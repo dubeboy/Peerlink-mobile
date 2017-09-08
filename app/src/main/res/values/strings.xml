@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MvpStarter</string>
+    <string name="app_name">Mvp App</string>
 
     <string name="dialog_action_ok">OK</string>
     <!--<string name="dialog_action_cancel">Cancel</string>-->
@@ -15,4 +15,11 @@
     <string name="error_message">There was a problem loading the pokemon, please try again!</string>
     <string name="error_reload">Reload</string>
     <string name="title_activity_maps_sample">Map</string>
+    <string name="title_activity_some_demo">SomeDEMO</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_demo">DemoAct</string>
 </resources>

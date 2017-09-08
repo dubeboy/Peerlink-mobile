@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.widget.Button
 import android.widget.ProgressBar
 import butterknife.BindView
 import timber.log.Timber
@@ -25,6 +26,7 @@ class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, 
     @BindView(R.id.recycler_pokemon) @JvmField var mPokemonRecycler: RecyclerView? = null
     @BindView(R.id.swipe_to_refresh) @JvmField var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     @BindView(R.id.toolbar) @JvmField var mToolbar: Toolbar? = null
+    @BindView(R.id.main_btn_search) @JvmField var mButton: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
