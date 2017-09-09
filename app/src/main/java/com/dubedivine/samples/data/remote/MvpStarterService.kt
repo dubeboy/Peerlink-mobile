@@ -16,4 +16,7 @@ interface MvpStarterService {
     @GET("pokemon/{name}")
     fun getPokemon(@Path("name") name: String): Single<Pokemon>
 
+    @GET("questions/suggest")
+    fun getSearchSuggestions(@Query("text") charSequence: CharSequence): Single<List<String>>
+
 }

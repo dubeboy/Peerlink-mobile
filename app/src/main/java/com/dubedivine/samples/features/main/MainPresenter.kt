@@ -4,6 +4,9 @@ import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
+import io.reactivex.Flowable
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @ConfigPersistent
@@ -31,10 +34,31 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
     fun getSuggestions(chars: CharSequence?) {
         checkViewAttached()
         mvpView?.showProgressOnAutoComplete(true);
+        if (chars != null) {
+            if (chars.length >= 5) {
+                Timber.i("getSuggestions is being called with text $chars")
+                Flowable
+                        .just(chars)
+                        .debounce(3, TimeUnit.SECONDS) // debouncing when the user is inputting the text
+                        .subscribe({
+                            mDataManager.getSuggestions(it)
+                                    .compose(SchedulerUtils.ioToMain<List<String>>())
+                                    .subscribe({
+                                        mvpView?.showProgressOnAutoComplete(false)
+                                        mvpView?.showSuggestions(it)
+                                    }, {
+                                        mvpView?.showProgressOnAutoComplete(false)
+                                        //todo: do something useful from here
+                                        mvpView?.showError(it)
+                                        Timber.e(it)
+                                    })
+                        })
+            }
+        }
     }
 
-    fun getQuestion(questionName: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    fun getQuestions(questionName: String) {
+        Timber.d("calling the api to get the questions with name $questionName")
     }
 
 }

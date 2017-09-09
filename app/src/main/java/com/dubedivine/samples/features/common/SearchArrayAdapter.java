@@ -2,6 +2,7 @@ package com.dubedivine.samples.features.common;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -15,15 +16,20 @@ import timber.log.Timber;
  * Created by divine on 2017/09/09.
  */
 
-public class InstantAutoComplete extends ArrayAdapter<String> implements Filterable {
+public class SearchArrayAdapter extends ArrayAdapter<String> implements Filterable {
 
     private List<String> items = new ArrayList<>();
 
-    public InstantAutoComplete(@NonNull Context context,
-                               int resource,
-                               @NonNull List<String> items) {
-        super(context, resource, items);
-        this.items = items;
+    public SearchArrayAdapter(@NonNull Context context,
+                              int resource) {
+        super(context, resource);
+    }
+
+    @Override
+    public void add(@Nullable String object) {
+        super.add(object);
+        items.add(object);
+   //     notifyDataSetChanged();
     }
 
     @NonNull
@@ -51,5 +57,5 @@ public class InstantAutoComplete extends ArrayAdapter<String> implements Filtera
         };
     }
 
-    
+
 }
