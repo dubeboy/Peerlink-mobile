@@ -8,5 +8,6 @@
     <!--<color name="secondary_text">#727272</color>-->
     <!--<color name="icons">@color/white</color>-->
     <color name="white">#FFFFFF</color>
+    <color name="background_material_light">#bcaaa4</color>
     <!--<color name="divider">#B6B6B6</color>-->
 </resources>

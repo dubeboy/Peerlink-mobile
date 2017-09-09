@@ -9,16 +9,25 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
+import android.widget.*
 import butterknife.BindView
+import io.reactivex.android.plugins.RxAndroidPlugins
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, ErrorView.ErrorListener {
+class MainActivity :
+        BaseActivity(),
+        MainMvpView,
+        PokemonAdapter.ClickListener,
+        ErrorView.ErrorListener,
+        View.OnClickListener,
+        AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
 
-    @Inject lateinit var mPokemonAdapter: PokemonAdapter
+    @Inject lateinit var mPokemonAdapter: PokemonAdapter //The initialization of this one is injected here
+    @Inject lateinit var mQuestionsSearchAdapter: QuestionsSearchAdapter
     @Inject lateinit var mMainPresenter: MainPresenter
 
     @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
@@ -26,7 +35,8 @@ class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, 
     @BindView(R.id.recycler_pokemon) @JvmField var mPokemonRecycler: RecyclerView? = null
     @BindView(R.id.swipe_to_refresh) @JvmField var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     @BindView(R.id.toolbar) @JvmField var mToolbar: Toolbar? = null
-    @BindView(R.id.main_btn_search) @JvmField var mButton: Button? = null
+    @BindView(R.id.main_btn_search) @JvmField var mSearchButton: ImageButton? = null
+    @BindView(R.id.main_auto_complete_input_search) @JvmField var mAutoCompleteSearchInputView: AutoCompleteTextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +55,26 @@ class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, 
 
         mErrorView?.setErrorListener(this)
 
-        mMainPresenter.getPokemon(POKEMON_COUNT)
+        mMainPresenter.getPokemon(POKEMON_COUNT) // gets the pokemon !!!
+
+        mSearchButton?.setOnClickListener(this)
+
+        //set the adapter for the auto complete search
+        mAutoCompleteSearchInputView?.setAdapter(mQuestionsSearchAdapter)
+        mAutoCompleteSearchInputView?.onItemSelectedListener = this
+        mAutoCompleteSearchInputView?.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(text: Editable?) {
+            }
+
+            override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(chars: CharSequence?, start: Int, before: Int, count: Int) {
+                Timber.i("the number of items on the list is %i ", count)
+              //  mMainPresenter.getSuggestions(chars)
+            }
+        })
+
     }
 
     override val layout: Int
@@ -56,6 +85,7 @@ class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, 
         mMainPresenter.detachView()
     }
 
+    //pveriden method from mvpView
     override fun showPokemon(pokemon: List<String>) {
         mPokemonAdapter.setPokemon(pokemon)
         mPokemonAdapter.notifyDataSetChanged()
@@ -93,6 +123,46 @@ class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, 
         startActivity(DetailActivity.getStartIntent(this, pokemon))
     }
 
+    override fun onClick(view: View?) {
+        when (view?.id ) {
+            R.id.main_btn_search -> {
+                Timber.d("btn search clicked")
+                mMainPresenter.getQuestion(mAutoCompleteSearchInputView?.text.toString())
+            }
+        }
+    }
+
+    //click listener for the item being selected from the drop down
+    override fun onNothingSelected(adapterView: AdapterView<*>?) {
+        Timber.d("onNothingSelected: nothing was selected yoh")
+    }
+
+    override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val selectedItem = adapterView?.adapter?.getItem(position) as String
+        Timber.d("onItemSelected: an item was selected a position %i and the value is %s",position ,
+              selectedItem)
+        mMainPresenter.getQuestion(selectedItem)
+    }
+
+
+    override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+       Timber.i("onItemClick: Item was clicked fam  at %i", p2)
+    }
+
+    override fun showProgressOnAutoComplete(show: Boolean) {
+        if(show) {
+            // todo: should add a spinner
+            // todo: should make the item un clickable
+            mQuestionsSearchAdapter.clear() // clear the available data and then just add one item that just says searching
+            mQuestionsSearchAdapter.add("Searching...")
+            mAutoCompleteSearchInputView?.onItemClickListener = null // so that when a person clik on the item disable the item
+        } else {
+            mQuestionsSearchAdapter.clear() // just make the adapter ready for more input
+            mAutoCompleteSearchInputView?.onItemClickListener = this
+        }
+    }
+
+
     override fun onReloadData() {
         mMainPresenter.getPokemon(POKEMON_COUNT)
     }
@@ -102,3 +172,4 @@ class MainActivity : BaseActivity(), MainMvpView, PokemonAdapter.ClickListener, 
         private val POKEMON_COUNT = 20
     }
 }
+

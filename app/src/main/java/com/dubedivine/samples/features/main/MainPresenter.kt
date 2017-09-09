@@ -28,4 +28,13 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
                 }
     }
 
+    fun getSuggestions(chars: CharSequence?) {
+        checkViewAttached()
+        mvpView?.showProgressOnAutoComplete(true);
+    }
+
+    fun getQuestion(questionName: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 }

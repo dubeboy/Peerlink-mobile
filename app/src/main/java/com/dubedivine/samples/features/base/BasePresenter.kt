@@ -11,7 +11,7 @@ import rx.subscriptions.CompositeSubscription
 open class BasePresenter<T : MvpView> : Presenter<T> {
 
     var mvpView: T? = null
-        private set
+        private set // making the setter of the mvpView private!!!
     private val mCompositeSubscription = CompositeSubscription()
 
     override fun attachView(mvpView: T) {

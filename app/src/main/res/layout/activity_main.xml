@@ -9,7 +9,6 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay"
         android:paddingTop="@dimen/appbar_padding_top"
         android:layout_height="wrap_content">
 
@@ -32,16 +31,17 @@
                 app:cardCornerRadius="2dp"
                 app:cardElevation="20dp"
                 android:layout_height="wrap_content">
-                <EditText
+                <AutoCompleteTextView
+                    android:id="@+id/main_auto_complete_input_search"
                     android:layout_width="match_parent"
                     android:background="@android:color/transparent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:padding="15px"
+                    android:completionThreshold="3"
                     android:textColorHint="@android:color/darker_gray"
                     android:hint="Search"
-                    android:inputType="text">
-                </EditText>
+                    android:inputType="text"/>
                 <ImageButton
                     android:id="@+id/main_btn_search"
                     android:layout_width="wrap_content"
