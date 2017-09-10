@@ -1,6 +1,7 @@
 package com.dubedivine.samples.data
 
 import com.dubedivine.samples.data.model.Pokemon
+import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import javax.inject.Inject
@@ -24,7 +25,7 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.getPokemon(name)
     }
 
-    fun getSuggestions(charSequence: CharSequence): Single<List<String>>  {
+    fun getSuggestions(charSequence: CharSequence): Single<List<Question>>  {
         return mMvpStarterService.getSearchSuggestions(charSequence)
                 .toObservable()
                 .flatMapIterable { it }

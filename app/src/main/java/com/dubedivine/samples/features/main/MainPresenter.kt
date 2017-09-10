@@ -1,6 +1,7 @@
 package com.dubedivine.samples.features.main
 
 import com.dubedivine.samples.data.DataManager
+import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
@@ -39,15 +40,15 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
                 Timber.i("getSuggestions is being called with text $chars")
                 Flowable
                         .just(chars)
-                        .debounce(3, TimeUnit.SECONDS) // debouncing when the user is inputting the text
+                        .debounce(2, TimeUnit.SECONDS) // debouncing when the user is inputting the text
                         .subscribe({
                             Timber.i("getSuggestions: calling the api for some data with this title $it")
                             mDataManager.getSuggestions(it)
-                                    .compose(SchedulerUtils.ioToMain<List<String>>())
+                                    .compose(SchedulerUtils.ioToMain<List<Question>>())
                                     .subscribe({
                                         Timber.i("getSuggestions: got results for $it")
                                         mvpView?.showProgressOnAutoComplete(false)
-                                        mvpView?.showSuggestions(it)
+                                        mvpView?.showSuggestions(it.map { it.title })
                                     }, {
                                         mvpView?.showProgressOnAutoComplete(false)
                                         //todo: do something useful from here

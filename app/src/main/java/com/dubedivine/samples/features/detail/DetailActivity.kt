@@ -31,6 +31,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
     @BindView(R.id.layout_pokemon) @JvmField var mPokemonLayout: View? = null
 
     private var mPokemonName: String? = null
+//    private var
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
