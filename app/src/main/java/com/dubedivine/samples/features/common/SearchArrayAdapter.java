@@ -15,11 +15,11 @@ import timber.log.Timber;
  * Created by divine on 2017/09/09.
  */
 
-public class InstantAutoComplete extends ArrayAdapter<String> implements Filterable {
+public class SearchArrayAdapter extends ArrayAdapter<String> implements Filterable {
 
     private List<String> items = new ArrayList<>();
 
-    public InstantAutoComplete(@NonNull Context context,
+    public SearchArrayAdapter(@NonNull Context context,
                                int resource,
                                @NonNull List<String> items) {
         super(context, resource, items);
