@@ -167,6 +167,7 @@ class MainActivity :
     }
 
     override fun showSuggestions(charSequence: List<String>) {
+        Timber.i("showSuggestions: is called with suggestions: $charSequence")
         mQuestionsSearchAdapter.addAll(charSequence)
     }
 

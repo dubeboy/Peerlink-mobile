@@ -24,7 +24,7 @@ object MvpStarterServiceFactory {
 
     private fun makeMvpStarterService(gson: Gson): MvpStarterService {
         val retrofit = Retrofit.Builder()
-                .baseUrl(BuildConfig.POKEAPI_API_URL)
+                .baseUrl(BuildConfig.BASE_API_URL)
                 .client(makeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

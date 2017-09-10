@@ -41,9 +41,11 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
                         .just(chars)
                         .debounce(3, TimeUnit.SECONDS) // debouncing when the user is inputting the text
                         .subscribe({
+                            Timber.i("getSuggestions: calling the api for some data with this title $it")
                             mDataManager.getSuggestions(it)
                                     .compose(SchedulerUtils.ioToMain<List<String>>())
                                     .subscribe({
+                                        Timber.i("getSuggestions: got results for $it")
                                         mvpView?.showProgressOnAutoComplete(false)
                                         mvpView?.showSuggestions(it)
                                     }, {
