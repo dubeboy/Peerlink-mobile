@@ -2,6 +2,7 @@ package com.dubedivine.samples.features.main
 
 import android.app.Activity
 import android.widget.ArrayAdapter
+import com.dubedivine.samples.features.common.SearchArrayAdapter
 import javax.inject.Inject
 
 /**
@@ -9,4 +10,4 @@ import javax.inject.Inject
  */
 class QuestionsSearchAdapter @Inject
 constructor(context: Activity) :
-        ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line )
+        SearchArrayAdapter(context, android.R.layout.simple_dropdown_item_1line )

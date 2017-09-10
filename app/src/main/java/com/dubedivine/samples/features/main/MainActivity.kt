@@ -14,7 +14,6 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import butterknife.BindView
-import io.reactivex.android.plugins.RxAndroidPlugins
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,6 +24,7 @@ class MainActivity :
         ErrorView.ErrorListener,
         View.OnClickListener,
         AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
+
 
     @Inject lateinit var mPokemonAdapter: PokemonAdapter //The initialization of this one is injected here
     @Inject lateinit var mQuestionsSearchAdapter: QuestionsSearchAdapter
@@ -70,8 +70,8 @@ class MainActivity :
             }
 
             override fun onTextChanged(chars: CharSequence?, start: Int, before: Int, count: Int) {
-                Timber.i("the number of items on the list is %i ", count)
-              //  mMainPresenter.getSuggestions(chars)
+                Timber.i("onTextChanged:  the chars is [$chars]")
+                mMainPresenter.getSuggestions(chars)
             }
         })
 
@@ -95,6 +95,7 @@ class MainActivity :
     }
 
     override fun showProgress(show: Boolean) {
+        Timber.i("show progress is being called dwag for lo")
         if (show) {
             if (mPokemonRecycler?.visibility == View.VISIBLE && mPokemonAdapter.itemCount > 0) {
                 mSwipeRefreshLayout?.isRefreshing = true
@@ -116,6 +117,8 @@ class MainActivity :
         mPokemonRecycler?.visibility = View.GONE
         mSwipeRefreshLayout?.visibility = View.GONE
         mErrorView?.visibility = View.VISIBLE
+        //if the keyboard is currently active just show toast just in case
+        Toast.makeText(this, "There was an error", Toast.LENGTH_LONG).show()
         Timber.e(error, "There was an error retrieving the pokemon")
     }
 
@@ -127,7 +130,7 @@ class MainActivity :
         when (view?.id ) {
             R.id.main_btn_search -> {
                 Timber.d("btn search clicked")
-                mMainPresenter.getQuestion(mAutoCompleteSearchInputView?.text.toString())
+                mMainPresenter.getQuestions(mAutoCompleteSearchInputView?.text.toString()) // get question that match this term
             }
         }
     }
@@ -139,27 +142,32 @@ class MainActivity :
 
     override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val selectedItem = adapterView?.adapter?.getItem(position) as String
-        Timber.d("onItemSelected: an item was selected a position %i and the value is %s",position ,
+        Timber.d("onItemSelected: an item was selected a position %d and the value is %s",position ,
               selectedItem)
-        mMainPresenter.getQuestion(selectedItem)
+        mMainPresenter.getQuestions(selectedItem)
     }
 
 
     override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-       Timber.i("onItemClick: Item was clicked fam  at %i", p2)
+       Timber.i("onItemClick: Item was clicked fam  at %d", p2)
     }
 
     override fun showProgressOnAutoComplete(show: Boolean) {
         if(show) {
-            // todo: should add a spinner
+            // todo: should add a spinner to the search
             // todo: should make the item un clickable
             mQuestionsSearchAdapter.clear() // clear the available data and then just add one item that just says searching
             mQuestionsSearchAdapter.add("Searching...")
             mAutoCompleteSearchInputView?.onItemClickListener = null // so that when a person clik on the item disable the item
+           // mAutoCompleteSearchInputView?.showDropDown()
         } else {
             mQuestionsSearchAdapter.clear() // just make the adapter ready for more input
             mAutoCompleteSearchInputView?.onItemClickListener = this
         }
+    }
+
+    override fun showSuggestions(charSequence: List<String>) {
+        mQuestionsSearchAdapter.addAll(charSequence)
     }
 
 
