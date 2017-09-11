@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    app:contentPadding="10dp"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/question_title"
+            android:layout_width="match_parent"
+            tools:text="What is and Atom"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/question_status"
+            android:layout_width="wrap_content"
+            android:textStyle="italic"
+            tools:text="10 answers, answered by Divine"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/question_body"
+            android:layout_width="wrap_content"
+            tools:text="an atom is dhsdhsdghsdghsdghsdghsdgshdgshdghs dhsgdhsdghsdwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwgdghsdghsdhsdsshdgshd"
+            android:ellipsize="marquee"
+            android:maxLines="3"
+            android:paddingBottom="10dp"
+            android:layout_height="wrap_content" />
+
+        <HorizontalScrollView
+            android:id="@+id/question_files_hori_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!--programmatically insert the files asscited with this question-->
+
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:id="@+id/question_tags_layout"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+                <!--progm insert the tags with chips-->
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>

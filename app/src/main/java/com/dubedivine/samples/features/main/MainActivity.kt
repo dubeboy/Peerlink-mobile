@@ -32,7 +32,7 @@ class MainActivity :
 
     @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
     @BindView(R.id.progress) @JvmField var mProgress: ProgressBar? = null
-    @BindView(R.id.recycler_pokemon) @JvmField var mPokemonRecycler: RecyclerView? = null
+    @BindView(R.id.recycler_data) @JvmField var mPokemonRecycler: RecyclerView? = null
     @BindView(R.id.swipe_to_refresh) @JvmField var mSwipeRefreshLayout: SwipeRefreshLayout? = null
     @BindView(R.id.toolbar) @JvmField var mToolbar: Toolbar? = null
     @BindView(R.id.main_btn_search) @JvmField var mSearchButton: ImageButton? = null

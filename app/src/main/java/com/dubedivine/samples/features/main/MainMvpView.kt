@@ -11,6 +11,7 @@ interface MainMvpView : MvpView {
     fun showError(error: Throwable)
 
     fun showProgressOnAutoComplete(show: Boolean)
+
     fun  showSuggestions(charSequence: List<String>)
 
 }

@@ -100,4 +100,23 @@ public class Question {
     public void setFiles(List<Media> files) {
         this.files = files;
     }
+
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", votes=" + votes +
+                ", comments=" + comments +
+                ", answers=" + answers +
+                ", tags=" + tags +
+                ", user=" + user +
+                ", type='" + type + '\'' +
+                ", video=" + video +
+                ", files=" + files +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
