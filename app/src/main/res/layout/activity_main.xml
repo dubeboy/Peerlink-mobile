@@ -43,21 +43,31 @@
                       android:padding="15px"
                       android:completionThreshold="3"
                       android:textColorHint="@android:color/darker_gray"
-                      android:hint="Search can also have tags like #phy1a"
+                      android:hint="Search... can have tags like #phy1a"
                       android:inputType="text"/>
+
+                <ImageButton
+                    android:id="@+id/main_btn_search"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Search"
+                    android:src="@drawable/ic_search_black_24dp" />
+                <ProgressBar
+                    android:id="@+id/search_progress_bar"
+                    android:layout_width="40dp"
+                    android:layout_gravity="end"
+                    android:visibility="gone"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_height="wrap_content" />
 
 
             </android.support.v7.widget.CardView>
-            <ImageButton
-                android:id="@+id/main_btn_search"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end"
-                android:background="@android:color/transparent"
-                android:contentDescription="Search"
-                android:src="@drawable/ic_search_black_24dp" />
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

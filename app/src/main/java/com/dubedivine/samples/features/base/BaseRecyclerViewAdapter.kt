@@ -14,4 +14,6 @@ abstract class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 abstract class BaseRecyclerViewAdapter
 constructor(view: View) : RecyclerView.Adapter<MyViewHolder>() {
 
+
+
 }

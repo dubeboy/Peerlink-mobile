@@ -48,7 +48,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
                                     .subscribe({
                                         Timber.i("getSuggestions: got results for $it")
                                         mvpView?.showProgressOnAutoComplete(false)
-                                        mvpView?.showSuggestions(it.map { it.title })
+                                        mvpView?.showSuggestions(it)
                                     }, {
                                         mvpView?.showProgressOnAutoComplete(false)
                                         //todo: do something useful from here
@@ -60,8 +60,13 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
         }
     }
 
-    fun getQuestions(questionName: String) {
-        Timber.d("calling the api to get the questions with name $questionName")
+
+    /**
+     * @param question this is the one that will be passed to the search to be put on top
+    * */
+    fun getQuestions(question: Question?) {
+        Timber.d("getQuestions: calling the api to get the questions with name ")
+
     }
 
 }

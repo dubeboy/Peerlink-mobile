@@ -43,6 +43,7 @@ ext {
             okhttp  : "com.squareup.okhttp3:okhttp:$versions.okHttp"
     ]
 
+    //todo: configure google services
     googlePlay = [
             maps             : "com.google.android.gms:play-services-maps:$versions.firebase",
             crash            : "com.google.firebase:firebase-crash:$versions.firebase",
@@ -67,12 +68,19 @@ ext {
             testRules      : "com.android.support.test:rules:$versions.espressoRunner",
     ] + mockito + restMock
 
+    // my miscellaneous dependencies ;)
+    divineDeps = [
+            chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1",
+            convertStringToDrwable : "com.amulyakhare:com.amulyakhare.textdrawable:1.0.1"
+    ]
+
     supportLibs = supportDeps.values()
     networkLibs = retrofit.values() + okHttp.values()
     rxJavaLibs = rxJava.values()
     googlePlayLibs = googlePlay.values()
     unitTestLibs = unitTest.values()
     androidTestsLibs = androidTests.values() + supportLibs
+    divineLibs = divineDeps.values()
 
     leakCannary = "com.squareup.leakcanary:leakcanary-android:1.5"
     daggerCompiler = "com.google.dagger:dagger-compiler:$versions.dagger"

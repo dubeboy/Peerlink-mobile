@@ -22,9 +22,6 @@ public class Question {
     private List<Media> files; //this can be combined with video dwag
     private Date createdAt = new Date();
 
-    public Question() {
-
-    }
 
 
     public Question(String title, String body, long votes, List<Tag> tags, String type) {
@@ -118,5 +115,12 @@ public class Question {
                 ", files=" + files +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public User getUser() {
+        return user;
     }
 }

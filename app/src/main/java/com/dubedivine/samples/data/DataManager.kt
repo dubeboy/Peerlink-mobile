@@ -1,5 +1,6 @@
 package com.dubedivine.samples.data
 
+import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Pokemon
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.remote.MvpStarterService
@@ -9,6 +10,8 @@ import timber.log.Timber
 import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
+import butterknife.OnClick
+
 
 
 // singleton that manages data it just makes sense!! really it should because do u want duplicates of the same data??!!
@@ -42,5 +45,7 @@ constructor(private val mMvpStarterService: MvpStarterService) {
                 { Timber.e("failed to add data to the questions array") })
         return returnQuestions
     }
+
+
 
 }

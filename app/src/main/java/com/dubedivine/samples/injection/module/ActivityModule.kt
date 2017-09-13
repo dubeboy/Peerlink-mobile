@@ -2,6 +2,7 @@ package com.dubedivine.samples.injection.module
 
 import android.app.Activity
 import android.content.Context
+import com.dubedivine.samples.features.common.SearchArrayAdapter
 
 import dagger.Module
 import dagger.Provides
@@ -19,5 +20,10 @@ class ActivityModule(private val mActivity: Activity) {
     @ActivityContext
     internal fun providesContext(): Context {
         return mActivity
+    }
+
+    @Provides
+    internal fun providesSearchArrayAdapter(): SearchArrayAdapter {
+        return SearchArrayAdapter(mActivity, arrayListOf())
     }
 }

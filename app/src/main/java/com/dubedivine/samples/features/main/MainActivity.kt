@@ -14,6 +14,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import butterknife.BindView
+import butterknife.OnClick
+import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.features.common.SearchArrayAdapter
+import com.dubedivine.samples.util.toast
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -21,13 +25,11 @@ class MainActivity :
         BaseActivity(),
         MainMvpView,
         PokemonAdapter.ClickListener,
-        ErrorView.ErrorListener,
-        View.OnClickListener,
-        AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
+        ErrorView.ErrorListener, SearchArrayAdapter.OnItemClickListener {
 
 
     @Inject lateinit var mPokemonAdapter: PokemonAdapter //The initialization of this one is injected here
-    @Inject lateinit var mQuestionsSearchAdapter: QuestionsSearchAdapter
+    @Inject lateinit var mSearchArrayAdapter: SearchArrayAdapter
     @Inject lateinit var mMainPresenter: MainPresenter
 
     @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
@@ -37,6 +39,7 @@ class MainActivity :
     @BindView(R.id.toolbar) @JvmField var mToolbar: Toolbar? = null
     @BindView(R.id.main_btn_search) @JvmField var mSearchButton: ImageButton? = null
     @BindView(R.id.main_auto_complete_input_search) @JvmField var mAutoCompleteSearchInputView: AutoCompleteTextView? = null
+    @BindView(R.id.search_progress_bar) @JvmField var mSearchProgressBar: ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,22 +60,32 @@ class MainActivity :
 
         mMainPresenter.getPokemon(POKEMON_COUNT) // gets the pokemon !!!
 
-        mSearchButton?.setOnClickListener(this)
+//        mSearchButton?.setOnClickListener(this)  // no need butterKnife has my back
 
+        //mAutoCompleteSearchInputView ----------------------------------------------------
+        mSearchArrayAdapter.onItemClick = this
         //set the adapter for the auto complete search
-        mAutoCompleteSearchInputView?.setAdapter(mQuestionsSearchAdapter)
-        mAutoCompleteSearchInputView?.onItemSelectedListener = this
-        mAutoCompleteSearchInputView?.addTextChangedListener(object: TextWatcher {
+        mAutoCompleteSearchInputView?.setAdapter(mSearchArrayAdapter)
+
+        mAutoCompleteSearchInputView?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
+                Timber.i("afterTextChanged:  the chars is [${text?.toString()}]")
             }
 
             override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                Timber.i("beforeTextChanged:  the chars is [${text?.toString()}]")
+
             }
 
             override fun onTextChanged(chars: CharSequence?, start: Int, before: Int, count: Int) {
+                //todo: this get the chars 2..infinity which is bad might have to use rxBind
                 Timber.i("onTextChanged:  the chars is [$chars]")
                 mMainPresenter.getSuggestions(chars)
             }
+        })
+
+        mAutoCompleteSearchInputView?.setOnItemClickListener({ adapterView, view, i, l ->
+            Timber.e("$adapterView is $view $i $l ayoba$$$$$$$$$$$$$$$$$$$")
         })
 
     }
@@ -126,51 +139,36 @@ class MainActivity :
         startActivity(DetailActivity.getStartIntent(this, pokemon))
     }
 
-    override fun onClick(view: View?) {
-        when (view?.id ) {
-            R.id.main_btn_search -> {
-                Timber.d("btn search clicked")
-                mMainPresenter.getQuestions(mAutoCompleteSearchInputView?.text.toString()) // get question that match this term
-            }
-        }
-    }
-
-    //click listener for the item being selected from the drop down
-    override fun onNothingSelected(adapterView: AdapterView<*>?) {
-        Timber.d("onNothingSelected: nothing was selected yoh")
-    }
-
-    override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val selectedItem = adapterView?.adapter?.getItem(position) as String
-        Timber.d("onItemSelected: an item was selected a position %d and the value is %s",position ,
-              selectedItem)
-        mMainPresenter.getQuestions(selectedItem)
+    @OnClick(R.id.main_btn_search)
+    fun onSearchButtonClick() {
+        Timber.d("btn search clicked")
+        mMainPresenter.getQuestions(null) // if null it means that
     }
 
 
-    override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-       Timber.i("onItemClick: Item was clicked fam  at %d", p2)
+    override fun onItemClick(question: Question) {
+        mMainPresenter.getQuestions(question)
     }
+
 
     override fun showProgressOnAutoComplete(show: Boolean) {
-        if(show) {
+        if (show) {
             // todo: should add a spinner to the search
             // todo: should make the item un clickable
-            mQuestionsSearchAdapter.clear() // clear the available data and then just add one item that just says searching
-            mQuestionsSearchAdapter.add("Searching...")
-            mAutoCompleteSearchInputView?.onItemClickListener = null // so that when a person clik on the item disable the item
-           // mAutoCompleteSearchInputView?.showDropDown()
+            mSearchProgressBar?.visibility = View.VISIBLE
+            mSearchArrayAdapter.clear() // clear the available data and then just add one item that just says searching
+            toast("Searching...", Toast.LENGTH_SHORT)
         } else {
-            mQuestionsSearchAdapter.clear() // just make the adapter ready for more input
-            mAutoCompleteSearchInputView?.onItemClickListener = this
+            mSearchProgressBar?.visibility = View.GONE
+            mSearchArrayAdapter.clear() // just make the adapter ready for more input
         }
     }
 
-    override fun showSuggestions(charSequence: List<String>) {
-        Timber.i("showSuggestions: is called with suggestions: $charSequence")
-        mQuestionsSearchAdapter.addAll(charSequence)
+    override fun showSuggestions(question: List<Question>) {
+        mSearchProgressBar?.visibility = View.GONE
+        Timber.i("showSuggestions: is called with suggestions: $question")
+        mSearchArrayAdapter.addAll(question)
     }
-
 
     override fun onReloadData() {
         mMainPresenter.getPokemon(POKEMON_COUNT)

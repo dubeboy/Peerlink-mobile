@@ -1,5 +1,6 @@
 package com.dubedivine.samples.features.main
 
+import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.MvpView
 
 interface MainMvpView : MvpView {
@@ -12,6 +13,6 @@ interface MainMvpView : MvpView {
 
     fun showProgressOnAutoComplete(show: Boolean)
 
-    fun  showSuggestions(charSequence: List<String>)
+    fun  showSuggestions(question: List<Question>)
 
 }

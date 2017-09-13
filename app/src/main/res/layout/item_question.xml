@@ -37,6 +37,7 @@
             android:layout_height="wrap_content" />
 
         <HorizontalScrollView
+            android:visibility="gone"
             android:id="@+id/question_files_hori_scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -45,6 +46,7 @@
         </HorizontalScrollView>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/question_tags_layout"
             android:layout_width="wrap_content"
             android:orientation="horizontal"

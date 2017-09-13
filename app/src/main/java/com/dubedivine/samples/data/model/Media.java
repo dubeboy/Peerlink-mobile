@@ -11,7 +11,7 @@ import java.util.Date;
 public class Media {
     private String name;
     private long size;
-    private String type;
+    private char type;  // P-> picture, V-> video, f -> docs
     private String location;
     private Date createAt = new Date();
 
@@ -23,7 +23,7 @@ public class Media {
         return size;
     }
 
-    public String getType() {
+    public char getType() {
         return type;
     }
 
@@ -39,7 +39,7 @@ public class Media {
         return createAt;
     }
 
-    public Media(String name, long size, String type, String location) {
+    public Media(String name, long size, char type, String location) {
         this.name = name;
         this.size = size;
         this.type = type;
