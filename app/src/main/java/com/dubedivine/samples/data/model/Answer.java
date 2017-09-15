@@ -1,13 +1,14 @@
 package com.dubedivine.samples.data.model;
 
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by divine on 2017/08/13.
  */
-public class Answer {
+public class Answer implements Serializable{
     private String body;
     private long votes;
     private boolean isChoosen;

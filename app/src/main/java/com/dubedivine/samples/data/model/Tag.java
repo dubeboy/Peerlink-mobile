@@ -1,5 +1,6 @@
 package com.dubedivine.samples.data.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  */
 
 
-public class Tag {
+public class Tag implements Serializable {
     private String name;  // name is the ID means
     private Date createAt = new Date();
     private List<Question> questions;

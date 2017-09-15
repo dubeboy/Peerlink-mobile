@@ -70,8 +70,7 @@ ext {
 
     // my miscellaneous dependencies ;)
     divineDeps = [
-            chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1",
-            convertStringToDrwable : "com.amulyakhare:com.amulyakhare.textdrawable:1.0.1"
+            chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1"
     ]
 
     supportLibs = supportDeps.values()

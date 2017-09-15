@@ -1,5 +1,6 @@
 package com.dubedivine.samples.data.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -7,10 +8,12 @@ import java.util.List;
  * Created by divine on 2017/09/10.
  */
 
-public class Question {
+// todo: should not deserialize the the nested objects?
 
-    private  String id;  // protected because it has a setter in the Elastic question child class
-    private   String title;
+public class Question implements Serializable {
+
+    private String id;  // protected because it has a setter in the Elastic question child class
+    private String title;
     private String body;
     private long votes;
     private List<Comment> comments;
@@ -21,8 +24,6 @@ public class Question {
     private Media video;
     private List<Media> files; //this can be combined with video dwag
     private Date createdAt = new Date();
-
-
 
     public Question(String title, String body, long votes, List<Tag> tags, String type) {
         this.title = title;

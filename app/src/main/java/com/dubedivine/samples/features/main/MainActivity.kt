@@ -17,6 +17,8 @@ import butterknife.BindView
 import butterknife.OnClick
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.common.SearchArrayAdapter
+import com.dubedivine.samples.features.searchResults.SearchActivity
+import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import timber.log.Timber
 import javax.inject.Inject
@@ -142,12 +144,19 @@ class MainActivity :
     @OnClick(R.id.main_btn_search)
     fun onSearchButtonClick() {
         Timber.d("btn search clicked")
-        mMainPresenter.getQuestions(null) // if null it means that
+        if (!mAutoCompleteSearchInputView!!.text.toString().isNullOrBlank()) {
+            startActivity(SearchActivity.getStartIntent(this, null,
+                    mAutoCompleteSearchInputView!!.text.toString()))
+        } else {
+            snack("Please type something to search :)")  // I need to add emojies here!
+        }
+
     }
 
 
     override fun onItemClick(question: Question) {
-        mMainPresenter.getQuestions(question)
+//        mMainPresenter.getQuestions(question)
+        startActivity(SearchActivity.getStartIntent(this, question, mAutoCompleteSearchInputView!!.text.toString()))
     }
 
 

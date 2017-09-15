@@ -21,7 +21,7 @@ constructor() : RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder>() {
     }
 
     fun setPokemon(pokemon: List<String>) {
-        mPokemon = pokemon
+        this.mPokemon = pokemon
     }
 
     fun setClickListener(clickListener: ClickListener) {
@@ -36,13 +36,14 @@ constructor() : RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
-        val pokemon = mPokemon?.get(position)
+        val pokemon = mPokemon!!.get(position)
         holder.mPokemon = pokemon
-        holder.nameText?.text = String.format("%s%s", pokemon?.substring(0, 1)?.toUpperCase(), pokemon?.substring(1))
+        holder.nameText?.text = String.format("%s%s", pokemon.substring(0, 1).toUpperCase(),
+                pokemon.substring(1))
     }
 
     override fun getItemCount(): Int {
-        return mPokemon?.size as Int
+        return mPokemon!!.size
     }
 
     interface ClickListener {

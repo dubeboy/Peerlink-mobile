@@ -10,8 +10,5 @@ interface DetailMvpView : MvpView {
 
     fun showStat(statistic: Statistic)
 
-    fun showProgress(show: Boolean)
-
-    fun showError(error: Throwable)
 
 }

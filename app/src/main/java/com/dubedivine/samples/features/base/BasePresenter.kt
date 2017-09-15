@@ -36,6 +36,17 @@ open class BasePresenter<T : MvpView> : Presenter<T> {
         mCompositeSubscription.add(subs)
     }
 
+    /**
+     * @param action its a function to be executed
+     * this function will show a loader while the function is being executed
+     * remember to close(hide) the progress bar
+    * */
+    fun doLongTaskOnView(action: BasePresenter<T>.() -> Unit) {
+        checkViewAttached()
+        mvpView?.showProgress(true)
+        action()
+    }
+
     private class MvpViewNotAttachedException internal constructor() : RuntimeException("Please call Presenter.attachView(MvpView) before" + " requesting data to the Presenter")
 
 }

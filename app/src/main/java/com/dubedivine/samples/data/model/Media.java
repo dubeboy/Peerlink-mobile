@@ -3,12 +3,13 @@ package com.dubedivine.samples.data.model;
 
 
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by divine on 2017/08/13.
  */
-public class Media {
+public class Media implements Serializable {
     private String name;
     private long size;
     private char type;  // P-> picture, V-> video, f -> docs

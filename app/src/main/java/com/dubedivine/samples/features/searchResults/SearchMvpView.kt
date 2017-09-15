@@ -8,5 +8,5 @@ import java.util.ArrayList
  * Created by divine on 2017/09/10.
  */
 interface SearchMvpView : MvpView {
-    fun showQuestionsSearchResults(questions: ArrayList<Question>)
+    fun showQuestionsSearchResults(questions: List<Question>)
 }

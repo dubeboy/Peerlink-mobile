@@ -9,7 +9,7 @@ import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import butterknife.BindView
+import butterknife.ButterKnife
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.common.FileView
@@ -18,7 +18,8 @@ import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.setDefaultDrawableIcon
 import com.dubedivine.samples.util.setRandomColor
 import com.robertlevonyan.views.chip.Chip
-import java.util.ArrayList
+import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -36,7 +37,7 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
 
     //binding each element to the view boss!!!
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        holder.bind(mQuestion!!.get(position))
+        holder.bind(mQuestion!![position])
     }
 
     override fun getItemCount(): Int = mQuestion!!.size
@@ -52,54 +53,73 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
         fun onQuestionClick(question: Question)
     }
 
-
     open inner class SearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        @BindView(R.id.question_status) @JvmField var questionStatus: TextView? = null //like: 10 answers, answered by Divine
-        @BindView(R.id.question_title) @JvmField var questionTitle: TextView? = null
-        @BindView(R.id.question_body) @JvmField var questionBody: TextView? = null
-        @BindView(R.id.question_files_hori_scrollview) @JvmField var questionFilesHoriScrollView: HorizontalScrollView? = null
-        @BindView(R.id.question_tags_layout) @JvmField var questionTagsLayout: LinearLayout? = null
+        @JvmField val questionStatus: TextView = view.findViewById(R.id.question_status)  //like: 10 answers, answered by Divine
+        @JvmField val questionTitle: TextView = view.findViewById(R.id.question_title)
+        @JvmField val questionBody: TextView = view.findViewById(R.id.question_body)
+        @JvmField val questionFilesHoriScrollView: HorizontalScrollView = view.findViewById(R.id.question_files_hori_scrollview)
+        @JvmField val questionTagsLayout: LinearLayout = view.findViewById(R.id.question_tags_layout)
+
+        init {
+
+            ButterKnife.bind(this, itemView)
+        }
 
         fun bind(question: Question) {
-            questionStatus?.text = BasicUtils.createTheStatusTextViewInfo(question)
-            questionBody?.text = question.body
-            questionTitle?.text = question.title
+            Timber.i("is it null?:  $questionTitle")
+            questionStatus.text = BasicUtils.createTheStatusTextViewInfo(question)
+            questionBody.text = question.body
+            questionTitle.text = question.title
             if (question.files != null && question.files.size > 0) {
-                questionFilesHoriScrollView?.visibility = View.VISIBLE
+                questionFilesHoriScrollView.visibility = View.VISIBLE
                 question.files.forEach({
                     val fileView = FileView(itemView.context, it)
-                    questionFilesHoriScrollView?.addView(fileView)
+                    questionFilesHoriScrollView.addView(fileView)
                 })
-
             }
             if (question.tags != null && question.tags.size > 0) { // a question should have atleast one tag yoh
-                questionTagsLayout?.visibility = View.VISIBLE
+                questionTagsLayout.visibility = View.VISIBLE
                 question.tags.forEach({
                     val params = RelativeLayout.LayoutParams(
-                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT )
+                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
                     val chip: Chip = Chip(context)
                     chip.layoutParams = params
                     chip.chipText = it.name
                     chip.setRandomColor()
                     chip.setDefaultDrawableIcon()
-                    questionTagsLayout?.addView(chip)
+                    questionTagsLayout.addView(chip)
                 })
 
             }
         }
     }
 
-    fun  setClickListener(clickListener: ClickListener ) {
+    fun setClickListener(clickListener: ClickListener) {
         this.clickListener = clickListener
     }
 
-    fun addQuestions(questions: ArrayList<Question>) {
+    fun addQuestions(questions: List<Question>) {
         mQuestion!!.addAll(questions) //should never be null so... i am like lets do it kotlin!!
+        notifyDataSetChanged()
     }
 
-    companion object {
-//        val intent =
+    fun setTopQuestion(question: Question) { // todo: sending the whole question inefficient
+        Timber.i("here is the Questions List from DB $mQuestion")
+        Timber.i("and the passed in qiestion is $question")
+        var indexOfQ = -1
+        mQuestion!!.forEachIndexed({ i, item ->
+            if (item.title == question.title) {
+                indexOfQ = i
+                return@forEachIndexed
+            }
+        })
+        if (indexOfQ != -1)
+            Collections.swap(mQuestion, indexOfQ, 0)
+    }
+
+    fun clear() {
+        mQuestion!!.clear()
     }
 }
 

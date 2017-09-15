@@ -19,7 +19,7 @@ import butterknife.OnClick
 class DataManager @Inject
 constructor(private val mMvpStarterService: MvpStarterService) {
 
-    val questions: ArrayList<Question> = ArrayList()
+    val questions: ArrayList<Question> = arrayListOf()
 
     fun getPokemonList(limit: Int): Single<List<String>> {
         return mMvpStarterService.getPokemonList(limit)
@@ -33,8 +33,16 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.getPokemon(name)
     }
 
-    fun getSuggestions(charSequence: CharSequence): Single<List<Question>>  {
-        val returnQuestions = mMvpStarterService.getSearchSuggestions(charSequence)
+    //this function will change bro so for now we just basically search ):
+    // should just get the question name
+    fun getSuggestions(charSequence: CharSequence): Single<List<Question>> {
+        // will change latter so for now to String will do
+        return searchForQuestionUsingName(charSequence.toString(), 0)
+    }
+
+    //page is for pagination!!
+    fun searchForQuestionUsingName(questionName: String, page: Int): Single<List<Question>> {
+        val returnQuestions = mMvpStarterService.getSearchSuggestions(questionName)
                 .toObservable()
                 .flatMapIterable { it }
                 .map({ title -> title })
@@ -45,7 +53,6 @@ constructor(private val mMvpStarterService: MvpStarterService) {
                 { Timber.e("failed to add data to the questions array") })
         return returnQuestions
     }
-
 
 
 }
