@@ -23,6 +23,8 @@ import javax.annotation.PostConstruct
 /**
  * Created by divine on 2017/09/11.
  */
+
+//todo: should remove the card view parent of this View
 class FileView : LinearLayout {
 
     private var onFileClickedListener: OnFileClickedListener? = null
@@ -65,24 +67,23 @@ class FileView : LinearLayout {
         }
     }
 
-
     private fun init() {
         orientation = LinearLayout.HORIZONTAL
         LayoutInflater.from(context).inflate(R.layout.view_file, this)
         ButterKnife.bind(this)
 
         if(file != null ) {
-            when(file?.type?.toLowerCase()) {
-                'p' -> {
-                    btnFile?.setCompoundDrawablesWithIntrinsicBounds(
+            when(file?.type) {
+                Media.PICTURE_TYPE -> {
+                    btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
                                 R.drawable.ic_image_black_24dp, 0, 0, 0)
                 }
-                'v' -> {
-                    btnFile?.setCompoundDrawablesWithIntrinsicBounds(
+                Media.PICTURE_TYPE -> {
+                    btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
                             R.drawable.ic_ondemand_video_24dp, 0, 0, 0)
                 }
-                'f' -> {
-                    btnFile?.setCompoundDrawablesWithIntrinsicBounds(
+                Media.DOCS_TYPE -> {
+                    btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
                             R.drawable.ic_attach_file_24dp, 0, 0, 0)
                 }
 

@@ -24,6 +24,7 @@ public class Question implements Serializable {
     private Media video;
     private List<Media> files; //this can be combined with video dwag
     private Date createdAt = new Date();
+    private Boolean isAnswered;
 
     public Question(String title, String body, long votes, List<Tag> tags, String type) {
         this.title = title;
@@ -123,5 +124,13 @@ public class Question implements Serializable {
     }
     public User getUser() {
         return user;
+    }
+
+    public Boolean getAnswered() {
+        return isAnswered;
+    }
+
+    public void setAnswered(Boolean answered) {
+        isAnswered = answered;
     }
 }

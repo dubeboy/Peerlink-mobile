@@ -9,26 +9,31 @@ import com.dubedivine.samples.features.detail.widget.StatisticView
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import butterknife.BindView
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.activity_detail.toolbar
+import kotlinx.android.synthetic.main.content_error_and_progress_view.*
+import kotlinx.android.synthetic.main.content_swipe_refresh.*
 import timber.log.Timber
 import javax.inject.Inject
 
+
+// in the future we should also get the question answers increnmentally so the
+// serialized Question should contain a max of 5 children each comments and answers and then
+// we lazly load the the other children
 class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
 
-    @Inject lateinit var mDetailPresenter: DetailPresenter
+     @Inject lateinit var mDetailPresenter: DetailPresenter
 
-    @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
-    @BindView(R.id.image_pokemon) @JvmField var mPokemonImage: ImageView? = null
-    @BindView(R.id.progress) @JvmField var mProgress: ProgressBar? = null
-    @BindView(R.id.toolbar) @JvmField var mToolbar: Toolbar? = null
-    @BindView(R.id.layout_stats) @JvmField var mStatLayout: LinearLayout? = null
-    @BindView(R.id.layout_pokemon) @JvmField var mPokemonLayout: View? = null
+     @JvmField var mErrorView: ErrorView = view_error
+     @JvmField var mProgress: ProgressBar = progress
+     @JvmField var mToolbar: Toolbar = toolbar
+     @JvmField var mRecyclerData: RecyclerView = recycler_data
 
     private var mPokemonName: String? = null
 
@@ -44,11 +49,13 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
         }
 
         setSupportActionBar(mToolbar)
+
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+
         title = mPokemonName?.substring(0, 1)?.toUpperCase() + mPokemonName?.substring(1)
 
-        mErrorView?.setErrorListener(this)
+        mErrorView.setErrorListener(this)
 
         mDetailPresenter.getPokemon(mPokemonName as String)
     }
@@ -56,19 +63,22 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
     override val layout: Int
         get() = R.layout.activity_detail
 
-    override fun showPokemon(pokemon: Pokemon) {
-        if (pokemon.sprites.frontDefault != null) {
-            Glide.with(this)
-                    .load(pokemon.sprites.frontDefault)
-                    .into(mPokemonImage)
-        }
-        mPokemonLayout?.visibility = View.VISIBLE
+    override fun showQuestionsAndAnswers(pokemon: Pokemon) {
+
+        //-> we populate the recycler view and
+        // -> show that data placing the question as the first item
+//        if (pokemon.sprites.frontDefault != null) {
+//            Glide.with(this)
+//                    .load(pokemon.sprites.frontDefault)
+//                    .into(mPokemonImage)
+//        }
+//        mPokemonLayout.visibility = View.VISIBLE
     }
 
     override fun showStat(statistic: Statistic) {
-        val statisticView = StatisticView(this)
-        statisticView.setStat(statistic)
-        mStatLayout?.addView(statisticView)
+//        val statisticView = StatisticView(this)
+//        statisticView.setStat(statistic)
+//        mStatLayout?.addView(statisticView)
     }
 
     override fun showProgress(show: Boolean) {
@@ -77,8 +87,8 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
     }
 
     override fun showError(error: Throwable) {
-        mPokemonLayout?.visibility = View.GONE
-        mErrorView?.visibility = View.VISIBLE
+//        mPokemonLayout?.visibility = View.GONE
+//        mErrorView?.visibility = View.VISIBLE
         Timber.e(error, "There was a problem retrieving the pokemon...")
     }
 

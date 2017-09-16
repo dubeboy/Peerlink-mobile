@@ -73,6 +73,6 @@
 
     <include layout="@layout/content_swipe_refresh" />
 
-    <include layout="@layout/content_error_and_pregress_view" />
+    <include layout="@layout/content_error_and_progress_view" />
 
 </android.support.design.widget.CoordinatorLayout>

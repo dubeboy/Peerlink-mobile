@@ -22,4 +22,5 @@ object ViewUtil {
         imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
     }
 
+
 }

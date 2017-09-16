@@ -8,10 +8,12 @@
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp">
 
+    <!-- should also add some search bar here dwag!!!-->
+
     <include
         layout="@layout/content_swipe_refresh" />
 
     <include
-        layout="@layout/content_error_and_pregress_view" />
+        layout="@layout/content_error_and_progress_view" />
 
 </android.support.design.widget.CoordinatorLayout>

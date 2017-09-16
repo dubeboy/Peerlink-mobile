@@ -62,9 +62,6 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
             searchAdapter.setTopQuestion(mQuestion!!)
         }
         mSearchResultsRecycler?.adapter = searchAdapter
-
-
-
     }
 
     override fun showProgress(show: Boolean) {
@@ -98,6 +95,10 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         searchAdapter.clear();
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        searchPresenter.detachView()
+    }
 
     companion object {
 

@@ -25,7 +25,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                     // Calling showProgress() on a not-attached fragment will throw a NPE
                     // It is possible to ask isAdded() in the fragment, but it's better to ask in the presenter
                     mvpView?.showProgress(false)
-                    mvpView?.showPokemon(pokemon)
+                    mvpView?.showQuestionsAndAnswers(pokemon)
                     for (statistic in pokemon.stats) {
                         mvpView?.showStat(statistic)
                     }

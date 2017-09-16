@@ -81,14 +81,7 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
             if (question.tags != null && question.tags.size > 0) { // a question should have atleast one tag yoh
                 questionTagsLayout.visibility = View.VISIBLE
                 question.tags.forEach({
-                    val params = RelativeLayout.LayoutParams(
-                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                    val chip: Chip = Chip(context)
-                    chip.layoutParams = params
-                    chip.chipText = it.name
-                    chip.setRandomColor()
-                    chip.setDefaultDrawableIcon()
-                    questionTagsLayout.addView(chip)
+                    questionTagsLayout.addView(BasicUtils.createChipFromCode(itemView.context, it.name))
                 })
 
             }

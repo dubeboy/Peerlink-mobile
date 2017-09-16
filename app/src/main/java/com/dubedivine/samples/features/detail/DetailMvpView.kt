@@ -6,7 +6,7 @@ import com.dubedivine.samples.features.base.MvpView
 
 interface DetailMvpView : MvpView {
 
-    fun showPokemon(pokemon: Pokemon)
+    fun showQuestionsAndAnswers(pokemon: Pokemon)
 
     fun showStat(statistic: Statistic)
 

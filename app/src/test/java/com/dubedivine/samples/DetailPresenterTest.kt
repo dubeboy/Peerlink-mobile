@@ -54,7 +54,7 @@ class DetailPresenterTest {
         mDetailPresenter?.getPokemon(anyString())
 
         verify<DetailMvpView>(mMockDetailMvpView, times(2)).showProgress(anyBoolean())
-        verify<DetailMvpView>(mMockDetailMvpView).showPokemon(pokemon)
+        verify<DetailMvpView>(mMockDetailMvpView).showQuestionsAndAnswers(pokemon)
         verify<DetailMvpView>(mMockDetailMvpView, never()).showError(RuntimeException())
     }
 

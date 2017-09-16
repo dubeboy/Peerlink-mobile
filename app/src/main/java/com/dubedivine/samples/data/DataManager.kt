@@ -54,5 +54,9 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return returnQuestions
     }
 
+    fun addVote(qId: String, vote: Int) {
+        mMvpStarterService.addVoteToQuestion(qId, vote)
+    }
+
 
 }

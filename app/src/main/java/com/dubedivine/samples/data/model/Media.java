@@ -15,6 +15,10 @@ public class Media implements Serializable {
     private char type;  // P-> picture, V-> video, f -> docs
     private String location;
     private Date createAt = new Date();
+    //enums are very expensive so we use chars instead!!
+    public static char VIDEO_TYPE = 'V';
+    public static char PICTURE_TYPE = 'P';
+    public static char DOCS_TYPE = 'D';
 
     public String getName() {
         return name;
