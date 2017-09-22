@@ -1,9 +1,10 @@
 package com.dubedivine.samples.features.detail
 
 import com.dubedivine.samples.data.DataManager
+import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Pokemon
-import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.features.base.BasePresenter
+import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import javax.inject.Inject
 
@@ -33,5 +34,19 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                     mvpView?.showProgress(false)
                     mvpView?.showError(throwable)
                 }
+    }
+
+    fun getMoreAnswers(questionId: String, page: Int) {
+        doLongTaskOnView {
+            mDataManager.getMoreAnswers(questionId, page)
+                   .compose(SchedulerUtils.ioToMain<List<Answer>>())
+                   .subscribe({
+                       mvpView!!.addAnswers(it)
+                       mvpView!!.showProgress(false)
+                   }, {
+                       mvpView!!.showError(it)
+                       mvpView!!.showProgress(false)
+                   })
+        }
     }
 }

@@ -41,7 +41,7 @@ open class BasePresenter<T : MvpView> : Presenter<T> {
      * this function will show a loader while the function is being executed
      * remember to close(hide) the progress bar
     * */
-    fun doLongTaskOnView(action: BasePresenter<T>.() -> Unit) {
+   inline fun doLongTaskOnView(action: BasePresenter<T>.() -> Unit) {
         checkViewAttached()
         mvpView?.showProgress(true)
         action()

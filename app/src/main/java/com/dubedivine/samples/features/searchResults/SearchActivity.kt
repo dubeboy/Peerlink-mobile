@@ -2,23 +2,20 @@ package com.dubedivine.samples.features.searchResults
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import butterknife.BindView
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.ErrorView
-import com.dubedivine.samples.features.main.MainActivity
+import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.util.snack
 import timber.log.Timber
-import java.util.ArrayList
 import javax.inject.Inject
 
 class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListener {
@@ -44,7 +41,7 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         mQuestion = intent.getSerializableExtra(SELECTED_TOP_QUESTION) as Question?
         val searchTerm = intent.getStringExtra(SEARCH_TERM)
 
-        //todo repative code plase fix that is why we have dagger
+        //todo relative code please fix that is why we have dagger
         mSwipeRefreshLayout?.setProgressBackgroundColorSchemeResource(R.color.primary)
         mSwipeRefreshLayout?.setColorSchemeResources(R.color.white)
         mSwipeRefreshLayout?.setOnRefreshListener {
@@ -69,8 +66,8 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
     }
 
     override fun showError(error: Throwable) {
-        snack("An error happend sorry!")
-        Timber.i(error)
+        snack("An error happened sorry!")
+        Timber.e(error)
     }
 
 
@@ -79,7 +76,7 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         get() = R.layout.activity_search
 
     override fun onQuestionClick(question: Question) {
-        Timber.i("the question: $question was clicked")
+       startActivity(DetailActivity.getStartIntent(this, question))
     }
 
     override fun showQuestionsSearchResults(questions: List<Question>) {

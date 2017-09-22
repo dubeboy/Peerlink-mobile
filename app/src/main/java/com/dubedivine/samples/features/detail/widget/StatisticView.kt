@@ -1,7 +1,5 @@
 package com.dubedivine.samples.features.detail.widget
 
-import com.dubedivine.samples.R
-import com.dubedivine.samples.data.model.Statistic
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
@@ -13,6 +11,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.dubedivine.samples.R
+import com.dubedivine.samples.data.model.Statistic
 
 class StatisticView : RelativeLayout {
 

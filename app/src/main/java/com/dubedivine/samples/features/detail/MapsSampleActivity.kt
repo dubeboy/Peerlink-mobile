@@ -1,8 +1,8 @@
 package com.dubedivine.samples.features.detail
 
+import android.os.Bundle
 import com.dubedivine.samples.R
 import com.dubedivine.samples.features.base.BaseActivity
-import android.os.Bundle
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback

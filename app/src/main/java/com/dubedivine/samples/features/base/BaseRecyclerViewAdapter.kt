@@ -2,7 +2,6 @@ package com.dubedivine.samples.features.base
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.dubedivine.samples.features.searchResults.SearchAdapter
 
 /**
  * Created by divine on 2017/09/10.

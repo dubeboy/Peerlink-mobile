@@ -1,6 +1,5 @@
 package com.dubedivine.samples.features.main
 
-import com.dubedivine.samples.R
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.dubedivine.samples.R
 import javax.inject.Inject
 
 class PokemonAdapter @Inject
@@ -50,7 +50,7 @@ constructor() : RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder>() {
         fun onPokemonClick(pokemon: String)
     }
 
-    open inner class PokemonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PokemonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var mPokemon: String? = null
         @BindView(R.id.text_name) @JvmField var nameText: TextView? = null

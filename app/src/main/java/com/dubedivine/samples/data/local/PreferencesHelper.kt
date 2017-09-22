@@ -1,8 +1,8 @@
 package com.dubedivine.samples.data.local
 
-import com.dubedivine.samples.injection.ApplicationContext
 import android.content.Context
 import android.content.SharedPreferences
+import com.dubedivine.samples.injection.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

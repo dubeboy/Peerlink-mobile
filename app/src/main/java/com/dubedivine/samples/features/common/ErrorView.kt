@@ -1,6 +1,5 @@
 package com.dubedivine.samples.features.common
 
-import com.dubedivine.samples.R
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.dubedivine.samples.R
 
 class ErrorView : LinearLayout {
 

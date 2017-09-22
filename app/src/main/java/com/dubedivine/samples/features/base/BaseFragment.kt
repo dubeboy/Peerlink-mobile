@@ -1,10 +1,5 @@
 package com.dubedivine.samples.features.base
 
-import com.dubedivine.samples.MvpStarterApplication
-import com.dubedivine.samples.injection.component.ConfigPersistentComponent
-import com.dubedivine.samples.injection.component.DaggerConfigPersistentComponent
-import com.dubedivine.samples.injection.component.FragmentComponent
-import com.dubedivine.samples.injection.module.FragmentModule
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.util.LongSparseArray
@@ -12,6 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.ButterKnife
+import com.dubedivine.samples.MvpStarterApplication
+import com.dubedivine.samples.injection.component.ConfigPersistentComponent
+import com.dubedivine.samples.injection.component.DaggerConfigPersistentComponent
+import com.dubedivine.samples.injection.component.FragmentComponent
+import com.dubedivine.samples.injection.module.FragmentModule
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicLong
 

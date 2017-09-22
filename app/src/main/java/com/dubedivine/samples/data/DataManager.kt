@@ -1,17 +1,15 @@
 package com.dubedivine.samples.data
 
-import com.dubedivine.samples.R
+import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Pokemon
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import butterknife.OnClick
-
 
 
 // singleton that manages data it just makes sense!! really it should because do u want duplicates of the same data??!!
@@ -54,8 +52,22 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return returnQuestions
     }
 
+    //todo : should return a boolean
     fun addVote(qId: String, vote: Int) {
         mMvpStarterService.addVoteToQuestion(qId, vote)
+    }
+
+    //todo: should return a boolean
+    fun addVoteToAnswer(questionId: String, id: Long, vote: Int) {
+        mMvpStarterService.addVoteToAnswer(questionId, id, vote)
+    }
+
+    fun getMoreAnswers(questionId: String, page: Int): Single<List<Answer>> {
+      return  mMvpStarterService.getMoreAnswers(questionId, page)
+                .toObservable()
+                .flatMapIterable { it }
+                .map({title -> title})
+                .toList()
     }
 
 

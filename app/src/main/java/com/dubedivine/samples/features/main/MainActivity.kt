@@ -1,9 +1,5 @@
 package com.dubedivine.samples.features.main
 
-import com.dubedivine.samples.R
-import com.dubedivine.samples.features.base.BaseActivity
-import com.dubedivine.samples.features.common.ErrorView
-import com.dubedivine.samples.features.detail.DetailActivity
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -12,10 +8,16 @@ import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.Toast
 import butterknife.BindView
 import butterknife.OnClick
+import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.features.base.BaseActivity
+import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.common.SearchArrayAdapter
 import com.dubedivine.samples.features.searchResults.SearchActivity
 import com.dubedivine.samples.util.snack
@@ -138,13 +140,13 @@ class MainActivity :
     }
 
     override fun onPokemonClick(pokemon: String) {
-        startActivity(DetailActivity.getStartIntent(this, pokemon))
+       // startActivity(DetailActivity.getStartIntent(this, pokemon))
     }
 
     @OnClick(R.id.main_btn_search)
     fun onSearchButtonClick() {
         Timber.d("btn search clicked")
-        if (!mAutoCompleteSearchInputView!!.text.toString().isNullOrBlank()) {
+        if (!mAutoCompleteSearchInputView!!.text.toString().isBlank()) {
             startActivity(SearchActivity.getStartIntent(this, null,
                     mAutoCompleteSearchInputView!!.text.toString()))
         } else {

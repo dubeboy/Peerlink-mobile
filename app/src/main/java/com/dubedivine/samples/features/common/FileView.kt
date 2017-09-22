@@ -13,7 +13,6 @@ import butterknife.OnClick
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
 import timber.log.Timber
-import javax.annotation.PostConstruct
 
 
 //todo this class has very deep nesting but its okay for now

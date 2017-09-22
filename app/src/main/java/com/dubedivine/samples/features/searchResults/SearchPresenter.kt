@@ -6,7 +6,6 @@ import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import timber.log.Timber
-import java.util.ArrayList
 import javax.inject.Inject
 
 /**

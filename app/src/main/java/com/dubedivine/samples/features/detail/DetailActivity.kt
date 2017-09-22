@@ -1,24 +1,25 @@
 package com.dubedivine.samples.features.detail
 
-import com.dubedivine.samples.R
-import com.dubedivine.samples.data.model.Pokemon
-import com.dubedivine.samples.data.model.Statistic
-import com.dubedivine.samples.features.base.BaseActivity
-import com.dubedivine.samples.features.common.ErrorView
-import com.dubedivine.samples.features.detail.widget.StatisticView
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ProgressBar
-import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.activity_detail.toolbar
-import kotlinx.android.synthetic.main.content_error_and_progress_view.*
-import kotlinx.android.synthetic.main.content_swipe_refresh.*
+import butterknife.BindView
+import com.dubedivine.samples.R
+import com.dubedivine.samples.data.model.Answer
+import com.dubedivine.samples.data.model.Pokemon
+import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.data.model.Statistic
+import com.dubedivine.samples.features.base.BaseActivity
+import com.dubedivine.samples.features.common.EndlessRecyclerViewScrollListener
+import com.dubedivine.samples.features.common.ErrorView
+//import kotlinx.android.synthetic.main.activity_detail.*
+//import kotlinx.android.synthetic.main.content_error_and_progress_view.*
+//import kotlinx.android.synthetic.main.content_swipe_refresh.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,14 +29,15 @@ import javax.inject.Inject
 // we lazly load the the other children
 class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
 
-     @Inject lateinit var mDetailPresenter: DetailPresenter
+    @Inject lateinit var mDetailPresenter: DetailPresenter
+    @Inject lateinit var mDetailAdapter: DetailAdapter
 
-     @JvmField var mErrorView: ErrorView = view_error
-     @JvmField var mProgress: ProgressBar = progress
-     @JvmField var mToolbar: Toolbar = toolbar
-     @JvmField var mRecyclerData: RecyclerView = recycler_data
+    @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
+    @BindView(R.id.progress)  @JvmField var mProgress: ProgressBar? = null
+    @BindView(R.id.toolbar)  @JvmField  var mToolbar: Toolbar? = null
+    @BindView(R.id.recycler_data)  @JvmField var mRecyclerData: RecyclerView? = null
 
-    private var mPokemonName: String? = null
+    private var mQuestion: Question? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,8 +45,9 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
         activityComponent().inject(this)
         mDetailPresenter.attachView(this)
 
-        mPokemonName = intent.getStringExtra(EXTRA_POKEMON_NAME)
-        if (mPokemonName == null) {
+        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
+
+        if (mQuestion == null) {
             throw IllegalArgumentException("Detail Activity requires a pokemon name@")
         }
 
@@ -53,26 +56,32 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        title = mPokemonName?.substring(0, 1)?.toUpperCase() + mPokemonName?.substring(1)
+        title = mQuestion!!.title
 
-        mErrorView.setErrorListener(this)
+        mErrorView!!.setErrorListener(this)
+        //  mDetailPresenter.getPokemon(mQuestion)
 
-        mDetailPresenter.getPokemon(mPokemonName as String)
+        mDetailAdapter.mQuestion = mQuestion!!
+//        mDetailAdapter.
+        val layoutManager = LinearLayoutManager(this)
+        mRecyclerData!!.layoutManager = layoutManager
+        val scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                //call the API here to add more answers to the question boss
+                if (page > 0)
+                    mDetailPresenter.getMoreAnswers(mQuestion!!.id!!, page)
+            }
+        }
+
+
+        mRecyclerData!!.adapter = mDetailAdapter
     }
+
 
     override val layout: Int
         get() = R.layout.activity_detail
 
     override fun showQuestionsAndAnswers(pokemon: Pokemon) {
-
-        //-> we populate the recycler view and
-        // -> show that data placing the question as the first item
-//        if (pokemon.sprites.frontDefault != null) {
-//            Glide.with(this)
-//                    .load(pokemon.sprites.frontDefault)
-//                    .into(mPokemonImage)
-//        }
-//        mPokemonLayout.visibility = View.VISIBLE
     }
 
     override fun showStat(statistic: Statistic) {
@@ -90,10 +99,11 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
 //        mPokemonLayout?.visibility = View.GONE
 //        mErrorView?.visibility = View.VISIBLE
         Timber.e(error, "There was a problem retrieving the pokemon...")
+        error.printStackTrace()
     }
 
     override fun onReloadData() {
-        mDetailPresenter.getPokemon(mPokemonName as String)
+        // mDetailPresenter.getPokemon(mQuestion as String)
     }
 
     override fun onDestroy() {
@@ -101,13 +111,18 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
         mDetailPresenter.detachView()
     }
 
+    override fun addAnswers(answer: List<Answer>) {
+
+    }
+
+
     companion object {
 
-        val EXTRA_POKEMON_NAME = "EXTRA_POKEMON_NAME"
+        val EXTRA_QUESTION = "EXTRA_QUESTION"
 
-        fun getStartIntent(context: Context, pokemonName: String): Intent {
+        fun getStartIntent(context: Context, question: Question): Intent {
             val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra(EXTRA_POKEMON_NAME, pokemonName)
+            intent.putExtra(EXTRA_QUESTION, question)
             return intent
         }
     }

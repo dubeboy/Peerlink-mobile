@@ -23,6 +23,7 @@ object MvpStarterServiceFactory {
     }
 
     private fun makeMvpStarterService(gson: Gson): MvpStarterService {
+
         val retrofit = Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_API_URL)
                 .client(makeOkHttpClient())

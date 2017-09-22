@@ -3,10 +3,9 @@ package com.dubedivine.samples.injection.module
 import android.app.Activity
 import android.content.Context
 import com.dubedivine.samples.features.common.SearchArrayAdapter
-
+import com.dubedivine.samples.injection.ActivityContext
 import dagger.Module
 import dagger.Provides
-import com.dubedivine.samples.injection.ActivityContext
 
 @Module
 class ActivityModule(private val mActivity: Activity) {

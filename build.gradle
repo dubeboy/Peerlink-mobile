@@ -8,7 +8,7 @@ buildscript {
         maven { url 'http://dl.bintray.com/amulyakhare/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta5'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta6'  //todo: this problem
         //noinspection GradleDynamicVersion
         classpath 'io.fabric.tools:gradle:1.+'
         classpath 'com.google.gms:google-services:3.1.0'

@@ -2,11 +2,11 @@ package com.dubedivine.samples
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
-import com.facebook.stetho.Stetho
-import com.squareup.leakcanary.LeakCanary
 import com.dubedivine.samples.injection.component.ApplicationComponent
 import com.dubedivine.samples.injection.component.DaggerApplicationComponent
 import com.dubedivine.samples.injection.module.ApplicationModule
+import com.facebook.stetho.Stetho
+import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
 
 class MvpStarterApplication : MultiDexApplication() {

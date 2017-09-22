@@ -3,13 +3,10 @@ package com.dubedivine.samples.util
 import android.app.Activity
 import android.graphics.Color
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.Toast
-import com.dubedivine.samples.R
 import com.robertlevonyan.views.chip.Chip
 import timber.log.Timber
-import java.time.Duration
 
 /**
  * Created by divine on 2017/09/12.

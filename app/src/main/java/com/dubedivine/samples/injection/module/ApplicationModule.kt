@@ -2,14 +2,12 @@ package com.dubedivine.samples.injection.module
 
 import android.app.Application
 import android.content.Context
-
-import javax.inject.Singleton
-
-import dagger.Module
-import dagger.Provides
 import com.dubedivine.samples.data.remote.MvpStarterService
 import com.dubedivine.samples.data.remote.MvpStarterServiceFactory
 import com.dubedivine.samples.injection.ApplicationContext
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class ApplicationModule(private val mApplication: Application) {

@@ -1,10 +1,10 @@
 package com.dubedivine.samples.injection.component
 
+import com.dubedivine.samples.features.base.BaseActivity
+import com.dubedivine.samples.features.base.BaseFragment
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.injection.module.ActivityModule
 import com.dubedivine.samples.injection.module.FragmentModule
-import com.dubedivine.samples.features.base.BaseActivity
-import com.dubedivine.samples.features.base.BaseFragment
 import dagger.Component
 
 /**

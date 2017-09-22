@@ -1,6 +1,7 @@
 package com.dubedivine.samples.data.remote
 
 
+import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Pokemon
 import com.dubedivine.samples.data.model.PokemonListResponse
 import com.dubedivine.samples.data.model.Question
@@ -22,6 +23,12 @@ interface MvpStarterService {
     fun getSearchSuggestions(@Query("text") charSequence: CharSequence): Single<List<Question>>
 
     @POST("questions/{q_id}/vote")
-    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int)
+    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int)  // should return a single Boolean
+
+    @POST("questions/{q_id}/vote/{a_id}")
+    fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: Long, @Query("vote") vote: Int)
+
+    @GET("answers/{q_id}")
+    fun getMoreAnswers(@Path("q_id") questionId: String, @Query("page")  page: Int) : Single<List<Answer>>
 
 }

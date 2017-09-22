@@ -1,15 +1,15 @@
 package com.dubedivine.samples.features.base
 
-import com.dubedivine.samples.MvpStarterApplication
-import com.dubedivine.samples.injection.component.ActivityComponent
-import com.dubedivine.samples.injection.component.ConfigPersistentComponent
-import com.dubedivine.samples.injection.component.DaggerConfigPersistentComponent
-import com.dubedivine.samples.injection.module.ActivityModule
 import android.os.Bundle
 import android.support.v4.util.LongSparseArray
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import butterknife.ButterKnife
+import com.dubedivine.samples.MvpStarterApplication
+import com.dubedivine.samples.injection.component.ActivityComponent
+import com.dubedivine.samples.injection.component.ConfigPersistentComponent
+import com.dubedivine.samples.injection.component.DaggerConfigPersistentComponent
+import com.dubedivine.samples.injection.module.ActivityModule
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicLong
 
