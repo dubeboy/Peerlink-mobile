@@ -72,10 +72,10 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
                 })
             }
             // not required
-            if (question.tags.size > 0) { // a question should have atleast one tag yoh
+            if (question.tags.isNotEmpty()) { // a question should have atleast one tag yoh
                 questionTagsLayout.visibility = View.VISIBLE
                 question.tags.forEach({
-                    questionTagsLayout.addView(BasicUtils.createChipFromCode(itemView.context, it.name))
+                    questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
                 })
             }
             itemView.setOnClickListener( {

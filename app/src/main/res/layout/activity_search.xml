@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dubedivine.samples.features.searchResults.SearchActivity"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="81dp">
+    android:fitsSystemWindows="true"
+    tools:context="com.dubedivine.samples.features.searchResults.SearchActivity">
 
     <!-- should also add some search bar here dwag!!!-->
 
@@ -15,5 +14,8 @@
 
     <include
         layout="@layout/content_error_and_progress_view" />
+
+   <include
+       layout="@layout/content_fab_add" />
 
 </android.support.design.widget.CoordinatorLayout>

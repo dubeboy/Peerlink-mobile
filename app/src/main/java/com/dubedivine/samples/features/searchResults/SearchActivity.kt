@@ -11,10 +11,12 @@ import android.widget.ProgressBar
 import butterknife.BindView
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.features.addQuestion.AddQuestionActivity
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.util.snack
+import kotlinx.android.synthetic.main.content_fab_add.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -59,6 +61,10 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
             searchAdapter.setTopQuestion(mQuestion!!)
         }
         mSearchResultsRecycler?.adapter = searchAdapter
+
+        fab_add.setOnClickListener({
+            startActivity(AddQuestionActivity.getStartIntent(this))
+        })
     }
 
     override fun showProgress(show: Boolean) {

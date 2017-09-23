@@ -26,7 +26,9 @@ import javax.inject.Inject
 
 // in the future we should also get the question answers increnmentally so the
 // serialized Question should contain a max of 5 children each comments and answers and then
-// we lazly load the the other children
+// we lazily load the the other children
+
+//todo: should only search when the text is not a empty(space) key
 class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
 
     @Inject lateinit var mDetailPresenter: DetailPresenter

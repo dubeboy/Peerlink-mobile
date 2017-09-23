@@ -3,6 +3,7 @@ package com.dubedivine.samples.data
 import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Pokemon
 import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -68,6 +69,15 @@ constructor(private val mMvpStarterService: MvpStarterService) {
                 .flatMapIterable { it }
                 .map({title -> title})
                 .toList()
+    }
+
+    fun getTagSuggestion(tag: CharSequence): Single<List<Tag>> {
+       return mMvpStarterService
+               .getTagSuggestion(tag)
+               .toObservable()
+               .flatMapIterable { it }
+               .map { t -> t }
+               .toList()
     }
 
 

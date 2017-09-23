@@ -80,8 +80,8 @@
                     android:id="@+id/q_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:textSize="17sp"
                     tools:text="An atom is a the best time in time eeeeeeeeeeeee e e e e ee ee e  e ee ee e e e  ee e e e e e e  e e e e e e ee e e e e e  e we we wewew ewe we we w ew ew ewew ew ewe we we we we w" />
 

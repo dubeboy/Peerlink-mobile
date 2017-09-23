@@ -1,5 +1,6 @@
 package com.dubedivine.samples.injection.component
 
+import com.dubedivine.samples.features.addQuestion.AddQuestionActivity
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.features.main.MainActivity
@@ -20,4 +21,6 @@ interface ActivityComponent {
     fun inject(detailActivity: DetailActivity)
 
     fun inject(searchActivity: SearchActivity)
+
+    fun inject(addQuestionActivity: AddQuestionActivity)
 }

@@ -22,7 +22,6 @@ android {
 
     defaultConfig {
         defaultPublishConfig 'debug'
-
         applicationId "com.dubedivine.samples"
         minSdkVersion 18
         targetSdkVersion 26

@@ -72,8 +72,8 @@ class DetailAdapter
         private val tvQuestionBody: TextView = view.findViewById(R.id.q_body)
         private val questionVidView: VideoView = view.findViewById(R.id.q_vid)
         private val questionImageView: ImageView = view.findViewById(R.id.q_image)
-        private val tagsHorizontalView: HorizontalScrollView = view.findViewById(R.id.hori_tags_list)
-        private val filesHorizontalView: HorizontalScrollView = view.findViewById(R.id.hori_files_list)
+        private val tagsLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_tags_linearlayout) // naming is a bit off...
+        private val filesLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_files_linearlayout)
         private val tvVotes: TextView = view.findViewById(R.id.tv_vote_count)
 
         private var q: Question?= null
@@ -99,10 +99,10 @@ class DetailAdapter
 
         private fun bindFileView(files: List<Media>?) {
             if (files != null) {
-                filesHorizontalView.visibility = View.VISIBLE
+                filesLinearHorizontalView.visibility = View.VISIBLE
                 files.forEach({
                     val fileView = FileView(itemView.context, it)
-                    filesHorizontalView.addView(fileView)
+                    filesLinearHorizontalView.addView(fileView)
                 })
             }
         }
@@ -129,8 +129,8 @@ class DetailAdapter
             bindCommonQuestion(q)
             this.q = q
             q.tags.forEach({
-                val chip = BasicUtils.createChipFromCode(itemView.context, it.name)
-                tagsHorizontalView.addView(chip)
+                val chip = BasicUtils.createTagsChip(itemView.context, it.name)
+                tagsLinearHorizontalView.addView(chip)
             })
 
             if (q.answered == true) {

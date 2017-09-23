@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.view.inputmethod.InputMethodManager
+import android.widget.RelativeLayout
 
 object ViewUtil {
 
@@ -22,5 +23,9 @@ object ViewUtil {
         imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
     }
 
-
+    fun getLayoutParamsForView(): RelativeLayout.LayoutParams {
+        return  RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT)
+    }
 }

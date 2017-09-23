@@ -51,7 +51,8 @@
             android:name=".features.main.DemoAct"
             android:label="@string/title_activity_demo"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".features.searchResults.SearchActivity"></activity>
+        <activity android:name=".features.searchResults.SearchActivity" />
+        <activity android:name=".features.addQuestion.AddQuestionActivity"></activity>
     </application>
 
 </manifest>
