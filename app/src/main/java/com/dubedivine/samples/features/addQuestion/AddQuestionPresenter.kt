@@ -16,12 +16,12 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
         super.attachView(mvpView)
     }
 
-    fun getTagSuggestion(tag: CharSequence) {
+    fun getTagSuggestion(tag: CharSequence, tagStartIndex: Int, tagStopIndex: Int) {
         doLongTaskOnView {
             mDataManager.getTagSuggestion(tag)
                     .compose<List<Tag>>(SchedulerUtils.ioToMain<List<Tag>>())
                     .subscribe({
-                        mvpView?.showTagsSuggestion(it, tag)
+                        mvpView?.showTagsSuggestion(it, tag, tagStartIndex, tagStopIndex)
                         mvpView?.showProgress(false)
                     }, {
                         mvpView?.showError(it)
