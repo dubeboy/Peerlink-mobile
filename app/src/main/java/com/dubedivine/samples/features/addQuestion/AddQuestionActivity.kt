@@ -55,7 +55,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             // save data on server here
         })
 
-
         q_add.addTextChangedListener(object : TextWatcher {  // its a singleton so good
             var tagStartIndex = 0 // assume that the tag starts at 0
             var tagStopIndex = 0 // assume that the tag stop at 0 meaning no tag, basic math!! hahaha
@@ -64,7 +63,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             override fun afterTextChanged(afterChange: Editable?) {
 
             }
-
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

@@ -13,7 +13,7 @@
         <Button
             android:id="@+id/btn_add_picture"
             android:layout_width="0dp"
-            android:text="Picture"
+            android:text="add image"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_image_black_24dp"
             android:layout_height="wrap_content" />
@@ -21,13 +21,13 @@
             android:id="@+id/btn_add_video"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="Files"
+            android:text="add Video"
             android:drawableLeft="@drawable/ic_ondemand_video_24dp"
             android:layout_height="wrap_content" />
         <Button
             android:id="@+id/btn_add_files"
             android:layout_width="0dp"
-            android:text="Files"
+            android:text="Add Files"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_attach_file_24dp"
             android:layout_height="wrap_content" />
