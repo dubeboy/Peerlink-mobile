@@ -28,7 +28,7 @@ class FileView : LinearLayout {
 
     private var onFileClickedListener: OnFileClickedListener? = null
     private var file: Media? = null
-    @BindView(R.id.button_reload) @JvmField var btnFile: Button? = null
+    @BindView(R.id.btn_show_files) @JvmField var btnFile: Button? = null
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         init()
@@ -55,7 +55,7 @@ class FileView : LinearLayout {
         init()
     }
 
-    @OnClick(R.id.button_reload)
+    @OnClick(R.id.btn_show_files)
     fun onFileClick() {
         if (onFileClickedListener != null && file != null) {
             onFileClickedListener?.onFileClick(file)
@@ -70,12 +70,12 @@ class FileView : LinearLayout {
         orientation = LinearLayout.HORIZONTAL
         LayoutInflater.from(context).inflate(R.layout.view_file, this)
         ButterKnife.bind(this)
-
         if(file != null ) {
-            when(file?.type) {
+            btnFile!!.text = file!!.name
+            when(file!!.type) {
                 Media.PICTURE_TYPE -> {
                     btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
-                                R.drawable.ic_image_black_24dp, 0, 0, 0)
+                                R.drawable.ic_image_black_24dp, 0, 0 , 0)
                 }
                 Media.PICTURE_TYPE -> {
                     btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
@@ -92,9 +92,9 @@ class FileView : LinearLayout {
 
     }
 
-    private fun setOnFileClickedListener(onFileClickedListener: OnFileClickedListener ) {
+     fun setOnFileClickedListener(onFileClickedListener: OnFileClickedListener ) {
         this.onFileClickedListener = onFileClickedListener
-    }
+     }
 
     interface OnFileClickedListener {
         fun onFileClick(file: Media?);

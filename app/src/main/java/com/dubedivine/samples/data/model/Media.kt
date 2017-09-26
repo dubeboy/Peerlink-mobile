@@ -9,7 +9,6 @@ import java.util.*
  */
 class Media(val name: String, val size: Long, val type: Char  // P-> picture, V-> video, f -> docs
             , val location: String) : Serializable {
-    val createAt = Date()
 
     val limit: Int
         get() = 5120

@@ -1,0 +1,17 @@
+<com.flipboard.bottomsheet.BottomSheetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/bottomsheet"
+    android:layout_height="match_parent">
+
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:src="@drawable/ic_close_black_24dp"-->
+        <!--android:id="@+id/fragment_bottom_view_close"-->
+        <!--android:layout_height="wrap_content" />-->
+
+    <VideoView
+        android:layout_width="match_parent"
+        android:id="@+id/fragment_vid_vide"
+        android:layout_height="match_parent" />
+
+</com.flipboard.bottomsheet.BottomSheetLayout>

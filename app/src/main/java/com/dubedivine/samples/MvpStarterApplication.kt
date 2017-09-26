@@ -39,6 +39,7 @@ class MvpStarterApplication : MultiDexApplication() {
 
     companion object {
 
+        //this function supports the indexing operator this one []
         operator fun get(context: Context): MvpStarterApplication {
             return context.applicationContext as MvpStarterApplication
         }

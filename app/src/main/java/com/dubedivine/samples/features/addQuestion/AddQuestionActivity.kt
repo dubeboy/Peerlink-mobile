@@ -1,10 +1,12 @@
 package com.dubedivine.samples.features.addQuestion
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,13 +16,21 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.dubedivine.samples.R
+import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.features.base.BaseActivity
+import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.snack
+import droidninja.filepicker.FilePickerBuilder
+import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_question.*
 import kotlinx.android.synthetic.main.content_fab_add.*
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
+import com.flipboard.bottomsheet.BottomSheetLayout
+
+
 
 
 // todo: this class breaks the constency rull one its not using timber!!
@@ -89,7 +99,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                             if (numChars >= tagStartIndex) {
                                 val tag = text.subSequence(tagStartIndex - 1, text.lastIndex + 1)
                                 Log.d(TAG, "the actual tag is: $tag")
-                                mAddQuestionPresenter.getTagSuggestion(tag, tagStartIndex, text.lastIndex + 1 )
+                                mAddQuestionPresenter.getTagSuggestion(tag, tagStartIndex, text.lastIndex + 1)
                             }
                         } else {
                             Log.d(TAG, "this is the normal text: $text")
@@ -99,10 +109,37 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                 }
             }
         })
+
+        btn_add_files.setOnClickListener({
+            FilePickerBuilder.getInstance()
+                    .setMaxCount(10)
+                    .setActivityTheme(R.style.AppTheme)
+                    .pickFile(this)
+        })
+
+        btn_add_video.setOnClickListener({
+            val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            if (takeVideoIntent.resolveActivity(packageManager) != null) {
+                Log.d(TAG, " the data is ${takeVideoIntent.data}")
+                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+            }
+        })
+
+        btn_add_picture.setOnClickListener({
+            FilePickerBuilder.getInstance()
+                    .setMaxCount(10)
+                    .setActivityTheme(R.style.AppTheme)
+                    .pickPhoto(this)
+        })
     }
 
     override val layout: Int
         get() = R.layout.activity_add_question
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "the user has been destroyed boss")
+    }
 
     //https://stackoverflow.com/questions/23464232/how-would-you-create-a-popover-view-in-android-like-facebook-comments
     override fun showTagsSuggestion(tags: List<Tag>,
@@ -136,8 +173,53 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         error.printStackTrace()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        Log.d(TAG, "the result is ${intent?.data}")
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_VIDEO_CAPTURE -> {
+                    if (intent?.data != null) {
+                        val vid_url = intent.data!!
+                        // q_vid.setVideoURI(intent.data!!)
+                        Log.d(TAG, "Initializing Video media")
+                        val file = File(vid_url.path)
+                        val btnFile: Button = BasicUtils.getFileViewInstance(this,
+                                Media(file.name,
+                                        file.length(),
+                                        Media.VIDEO_TYPE,
+                                        file.absolutePath), {
+                            Log.d(TAG, "the clicked file is $it")
+                            val bottomSheet = findViewById(R.id.bottomsheet) as BottomSheetLayout
+                            bottomSheet.showWithSheetView(LayoutInflater.from(this@AddQuestionActivity).inflate(R.layout.fragment_video_view, bottomSheet, false));
+                        }, {
+                            add_q_linearlayout.removeView(it)
+                            //count the children of this layout if 0 ena all enable other views
+                        })
+                        add_q_linearlayout.addView(btnFile)
+                        // count children of this layout its 0 enable the and then disable
+                    }
+                }
+                FilePickerConst.REQUEST_CODE_PHOTO -> {
+                    if (intent != null) {
+                        val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
+                        Log.d(TAG, "the data that we got: Photos ${photosPaths}")
+                    }
+                }
+                FilePickerConst.REQUEST_CODE_DOC -> {
+                    if (intent != null) {
+                        val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
+                        Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
+                    }
+                }
+
+            }
+
+        }
+    }
+
+
     //--------------------------private methods ------------------------
-    private fun configurePopUpWindow(popUpWindow: PopupWindow,tagsSuggestionsView: View): PopupWindow {
+    private fun configurePopUpWindow(popUpWindow: PopupWindow, tagsSuggestionsView: View): PopupWindow {
         popUpWindow.contentView = tagsSuggestionsView
         popUpWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
         popUpWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -173,6 +255,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
     companion object {
         val TAG = "__AddQuestionActivity"
+        val REQUEST_VIDEO_CAPTURE = 1
         fun getStartIntent(context: Context): Intent {
             val intent = Intent(context, AddQuestionActivity::class.java)
             return intent

@@ -42,6 +42,7 @@ android {
         }
     }
 
+
     sourceSets {
         def commonTestDir = 'src/commonTest/java'
         test {
@@ -121,6 +122,7 @@ dependencies {
 
     implementation "com.google.dagger:dagger:$versions.dagger"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-v4:26.1.0'
     compileOnly 'org.glassfish:javax.annotation:10.0-b28' //Required by Dagger2
 
     debugImplementation leakCannary
@@ -141,7 +143,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test:1.1.2-2"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.1.2-2"
 
-    //divine libs
+    //divine libs all the other libs that i have added to my convinence
     implementation divineLibs
 }
 // Log out test results to console

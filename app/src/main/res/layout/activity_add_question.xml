@@ -13,7 +13,7 @@
         <Button
             android:id="@+id/btn_add_picture"
             android:layout_width="0dp"
-            android:text="add image"
+            android:text="add pic"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_image_black_24dp"
             android:layout_height="wrap_content" />
@@ -36,11 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
-            android:id="@+id/add_q_linearlayout_"
+            android:id="@+id/add_q_linearlayout"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
-
         </LinearLayout>
     </HorizontalScrollView>
     <AutoCompleteTextView
