@@ -2,9 +2,13 @@ package com.dubedivine.samples.util
 
 import android.app.Activity
 import android.content.Context
+import android.support.annotation.LayoutRes
 import android.support.v7.widget.CardView
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
+import com.bumptech.glide.Glide
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
@@ -39,8 +43,8 @@ object BasicUtils {
     }
 
     fun getFileViewInstance(context: Activity, file: Media, onButtonClick: (media: Media) -> Unit,
-                            onCloseButtonClick: (thisView: Button) -> Unit): CardView {
-        val cardView = context.layoutInflater.inflate(R.layout.view_file, null) as CardView
+                            onCloseButtonClick: (thisView: CardView) -> Unit): CardView {
+        val cardView = inflateFor<CardView>(context, R.layout.view_file)
         val btnFile = cardView.findViewById<Button>(R.id.btn_show_files)
         val closeButton = cardView.findViewById<ImageView>(R.id.view_file_btn_close)
         btnFile.text = file.name
@@ -64,10 +68,34 @@ object BasicUtils {
             onButtonClick(file)
         })
         closeButton.setOnClickListener({
-            onCloseButtonClick(btnFile)
+            onCloseButtonClick(cardView)
         })
         return cardView
     }
+
+    fun getImagePreviewInstance(context: Activity, path: String,
+                                onCloseImageView: (layout: RelativeLayout) -> Unit ) : RelativeLayout {
+        val relativeLayout = inflateFor<RelativeLayout>(context, R.layout.view_image)
+        val imageView = relativeLayout.findViewById<ImageView>(R.id.view_image_preview)
+        val btnCloseImage = relativeLayout.findViewById<ImageView>(R.id.btn_image_close)
+
+        btnCloseImage.setOnClickListener(
+                {
+                    onCloseImageView(relativeLayout)
+                }
+        )
+        Glide.with(imageView.context)
+                .load(path)
+                .into(imageView)
+        return relativeLayout
+
+    }
+
+
+    // no need to export this if i need it will just use the  context... as X in the activity
+   private fun <T : View> inflateFor(context: Activity, @LayoutRes layout: Int) : T {
+       return context.layoutInflater.inflate(layout, null) as T
+   }
 
 
 }

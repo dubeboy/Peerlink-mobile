@@ -48,6 +48,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         //fab_add set the drawable here of a tick
 
         Log.d(TAG, "guys you are awesome")
+        l("trying timber for the last time")
         Timber.i(TAG, "Timber is not so awesome")
 
         tagsSuggestionsAdapter = ArrayAdapter(this@AddQuestionActivity,
@@ -177,6 +178,12 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             when (requestCode) {
                 REQUEST_VIDEO_CAPTURE -> {
                     if (intent?.data != null) {
+
+                        if(add_q_linearlayout.childCount > 0) {
+                            snack("You can only add one video. press X to remove the previously add video")
+                            return
+                        }
+
                         val vid_url = intent.data!!
                         enableAddButtons(false) // disable the add buttons
                         // q_vid.setVideoURI(intent.data!!)
@@ -208,10 +215,24 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                         // count children of this layout its 0 enable the and then disable
                     }
                 }
+                // todo: inconsistent looks the problem is that for the image we don`t have the X button
                 FilePickerConst.REQUEST_CODE_PHOTO -> {
                     if (intent != null) {
                         val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
-                        Log.d(TAG, "the data that we got: Photos ${photosPaths}")
+                        Log.d(TAG, "the data that we got: Photos $photosPaths")
+                        photosPaths.forEach(
+                                {
+                                    l("Hello From Timber the path is $it")
+                                    val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this@AddQuestionActivity, it,
+                                                {
+                                                    if (it.parent != null) {
+                                                        (it.parent as ViewGroup).removeView(it)
+                                                    }
+                                                }
+                                            )
+                                    add_q_linearlayout.addView(imagePreviewInstance)
+                                }
+                        )
                     }
                 }
                 FilePickerConst.REQUEST_CODE_DOC -> {
