@@ -26,8 +26,7 @@ import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 import android.support.design.widget.BottomSheetDialogFragment
-
-
+import android.support.v7.widget.CardView
 
 
 // todo: this class breaks the constency rull one its not using timber!!
@@ -170,6 +169,8 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         error.printStackTrace()
     }
 
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         Log.d(TAG, "the result is ${intent?.data}")
         if (resultCode == Activity.RESULT_OK) {
@@ -177,24 +178,33 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                 REQUEST_VIDEO_CAPTURE -> {
                     if (intent?.data != null) {
                         val vid_url = intent.data!!
+                        enableAddButtons(false) // disable the add buttons
                         // q_vid.setVideoURI(intent.data!!)
                         Log.d(TAG, "Initializing Video media")
                         val file = File(vid_url.path)
-                        val btnFile: Button = BasicUtils.getFileViewInstance(this,
+                        val btnFile: CardView = BasicUtils.getFileViewInstance(this,
                                 Media(file.name, file.length(), Media.VIDEO_TYPE, file.absolutePath), {
                             Log.d(TAG, "the clicked file is $it")
-                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
-                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
+                            Log.d(TAG, "the path is ${vid_url.path}")
+//                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
+//                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
+                            val vidIntent = Intent(Intent.ACTION_VIEW, vid_url)
+                            vidIntent.setDataAndType(vid_url, "video/*")
+                            startActivity(vidIntent)
 
                         }, {
                             Log.d(TAG, "you have removed this view")
-                            add_q_linearlayout.removeView(it)
+//                            add_q_linearlayout.removeAllViews()
+                            if (it.parent != null) {
+                                (it.parent as ViewGroup).removeView(it)
+                                enableAddButtons(true)
+                            }
+
                             //count the children of this layout if 0 ena all enable other views
                         })
-                        if (btnFile.parent != null) {
-                            (btnFile.parent as ViewGroup).removeView(btnFile)
-                        }
+
                         add_q_linearlayout.addView(btnFile)
+
                         // count children of this layout its 0 enable the and then disable
                     }
                 }
@@ -218,6 +228,13 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
 
     //--------------------------private methods ------------------------
+
+
+    private fun enableAddButtons(toggle: Boolean) {
+        btn_add_picture.isEnabled = toggle
+        btn_add_video.isEnabled = toggle
+        btn_add_files.isEnabled = toggle
+    }
     private fun configurePopUpWindow(popUpWindow: PopupWindow, tagsSuggestionsView: View): PopupWindow {
         popUpWindow.contentView = tagsSuggestionsView
         popUpWindow.height = WindowManager.LayoutParams.WRAP_CONTENT

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.VideoView
 import com.dubedivine.samples.R
 import com.dubedivine.samples.features.base.BaseBottomSheetFragment
+import com.dubedivine.samples.util.snack
 
 /**
  * A simple [Fragment] subclass.
@@ -27,8 +28,13 @@ class VideoViewFragment : BaseBottomSheetFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val videoView = view!!.findViewById<VideoView>(R.id.fragment_vid)
-        videoView.setVideoURI(Uri.parse(videoURI))
-        videoView.start()
+        videoURI = arguments.getString(VIDEO_URI, "")
+        if (videoURI != "") {
+            videoView.setVideoPath(videoURI)
+            videoView.start()
+        } else {
+            snack("Sorry something went wrong while trying to open video")
+        }
     }
 
     companion object {

@@ -38,6 +38,7 @@
         <LinearLayout
             android:id="@+id/add_q_linearlayout"
             android:layout_width="match_parent"
+            android:padding="3dp"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
 

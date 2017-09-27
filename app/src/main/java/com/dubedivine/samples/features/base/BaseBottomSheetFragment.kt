@@ -22,6 +22,17 @@ import java.util.concurrent.atomic.AtomicLong
 //todo not sure if this is the best IDEA
 abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
 
+
+    //could have used:
+    /*
+    *  mButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BottomSheetDialogFragment bottomSheetDialogFragment = new BottomSheet3DialogFragment();
+                bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+            }
+        });*/
+
     private var mFragmentComponent: FragmentComponent? = null
     private var mFragmentId: Long = 0
 

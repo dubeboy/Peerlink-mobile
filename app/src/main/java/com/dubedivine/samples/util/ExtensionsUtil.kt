@@ -3,6 +3,7 @@ package com.dubedivine.samples.util
 import android.app.Activity
 import android.graphics.Color
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Toast
 import com.robertlevonyan.views.chip.Chip
@@ -38,5 +39,10 @@ fun Activity.toast(msg: String, duration: Int = Toast.LENGTH_LONG) {
 fun Activity.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {
     ViewUtil.hideKeyboard(this)  // hide the keyboard first
     Snackbar.make(findViewById<View>(android.R.id.content), msg, duration ).show()
+}
+
+fun Fragment.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {
+    ViewUtil.hideKeyboard(this.activity)  // hide the keyboard first
+    Snackbar.make(view!!, "", duration).show()
 }
 

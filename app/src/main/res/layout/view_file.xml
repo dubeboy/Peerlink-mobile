@@ -13,9 +13,9 @@
         <Button
             android:id="@+id/btn_show_files"
             android:layout_width="wrap_content"
-            android:background="#eeeeee"
             android:padding="10dp"
-            tools:drawableLeft="@drawable/ic_attach_file_24dp"
+            android:background="#fff"
+            android:drawableStart="@drawable/ic_attach_file_24dp"
             tools:text="Math 1b Semeter 2.doc"
             style="@style/ButtonStyle"
             android:layout_height="wrap_content" />
@@ -26,9 +26,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:padding="5dp"
-            android:background="#eee"
-            android:layout_gravity="right|center_vertical"
-            android:src="@drawable/ic_close_black_24dp" />
+            android:src="@drawable/ic_close_black_24dp"
+            android:background="#fff"
+
+            android:contentDescription="Close Button" />
 
     </LinearLayout>
 

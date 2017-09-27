@@ -16,8 +16,7 @@ import timber.log.Timber
  */
 object BasicUtils {
 
-    val _3dp = ViewUtil.dpToPx(3)  // what do u think is it cool ? instead of ThreeDp or i could do this val `3dp` = "3dp"
-    val `3dp` = "3dp"
+   private val _3dp = ViewUtil.dpToPx(3)  // what do u think is it cool ? instead of ThreeDp or i could do this val `3dp` = "3dp"
     fun createTheStatusTextViewInfo(question: Question): String {
         return if (question.answers?.size != null) {
             Timber.d("the answer is: ${question.answers}")
@@ -40,7 +39,7 @@ object BasicUtils {
     }
 
     fun getFileViewInstance(context: Activity, file: Media, onButtonClick: (media: Media) -> Unit,
-                            onCloseButtonClick: (thisView: Button) -> Unit): Button {
+                            onCloseButtonClick: (thisView: Button) -> Unit): CardView {
         val cardView = context.layoutInflater.inflate(R.layout.view_file, null) as CardView
         val btnFile = cardView.findViewById<Button>(R.id.btn_show_files)
         val closeButton = cardView.findViewById<ImageView>(R.id.view_file_btn_close)
@@ -67,7 +66,7 @@ object BasicUtils {
         closeButton.setOnClickListener({
             onCloseButtonClick(btnFile)
         })
-        return btnFile
+        return cardView
     }
 
 
