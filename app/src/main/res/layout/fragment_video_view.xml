@@ -1,4 +1,4 @@
-<com.flipboard.bottomsheet.BottomSheetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/bottomsheet"
     android:layout_height="match_parent">
@@ -11,7 +11,7 @@
 
     <VideoView
         android:layout_width="match_parent"
-        android:id="@+id/fragment_vid_vide"
+        android:id="@+id/fragment_vid"
         android:layout_height="match_parent" />
 
-</com.flipboard.bottomsheet.BottomSheetLayout>
+</LinearLayout>

@@ -10,10 +10,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
@@ -28,7 +25,7 @@ import kotlinx.android.synthetic.main.content_fab_add.*
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
-import com.flipboard.bottomsheet.BottomSheetLayout
+import android.support.design.widget.BottomSheetDialogFragment
 
 
 
@@ -184,17 +181,19 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                         Log.d(TAG, "Initializing Video media")
                         val file = File(vid_url.path)
                         val btnFile: Button = BasicUtils.getFileViewInstance(this,
-                                Media(file.name,
-                                        file.length(),
-                                        Media.VIDEO_TYPE,
-                                        file.absolutePath), {
+                                Media(file.name, file.length(), Media.VIDEO_TYPE, file.absolutePath), {
                             Log.d(TAG, "the clicked file is $it")
-                            val bottomSheet = findViewById(R.id.bottomsheet) as BottomSheetLayout
-                            bottomSheet.showWithSheetView(LayoutInflater.from(this@AddQuestionActivity).inflate(R.layout.fragment_video_view, bottomSheet, false));
+                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
+                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
+
                         }, {
+                            Log.d(TAG, "you have removed this view")
                             add_q_linearlayout.removeView(it)
                             //count the children of this layout if 0 ena all enable other views
                         })
+                        if (btnFile.parent != null) {
+                            (btnFile.parent as ViewGroup).removeView(btnFile)
+                        }
                         add_q_linearlayout.addView(btnFile)
                         // count children of this layout its 0 enable the and then disable
                     }

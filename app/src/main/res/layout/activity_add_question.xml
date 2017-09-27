@@ -37,9 +37,10 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/add_q_linearlayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
+
         </LinearLayout>
     </HorizontalScrollView>
     <AutoCompleteTextView

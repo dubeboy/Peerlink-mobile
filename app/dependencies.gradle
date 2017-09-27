@@ -71,9 +71,7 @@ ext {
     // my miscellaneous dependencies ;)
     divineDeps = [
             chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1",
-            filePicker : "com.droidninja:filepicker:2.0.8",
-            bottomSheet: "com.flipboard:bottomsheet-core:1.5.3",
-            bottomSheetCommon: "com.flipboard:bottomsheet-commons:1.5.3"
+            filePicker : "com.droidninja:filepicker:2.0.8"
     ]
 
     supportLibs = supportDeps.values()

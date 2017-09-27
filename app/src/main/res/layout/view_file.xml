@@ -6,25 +6,31 @@
     android:layout_width="wrap_content"
     app:cardElevation="10dp"
     android:layout_height="wrap_content">
-
-    <Button
-        android:id="@+id/btn_show_files"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:background="#eeeeee"
-        android:padding="10dp"
-        android:drawableRight="@drawable/ic_close_black_24dp"
-        tools:drawableLeft="@drawable/ic_attach_file_24dp"
-        tools:text="Math 1b Semeter 2.doc"
-        style="@style/ButtonStyle"
-        android:layout_height="wrap_content" />
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_show_files"
+            android:layout_width="wrap_content"
+            android:background="#eeeeee"
+            android:padding="10dp"
+            tools:drawableLeft="@drawable/ic_attach_file_24dp"
+            tools:text="Math 1b Semeter 2.doc"
+            style="@style/ButtonStyle"
+            android:layout_height="wrap_content" />
 
-    <!--this is ot the bst solution but the best performant-->
-    <ImageView
-        android:id="@+id/view_file_btn_close"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="right|center_vertical"
-        android:src="@drawable/ic_close_black_24dp" />
+        <!--this is ot the bst solution but the best performant-->
+        <ImageView
+            android:id="@+id/view_file_btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:background="#eee"
+            android:layout_gravity="right|center_vertical"
+            android:src="@drawable/ic_close_black_24dp" />
+
+    </LinearLayout>
+
 
 </android.support.v7.widget.CardView>

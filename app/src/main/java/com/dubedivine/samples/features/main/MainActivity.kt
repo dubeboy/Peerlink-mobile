@@ -25,6 +25,8 @@ import com.dubedivine.samples.util.toast
 import timber.log.Timber
 import javax.inject.Inject
 
+//todo we should have better font thinner font please
+
 class MainActivity :
         BaseActivity(),
         MainMvpView,
