@@ -12,7 +12,7 @@ object NetworkUtil {
      * http status code equals to the given one.
      */
     fun isHttpStatusCode(throwable: Throwable, statusCode: Int): Boolean {
-        return throwable is HttpException && throwable.code() == statusCode
+        return throwable is HttpException && throwable.code() ==  statusCode
     }
 
     fun isNetworkConnected(context: Context): Boolean {

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.robertlevonyan.views.chip.Chip
 import timber.log.Timber
@@ -44,5 +45,11 @@ fun Activity.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {
 fun Fragment.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {
     ViewUtil.hideKeyboard(this.activity)  // hide the keyboard first
     Snackbar.make(view!!, "", duration).show()
+}
+
+fun View.removeFromParent() {
+    if (parent != null) {
+        (this as ViewGroup).removeView(this)
+    }
 }
 

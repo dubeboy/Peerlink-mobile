@@ -7,6 +7,7 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v7.widget.CardView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -25,8 +26,6 @@ import kotlinx.android.synthetic.main.content_fab_add.*
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v7.widget.CardView
 
 
 // todo: this class breaks the constency rull one its not using timber!!
@@ -171,19 +170,20 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         Log.d(TAG, "the result is ${intent?.data}")
         if (resultCode == Activity.RESULT_OK) {
+            if (add_q_linearlayout.childCount == 0) { //enable all the button if the item are removed to 0 meaning here in the following switches we modify this state
+                enableAddButtons(isPic = true, isVid = true, isFiles =  true)
+            }
             when (requestCode) {
                 REQUEST_VIDEO_CAPTURE -> {
                     if (intent?.data != null) {
-
-                        if(add_q_linearlayout.childCount > 0) {
+                        enableAddButtons(isVid = true)
+                        if (add_q_linearlayout.childCount > 0) {
                             snack("You can only add one video. press X to remove the previously add video")
                             return
                         }
-
                         val vid_url = intent.data!!
                         enableAddButtons(false) // disable the add buttons
                         // q_vid.setVideoURI(intent.data!!)
@@ -204,7 +204,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 //                            add_q_linearlayout.removeAllViews()
                             if (it.parent != null) {
                                 (it.parent as ViewGroup).removeView(it)
-                                enableAddButtons(true)
+                                ifHoriItemViewIsEmptyEnableAllAddButtons()
                             }
 
                             //count the children of this layout if 0 ena all enable other views
@@ -215,30 +215,48 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                         // count children of this layout its 0 enable the and then disable
                     }
                 }
-                // todo: inconsistent looks the problem is that for the image we don`t have the X button
+
                 FilePickerConst.REQUEST_CODE_PHOTO -> {
                     if (intent != null) {
+                        enableAddButtons(isPic = true)
                         val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
                         Log.d(TAG, "the data that we got: Photos $photosPaths")
                         photosPaths.forEach(
                                 {
                                     l("Hello From Timber the path is $it")
                                     val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this@AddQuestionActivity, it,
-                                                {
-                                                    if (it.parent != null) {
-                                                        (it.parent as ViewGroup).removeView(it)
-                                                    }
+                                            {
+                                                if (it.parent != null) {
+                                                    (it.parent as ViewGroup).removeView(it)
                                                 }
-                                            )
+                                                ifHoriItemViewIsEmptyEnableAllAddButtons()
+                                            }
+                                    )
                                     add_q_linearlayout.addView(imagePreviewInstance)
                                 }
                         )
                     }
                 }
+
                 FilePickerConst.REQUEST_CODE_DOC -> {
                     if (intent != null) {
-                        val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
+                        enableAddButtons(isFiles = true)
+                        val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS)
                         Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
+                        photosPaths.forEach {
+                            Timber.i("Helllo the file has been selected $it")
+                            val fileViewInstance = BasicUtils.getFileViewInstance(this,
+                                    Media(it.substringAfterLast("/"), 0, Media.DOCS_TYPE, it),
+                                    { _ -> },
+                                    {
+                                        if (it.parent != null) {
+                                            (it.parent as ViewGroup).removeView(it)
+                                        }
+                                        ifHoriItemViewIsEmptyEnableAllAddButtons()
+                                    }
+                            )
+                            add_q_linearlayout.addView(fileViewInstance)
+                        }
                     }
                 }
 
@@ -251,11 +269,19 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     //--------------------------private methods ------------------------
 
 
-    private fun enableAddButtons(toggle: Boolean) {
-        btn_add_picture.isEnabled = toggle
-        btn_add_video.isEnabled = toggle
-        btn_add_files.isEnabled = toggle
+    private fun enableAddButtons( isPic: Boolean = false, isVid: Boolean = false, isFiles: Boolean = false ) {
+        btn_add_picture.isEnabled = isPic
+        btn_add_video.isEnabled = isVid
+        btn_add_files.isEnabled = isFiles
     }
+    private fun ifHoriItemViewIsEmptyEnableAllAddButtons() {
+        Log.d(TAG, "the child count is ${add_q_linearlayout.childCount}" )
+        if (add_q_linearlayout.childCount == 0) {
+            enableAddButtons(true, true, true)
+        }
+    }
+
+    //todo: leaking memory is here
     private fun configurePopUpWindow(popUpWindow: PopupWindow, tagsSuggestionsView: View): PopupWindow {
         popUpWindow.contentView = tagsSuggestionsView
         popUpWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
