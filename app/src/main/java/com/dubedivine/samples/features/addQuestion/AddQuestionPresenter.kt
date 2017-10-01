@@ -30,4 +30,8 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
         }
     }
 
+    fun publishNewQuestion() {
+
+    }
+
 }

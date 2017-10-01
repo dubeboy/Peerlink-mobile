@@ -37,7 +37,9 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     lateinit var tagsSuggestionsAdapter: ArrayAdapter<String>
     private var tagsSuggestionsView: View? = null
     private var tagsSuggestionListView: ListView? = null
-    lateinit var popUpWindow: PopupWindow
+    private lateinit var popUpWindow: PopupWindow
+    private var mediaFiles: Map<Char, List<String>>? = null //Maps media type to Files
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,27 +108,31 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             }
         })
 
-        btn_add_files.setOnClickListener({
+        btn_add_files.setOnClickListener {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
                     .setActivityTheme(R.style.AppTheme)
                     .pickFile(this)
-        })
+        }
 
-        btn_add_video.setOnClickListener({
+        btn_add_video.setOnClickListener {
             val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
             if (takeVideoIntent.resolveActivity(packageManager) != null) {
                 Log.d(TAG, " the data is ${takeVideoIntent.data}")
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
             }
-        })
+        }
 
-        btn_add_picture.setOnClickListener({
+        btn_add_picture.setOnClickListener {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
                     .setActivityTheme(R.style.AppTheme)
                     .pickPhoto(this)
-        })
+        }
+
+        fab_add.setOnClickListener {
+            publishNewQuestion()
+        }
     }
 
     override val layout: Int
@@ -136,6 +142,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         super.onDestroy()
         Log.d(TAG, "the user has been destroyed boss")
     }
+
 
     //https://stackoverflow.com/questions/23464232/how-would-you-create-a-popover-view-in-android-like-facebook-comments
     override fun showTagsSuggestion(tags: List<Tag>,
@@ -190,7 +197,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                         Log.d(TAG, "Initializing Video media")
                         val file = File(vid_url.path)
                         val btnFile: CardView = BasicUtils.getFileViewInstance(this,
-                                Media(file.name, file.length(), Media.VIDEO_TYPE, file.absolutePath), {
+                                Media(file.name + file.extension, file.length(), Media.VIDEO_TYPE, file.absolutePath), {
                             Log.d(TAG, "the clicked file is $it")
                             Log.d(TAG, "the path is ${vid_url.path}")
 //                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
@@ -200,8 +207,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                             startActivity(vidIntent)
 
                         }, {
-                            Log.d(TAG, "you have removed this view")
-//                            add_q_linearlayout.removeAllViews()
                             if (it.parent != null) {
                                 (it.parent as ViewGroup).removeView(it)
                                 ifHoriItemViewIsEmptyEnableAllAddButtons()
@@ -211,6 +216,9 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                         })
 
                         add_q_linearlayout.addView(btnFile)
+
+                        mediaFiles = mapOf(Media.VIDEO_TYPE to listOf(vid_url.path))
+
 
                         // count children of this layout its 0 enable the and then disable
                     }
@@ -235,6 +243,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                                     add_q_linearlayout.addView(imagePreviewInstance)
                                 }
                         )
+                        mediaFiles = mapOf(Media.PICTURE_TYPE to photosPaths)
                     }
                 }
 
@@ -247,7 +256,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                             Timber.i("Helllo the file has been selected $it")
                             val fileViewInstance = BasicUtils.getFileViewInstance(this,
                                     Media(it.substringAfterLast("/"), 0, Media.DOCS_TYPE, it),
-                                    { _ -> },
+                                    { _ -> }, //not require but looks great ;)
                                     {
                                         if (it.parent != null) {
                                             (it.parent as ViewGroup).removeView(it)
@@ -257,6 +266,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                             )
                             add_q_linearlayout.addView(fileViewInstance)
                         }
+                        mediaFiles = mapOf(Media.DOCS_TYPE to photosPaths)
                     }
                 }
 
@@ -268,6 +278,20 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
     //--------------------------private methods ------------------------
 
+    private fun publishNewQuestion() {
+        //get the question text
+        //create files from the paths send them to prensenter
+        // presenter will upload to server
+
+        val questionBody = q_add.text.toString()
+
+        if (questionBody == "" ) {
+            snack("Please add a brief description about you question")
+            return
+        }
+
+        mAddQuestionPresenter.publishNewQuestion()
+    }
 
     private fun enableAddButtons( isPic: Boolean = false, isVid: Boolean = false, isFiles: Boolean = false ) {
         btn_add_picture.isEnabled = isPic
@@ -275,7 +299,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         btn_add_files.isEnabled = isFiles
     }
     private fun ifHoriItemViewIsEmptyEnableAllAddButtons() {
-        Log.d(TAG, "the child count is ${add_q_linearlayout.childCount}" )
         if (add_q_linearlayout.childCount == 0) {
             enableAddButtons(true, true, true)
         }

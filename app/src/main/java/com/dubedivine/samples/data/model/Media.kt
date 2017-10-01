@@ -11,6 +11,7 @@ class Media(val name: String, val size: Long, val type: Char  // P-> picture, V-
             , val location: String) : Serializable {
 
     val limit: Int
+
         get() = 5120
 
     companion object {
