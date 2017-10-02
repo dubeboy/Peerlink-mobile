@@ -42,7 +42,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
                         when (it.status) {
                             true -> {
                                 mvpView!!.showProgress(false)
-                                mvpView!!.showQuestion(it.entity)
+                                mvpView!!.showQuestion(it.entity!!)
                             }
                             false -> {
                                 mvpView!!.showError(Throwable("Sorry failed to upload Question"))

@@ -18,7 +18,7 @@ interface MvpStarterService {
     fun getSearchSuggestions(@Query("text") charSequence: CharSequence): Single<List<Question>>
 
     @POST("questions/{q_id}/vote")
-    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int): Single<StatusResponse>  // should return a single Boolean
+    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int): Single<StatusResponse<Boolean>>  // should return a single Boolean
 
     @POST("questions/{q_id}/vote/{a_id}")
     fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: Long, @Query("vote") vote: Int): Single<Status>
@@ -31,6 +31,6 @@ interface MvpStarterService {
 
     //since we are adding a new question we want to put!!
     @PUT("questions")
-    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>):  Single<StatusResponse>
+    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>):  Single<StatusResponse<Question>>
 
 }

@@ -78,7 +78,7 @@ constructor(private val mMvpStarterService: MvpStarterService) {
                .toList()
     }
 
-    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>): Single<StatusResponse> {
+    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>): Single<StatusResponse<Question>> {
         return mMvpStarterService.postQuestion(question, retrofitFileParts)
     }
 
