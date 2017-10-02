@@ -112,10 +112,12 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         })
 
         btn_add_files.setOnClickListener {
+
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
                     .setActivityTheme(R.style.AppTheme)
                     .pickFile(this)
+
         }
 
         btn_add_video.setOnClickListener {
@@ -191,13 +193,15 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         if (resultCode == Activity.RESULT_OK) {
             if (add_q_linearlayout.childCount == 0) { //enable all the button if the item are removed to 0 meaning here in the following switches we modify this state
                 enableAddButtons(isPic = true, isVid = true, isFiles =  true)
+                q_add.hint = "You can just type your question here, like you do on google, no need to greet we are all here to get answers :)"
             }
             when (requestCode) {
                 REQUEST_VIDEO_CAPTURE -> {
                     if (intent?.data != null) {
+                        q_add.hint = "add a tag to the attached video so that people can find it\n#math1b #drawingGraphs"
                         enableAddButtons(isVid = true)
                         if (add_q_linearlayout.childCount > 0) {
-                            snack("You can only add one video. press X to remove the previously add video")
+                            snack("You can only add one video. press X to remove the previously add video to add another one")
                             return
                         }
                         val vid_url = intent.data!!
@@ -235,6 +239,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
                 FilePickerConst.REQUEST_CODE_PHOTO -> {
                     if (intent != null) {
+                        q_add.hint = "add a tag to the attached photo so that people can find it\n#math1b #drawingGraphs"
                         enableAddButtons(isPic = true)
                         val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
                         Log.d(TAG, "the data that we got: Photos $photosPaths")
@@ -258,6 +263,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
                 FilePickerConst.REQUEST_CODE_DOC -> {
                     if (intent != null) {
+                        q_add.hint = "add a tag to the attached document so that people can find it\n#math1b #drawingGraphs"
                         enableAddButtons(isFiles = true)
                         val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS)
                         Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
@@ -297,24 +303,42 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
         val questionBody = q_add.text.toString()
         val questionTitle = q_add_title.text.toString()
+
         if (questionTitle == "") {
             snack("Please add a brief title about your question")
+            return
+        } else if(questionTitle.isBlank()) {
+            snack("Please add a brief title about your question")
+            return
+        } else if (questionBody.isBlank()) {
+            snack("You did not type the actual question")
+            return
+        }  else if((docsListPaths != null || videoListPaths != null || picturesListPaths != null)
+                && questionTitle.isNotBlank() ) {  // the last && is not required just for clearity
+            snack("please add at least one tag for this file")
             return
         }
 
         val (_, tags) = BasicUtils.getCleanTextAndTags(questionBody)
-
         val questionToPost = Question(questionTitle, questionBody, 0, tags.map { Tag(it, Date()) }, Question.TYPE_Q)
 
-        if(docsListPaths!!.isNotEmpty()) {
-            mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
-            return
-        } else if (videoListPaths!!.isNotEmpty()) {
-            mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
-            return
-        } else if (picturesListPaths!!.isNotEmpty()) {
-            mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
-            return
+        when {
+
+            docsListPaths != null && docsListPaths.isNotEmpty() -> {
+                mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
+                return
+            } videoListPaths != null && videoListPaths.isNotEmpty() -> {
+                mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
+                return
+            } picturesListPaths != null && picturesListPaths.isNotEmpty() -> {
+                mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
+                return
+            } questionBody.isNotBlank() -> {
+                mAddQuestionPresenter.publishNewQuestion(questionToPost, arrayListOf())
+                return
+            } else -> {
+                snack("Please also add a question body")
+            }
         }
     }
 
@@ -326,6 +350,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     private fun ifHoriItemViewIsEmptyEnableAllAddButtons() {
         if (add_q_linearlayout.childCount == 0) {
             enableAddButtons(true, true, true)
+            q_add.hint = "You can just type your question here, like you do on google, no need to greet we are all here to get answers :)"
         }
     }
 

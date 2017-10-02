@@ -49,7 +49,7 @@
         android:id="@+id/q_add_title"
         android:labelFor="@+id/et_question"
         android:layout_width="match_parent"
-        android:hint="Please type question title here"
+        android:hint="Please type question title here, eg: what is an Atom?"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine" />
 
@@ -57,7 +57,7 @@
         android:id="@+id/q_add"
         android:labelFor="@+id/et_question"
         android:layout_width="match_parent"
-        android:hint="Type Question here.\n\nPlease get straight to the question, no hi.... or my name is ..."
+        android:hint="You can just type your question here, like you do on google, no need to greet we are all here to get answers :)"
         android:layout_height="wrap_content"
         android:lines="8"
         android:inputType="textMultiLine" />
