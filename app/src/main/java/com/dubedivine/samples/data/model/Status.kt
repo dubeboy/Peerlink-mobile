@@ -5,6 +5,8 @@ package com.dubedivine.samples.data.model
  */
 
 // class for responses that just send confirmation back
+@Deprecated(message = "use StatusResponse",
+        replaceWith = ReplaceWith("StatusResponse", "com.dubedivine.samples.data.model.StatusResponse"))
 class Status {
     val status: Boolean = false
 }

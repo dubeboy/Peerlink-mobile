@@ -15,8 +15,10 @@ import android.view.*
 import android.widget.*
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
+import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.features.base.BaseActivity
+import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.snack
 import droidninja.filepicker.FilePickerBuilder
@@ -25,12 +27,15 @@ import kotlinx.android.synthetic.main.activity_add_question.*
 import kotlinx.android.synthetic.main.content_fab_add.*
 import timber.log.Timber
 import java.io.File
+import java.util.*
 import javax.inject.Inject
 
 
-// todo: this class breaks the constency rull one its not using timber!!
+// todo: this class breaks the constency rule one its not using timber!!
+//todo : should the question title have suggestions?
 // and it not using ButterKnife myabe there shold be a revolution
 class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
+
 
     @Inject lateinit var mAddQuestionPresenter: AddQuestionPresenter
 
@@ -39,8 +44,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     private var tagsSuggestionListView: ListView? = null
     private lateinit var popUpWindow: PopupWindow
     private var mediaFiles: Map<Char, List<String>>? = null //Maps media type to Files
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,8 +174,14 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         snack("showing progress $show")
     }
 
+    override fun showQuestion(entity: Question) {
+        DetailActivity.getStartIntent(this, entity)
+    }
+
     override fun showError(error: Throwable) {
-        snack("showing error")
+        if (error.message != null) {
+            snack(error.message!!)
+        }
         error.printStackTrace()
     }
 
@@ -280,17 +289,33 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
     private fun publishNewQuestion() {
         //get the question text
-        //create files from the paths send them to prensenter
+        //create files from the paths send them to presenter
         // presenter will upload to server
+        val docsListPaths = mediaFiles?.get(Media.DOCS_TYPE)
+        val videoListPaths = mediaFiles?.get(Media.VIDEO_TYPE)
+        val picturesListPaths = mediaFiles?.get(Media.PICTURE_TYPE)
 
         val questionBody = q_add.text.toString()
-
-        if (questionBody == "" ) {
-            snack("Please add a brief description about you question")
+        val questionTitle = q_add_title.text.toString()
+        if (questionTitle == "") {
+            snack("Please add a brief title about your question")
             return
         }
 
-        mAddQuestionPresenter.publishNewQuestion()
+        val (_, tags) = BasicUtils.getCleanTextAndTags(questionBody)
+
+        val questionToPost = Question(questionTitle, questionBody, 0, tags.map { Tag(it, Date()) }, Question.TYPE_Q)
+
+        if(docsListPaths!!.isNotEmpty()) {
+            mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
+            return
+        } else if (videoListPaths!!.isNotEmpty()) {
+            mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
+            return
+        } else if (picturesListPaths!!.isNotEmpty()) {
+            mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
+            return
+        }
     }
 
     private fun enableAddButtons( isPic: Boolean = false, isVid: Boolean = false, isFiles: Boolean = false ) {

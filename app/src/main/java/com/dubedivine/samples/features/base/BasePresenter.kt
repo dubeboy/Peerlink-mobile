@@ -43,7 +43,7 @@ open class BasePresenter<T : MvpView> : Presenter<T> {
     * */
    inline fun doLongTaskOnView(action: BasePresenter<T>.() -> Unit) {
         checkViewAttached()
-        mvpView?.showProgress(true)
+        mvpView!!.showProgress(true)
         action()
     }
 

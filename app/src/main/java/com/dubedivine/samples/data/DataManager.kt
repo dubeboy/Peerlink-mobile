@@ -1,12 +1,10 @@
 package com.dubedivine.samples.data
 
-import com.dubedivine.samples.data.model.Answer
-import com.dubedivine.samples.data.model.Pokemon
-import com.dubedivine.samples.data.model.Question
-import com.dubedivine.samples.data.model.Tag
+import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MultipartBody
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -78,6 +76,10 @@ constructor(private val mMvpStarterService: MvpStarterService) {
                .flatMapIterable { it }
                .map { t -> t }
                .toList()
+    }
+
+    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>): Single<StatusResponse> {
+        return mMvpStarterService.postQuestion(question, retrofitFileParts)
     }
 
 

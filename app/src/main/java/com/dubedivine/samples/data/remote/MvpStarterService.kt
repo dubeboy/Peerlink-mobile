@@ -3,10 +3,8 @@ package com.dubedivine.samples.data.remote
 
 import com.dubedivine.samples.data.model.*
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import okhttp3.MultipartBody
+import retrofit2.http.*
 
 interface MvpStarterService {
 
@@ -20,7 +18,7 @@ interface MvpStarterService {
     fun getSearchSuggestions(@Query("text") charSequence: CharSequence): Single<List<Question>>
 
     @POST("questions/{q_id}/vote")
-    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int): Single<Status>  // should return a single Boolean
+    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int): Single<StatusResponse>  // should return a single Boolean
 
     @POST("questions/{q_id}/vote/{a_id}")
     fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: Long, @Query("vote") vote: Int): Single<Status>
@@ -30,5 +28,9 @@ interface MvpStarterService {
 
     @GET("tags/suggest")
     fun getTagSuggestion(@Query("tag") tag: CharSequence): Single<List<Tag>>
+
+    //since we are adding a new question we want to put!!
+    @PUT("questions")
+    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>):  Single<StatusResponse>
 
 }

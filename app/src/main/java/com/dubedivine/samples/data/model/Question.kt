@@ -24,6 +24,7 @@ class Question(val title: String, val body: String, val votes: Long, val tags: L
     var createdAt = Date()
     var answered: Boolean? = null
 
+
     override fun toString(): String {
         return "Question{" +
                 "id='" + id + '\'' +
@@ -39,5 +40,10 @@ class Question(val title: String, val body: String, val votes: Long, val tags: L
                 ", files=" + files +
                 ", createdAt=" + createdAt +
                 '}'
+    }
+
+    companion object {
+        val TYPE_Q ="Q"
+        val TYPE_P ="P"
     }
 }
