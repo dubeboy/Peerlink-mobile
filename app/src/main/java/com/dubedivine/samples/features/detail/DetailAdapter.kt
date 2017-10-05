@@ -52,7 +52,7 @@ class DetailAdapter
         return DetailView(view, mDataManager)
     }
 
-    override fun getItemCount(): Int = mQuestion.answers!!.size + 1
+    override fun getItemCount(): Int = (mQuestion.answers?.size ?: 0) + 1
 
     override fun onBindViewHolder(holder: DetailView?, position: Int) {
         if (position == 0) {

@@ -14,11 +14,13 @@ import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
 import com.robertlevonyan.views.chip.Chip
+import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import timber.log.Timber
 import java.io.File
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -27,9 +29,12 @@ import java.util.regex.Pattern
 object BasicUtils {
 
     private const val REGEX = "#(\\d*[A-Za-z_]+\\w*)\\b(?!;)"
+    private const val TAG = "__BasicUtils"
+    private val MULTIPART_CHARS = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            .toCharArray()
 
 
-    private val _3dp = ViewUtil.dpToPx(3)  // what do u think is it cool ? instead of ThreeDp or i could do this val `3dp` = "3dp"
+    private val threeDp = ViewUtil.dpToPx(3)  // what do u think is it cool ? instead of ThreeDp or i could do this val `3dp` = "3dp"
     fun createTheStatusTextViewInfo(question: Question): String {
         return if (question.answers?.size != null) {
             Timber.d("the answer is: ${question.answers}")
@@ -41,9 +46,8 @@ object BasicUtils {
 
     fun createTagsChip(context: Context, chipText: String): Chip {
         val params = ViewUtil.getLayoutParamsForView()
-        params.setMargins(_3dp, 0, _3dp, 0)
+        params.setMargins(threeDp, 0, threeDp, 0)
         val chip = Chip(context)
-//        chip.setMargin(_3dp,0, _3dp, 0)
         chip.layoutParams = params
         chip.chipText = "#$chipText" //apend the hash tag yoh!!
         chip.setRandomColor()
@@ -82,6 +86,10 @@ object BasicUtils {
         return cardView
     }
 
+    fun textHasNoTags(text: String): Boolean {
+        return getCleanTextAndTags(text).second.isEmpty()
+    }
+
     fun getImagePreviewInstance(context: Activity, path: String,
                                 onCloseImageView: (layout: RelativeLayout) -> Unit ) : RelativeLayout {
         val relativeLayout = inflateFor<RelativeLayout>(context, R.layout.view_image)
@@ -107,7 +115,7 @@ object BasicUtils {
    }
 
     fun getCleanTextAndTags(text: String): Pair<String, Set<String>> {
-        println("the text is $text")
+        Log.d(TAG, "the text is: $text")
         val p = getPattern()
         val tags = mutableSetOf<String>()
         val sequenceOfTags = p.toRegex().findAll(text).distinct()
@@ -132,7 +140,7 @@ object BasicUtils {
         return "image/" + s
     }
 
-    fun createMultiPartFromFile(uris: List<String>): MutableList<MultipartBody.Part>? {
+    fun createMultiPartFromFile(uris: List<String>): MutableList<MultipartBody.Part> {
         val multiPartBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
 
         for (imageUri in uris) {
@@ -147,4 +155,18 @@ object BasicUtils {
         val body: MultipartBody = multiPartBuilder.build()
         return body.parts()
     }
+
+
+     fun generateBoundary(): String {
+        val buffer = StringBuilder()
+        val rand = Random()
+        val count = rand.nextInt(11) + 30 // a random size from 30 to 40
+        for (i in 0 until count) {
+            buffer.append(MULTIPART_CHARS[rand.nextInt(MULTIPART_CHARS.size)])
+        }
+        return buffer.toString()
+    }
+
+
+
 }

@@ -15,5 +15,7 @@ interface AddQuestionMvpView : MvpView {
 
     fun showQuestion(entity: Question)
 
+    fun showProgress(show: Boolean, msg: String)
 
+    fun showTagSuggestionProgress(show: Boolean)
 }

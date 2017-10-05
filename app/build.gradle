@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '26.0.2'
 
     //todo: future cool stuff
 //    dataBinding {
@@ -17,7 +17,7 @@ android {
     dexOptions {
         maxProcessCount 4
         preDexLibraries false
-        javaMaxHeapSize "8g"
+        javaMaxHeapSize "3g"
     }
 
     defaultConfig {

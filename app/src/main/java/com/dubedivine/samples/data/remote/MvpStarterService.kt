@@ -4,9 +4,11 @@ package com.dubedivine.samples.data.remote
 import com.dubedivine.samples.data.model.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
+import org.jetbrains.annotations.NotNull
 import retrofit2.http.*
 
 interface MvpStarterService {
+
 
     @GET("pokemon")
     fun getPokemonList(@Query("limit") limit: Int): Single<PokemonListResponse>
@@ -24,13 +26,26 @@ interface MvpStarterService {
     fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: Long, @Query("vote") vote: Int): Single<Status>
 
     @GET("answers/{q_id}")
-    fun getMoreAnswers(@Path("q_id") questionId: String, @Query("page")  page: Int) : Single<List<Answer>>
+    fun getMoreAnswers(@Path("q_id") questionId: String, @Query("page") page: Int): Single<List<Answer>>
 
     @GET("tags/suggest")
     fun getTagSuggestion(@Query("tag") tag: CharSequence): Single<List<Tag>>
 
     //since we are adding a new question we want to put!!
-    @PUT("questions")
-    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>):  Single<StatusResponse<Question>>
+//    application/octet-stream
+//    @Headers({"Accept: application/json"})
+//    if(isMultipart)
+//    builder.add("Content-Type", "multipart/form-data; charset=utf-8; boundary=\"myboundary\"");
 
+
+    //    @Headers("Accept: application/json",
+    // "Content-Type: application/form-data; charset=utf-8; boundary=\"73379e6d-c34a-431a-827f-82b4981d54cb\"")
+
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    @PUT("questions")
+    fun postQuestion(@Body question: Question): Single<StatusResponse<Question>>
+
+    @Multipart
+    @POST("questions/{q_id}/files")
+    fun postQuestionFiles(@Path("q_id") @NotNull questionId: String, @Part files: List<MultipartBody.Part>): Single<StatusResponse<Question>>
 }

@@ -1,10 +1,12 @@
 package com.dubedivine.samples.features.addQuestion
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.CardView
@@ -21,6 +23,7 @@ import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.snack
+import com.dubedivine.samples.util.toast
 import droidninja.filepicker.FilePickerBuilder
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_question.*
@@ -31,9 +34,9 @@ import java.util.*
 import javax.inject.Inject
 
 
-// todo: this class breaks the constency rule one its not using timber!!
+//todo: this class breaks the constency rule one its not using timber!!
 //todo : should the question title have suggestions?
-// and it not using ButterKnife myabe there shold be a revolution
+//and it not using ButterKnife myabe there shold be a revolution
 class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
 
@@ -44,6 +47,8 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     private var tagsSuggestionListView: ListView? = null
     private lateinit var popUpWindow: PopupWindow
     private var mediaFiles: Map<Char, List<String>>? = null //Maps media type to Files
+    private lateinit var prog: ProgressDialog
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,9 +67,8 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         tagsSuggestionListView = tagsSuggestionsView?.findViewById(R.id.tags_suggestion_listview)
         popUpWindow = PopupWindow(this)
         configurePopUpWindow(popUpWindow, tagsSuggestionsView!!)
-        fab_add.setOnClickListener({
-            // save data on server here
-        })
+
+        prog = ProgressDialog(this)
 
         q_add.addTextChangedListener(object : TextWatcher {  // its a singleton so good
             var tagStartIndex = 0 // assume that the tag starts at 0
@@ -98,7 +102,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                             Log.d(TAG, "this is the has tag dwag $text")
                             //get the tags suggestion here
                             if (numChars >= tagStartIndex) {
-                                val tag = text.subSequence(tagStartIndex - 1, text.lastIndex + 1)
+                                val tag = text.subSequence(tagStartIndex, text.lastIndex + 1)
                                 Log.d(TAG, "the actual tag is: $tag")
                                 mAddQuestionPresenter.getTagSuggestion(tag, tagStartIndex, text.lastIndex + 1)
                             }
@@ -159,12 +163,11 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         for (tag in tags) {
             tagsSuggestionsAdapter.add(tag.name)
         }
-        tagsSuggestionListView?.onItemClickListener = object : AdapterView.OnItemClickListener {
-            override fun onItemClick(adapter: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                val wordToReplace = adapter?.getItemAtPosition(position) as String
-                q_add.text.replace(tagStartIndex, tagStopIndex, "#$wordToReplace ")
-                popUpWindow.dismiss()
-            }
+        tagsSuggestionListView?.onItemClickListener = AdapterView.OnItemClickListener { adapter, p1, position, p3 ->
+            val wordToReplace = adapter?.getItemAtPosition(position) as String
+            //should do a check here
+            q_add.text.replace(tagStartIndex, tagStopIndex, "#$wordToReplace ") // there is a problem here
+            popUpWindow.dismiss()
         }
         tagsSuggestionListView?.adapter = tagsSuggestionsAdapter
         val (x, y) = getTheXAndYForWord(q_add, typedWord)
@@ -172,12 +175,29 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         popUpWindow.showAtLocation(q_add, Gravity.TOP, x, y)
     }
 
+    private fun getProgressBarInstance(title: String, msg: String): ProgressDialog {
+        prog.setMessage(msg)
+        prog.setTitle(title)
+        return prog
+    }
+
     override fun showProgress(show: Boolean) {
-        snack("showing progress $show")
+        val prog = getProgressBarInstance("Asking question", "Please wait asking question...")
+        if (show) prog.show() else prog.dismiss()
+    }
+
+    override fun showProgress(show: Boolean, msg: String) {
+        val prog = getProgressBarInstance("Attaching files", msg)
+        if (show) prog.show() else prog.dismiss()
     }
 
     override fun showQuestion(entity: Question) {
-        DetailActivity.getStartIntent(this, entity)
+        val intent = DetailActivity.getStartIntent(this, entity)
+        startActivity(intent)
+    }
+
+    override fun showTagSuggestionProgress(show: Boolean) {
+        toast("Suggesting tags")
     }
 
     override fun showError(error: Throwable) {
@@ -192,7 +212,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         Log.d(TAG, "the result is ${intent?.data}")
         if (resultCode == Activity.RESULT_OK) {
             if (add_q_linearlayout.childCount == 0) { //enable all the button if the item are removed to 0 meaning here in the following switches we modify this state
-                enableAddButtons(isPic = true, isVid = true, isFiles =  true)
+                enableAddButtons(isPic = true, isVid = true, isFiles = true)
                 q_add.hint = "You can just type your question here, like you do on google, no need to greet we are all here to get answers :)"
             }
             when (requestCode) {
@@ -204,19 +224,23 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                             snack("You can only add one video. press X to remove the previously add video to add another one")
                             return
                         }
-                        val vid_url = intent.data!!
+                        val vidUri = intent.data!!
+                        val vidUrl = getRealPathFromURI(vidUri)
                         enableAddButtons(false) // disable the add buttons
                         // q_vid.setVideoURI(intent.data!!)
                         Log.d(TAG, "Initializing Video media")
-                        val file = File(vid_url.path)
+                        val file = File(vidUrl)
+                        Log.d(TAG, "the path is $vidUrl")
                         val btnFile: CardView = BasicUtils.getFileViewInstance(this,
-                                Media(file.name + file.extension, file.length(), Media.VIDEO_TYPE, file.absolutePath), {
+                                Media(file.name,
+                                        file.length(),
+                                        Media.VIDEO_TYPE,
+                                        file.absolutePath), {
                             Log.d(TAG, "the clicked file is $it")
-                            Log.d(TAG, "the path is ${vid_url.path}")
 //                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
 //                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
-                            val vidIntent = Intent(Intent.ACTION_VIEW, vid_url)
-                            vidIntent.setDataAndType(vid_url, "video/*")
+                            val vidIntent = Intent(Intent.ACTION_VIEW, vidUri)
+                            vidIntent.setDataAndType(vidUri, "video/*")
                             startActivity(vidIntent)
 
                         }, {
@@ -225,15 +249,15 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                                 ifHoriItemViewIsEmptyEnableAllAddButtons()
                             }
 
-                            //count the children of this layout if 0 ena all enable other views
                         })
 
                         add_q_linearlayout.addView(btnFile)
+                        mediaFiles = if (add_q_linearlayout.childCount != 0) {
+                            hashMapOf(Media.VIDEO_TYPE to listOf(vidUrl))
+                        } else {
+                            null  //nothing
 
-                        mediaFiles = mapOf(Media.VIDEO_TYPE to listOf(vid_url.path))
-
-
-                        // count children of this layout its 0 enable the and then disable
+                        }
                     }
                 }
 
@@ -257,7 +281,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                                     add_q_linearlayout.addView(imagePreviewInstance)
                                 }
                         )
-                        mediaFiles = mapOf(Media.PICTURE_TYPE to photosPaths)
+                        mediaFiles = hashMapOf(Media.PICTURE_TYPE to photosPaths)
                     }
                 }
 
@@ -277,11 +301,12 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                                             (it.parent as ViewGroup).removeView(it)
                                         }
                                         ifHoriItemViewIsEmptyEnableAllAddButtons()
+
                                     }
                             )
                             add_q_linearlayout.addView(fileViewInstance)
                         }
-                        mediaFiles = mapOf(Media.DOCS_TYPE to photosPaths)
+                        mediaFiles = hashMapOf(Media.DOCS_TYPE to photosPaths)
                     }
                 }
 
@@ -300,53 +325,65 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         val docsListPaths = mediaFiles?.get(Media.DOCS_TYPE)
         val videoListPaths = mediaFiles?.get(Media.VIDEO_TYPE)
         val picturesListPaths = mediaFiles?.get(Media.PICTURE_TYPE)
+        Log.d(TAG, "The values are: " +  mediaFiles?.values?.toString())
 
         val questionBody = q_add.text.toString()
         val questionTitle = q_add_title.text.toString()
 
-        if (questionTitle == "") {
-            snack("Please add a brief title about your question")
-            return
-        } else if(questionTitle.isBlank()) {
-            snack("Please add a brief title about your question")
-            return
-        } else if (questionBody.isBlank()) {
-            snack("You did not type the actual question")
-            return
-        }  else if((docsListPaths != null || videoListPaths != null || picturesListPaths != null)
-                && questionTitle.isNotBlank() ) {  // the last && is not required just for clearity
-            snack("please add at least one tag for this file")
-            return
-        }
-
-        val (_, tags) = BasicUtils.getCleanTextAndTags(questionBody)
-        val questionToPost = Question(questionTitle, questionBody, 0, tags.map { Tag(it, Date()) }, Question.TYPE_Q)
-
         when {
+            questionTitle.isBlank() -> {
+                snack("Please add a brief title about your question")
+                return
+            }
+            questionTitle.isBlank() -> {
+                snack("Please add a brief title about your question")
+                return
+            }
+            questionBody.isBlank() -> {
+                snack("You did not type the actual question")
+                return
+            }
+            BasicUtils.textHasNoTags(questionBody) -> {  // the last && is not required just for clearity
+                snack("please add at least one tag to this question so that people can find it")
+                return
+            }
+            else -> {
+                val (_, tags) = BasicUtils.getCleanTextAndTags(questionBody)
+                val questionToPost = Question(questionTitle, questionBody, 0, tags.map { Tag(it, Date()) }, Question.TYPE_Q)
 
-            docsListPaths != null && docsListPaths.isNotEmpty() -> {
-                mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
-                return
-            } videoListPaths != null && videoListPaths.isNotEmpty() -> {
-                mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
-                return
-            } picturesListPaths != null && picturesListPaths.isNotEmpty() -> {
-                mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
-                return
-            } questionBody.isNotBlank() -> {
-                mAddQuestionPresenter.publishNewQuestion(questionToPost, arrayListOf())
-                return
-            } else -> {
-                snack("Please also add a question body")
+                when {
+
+                    docsListPaths != null && docsListPaths.isNotEmpty() -> {
+                        mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
+                        return
+                    }
+                    videoListPaths != null && videoListPaths.isNotEmpty() -> {
+                        mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
+                        return
+                    }
+                    picturesListPaths != null && picturesListPaths.isNotEmpty() -> {
+                        mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
+                        return
+                    }
+                    questionBody.isNotBlank() -> {
+                        mAddQuestionPresenter.publishNewQuestion(questionToPost)
+                        return
+                    }
+                    else -> {
+                        snack("Please also add a question body")
+                    }
+                }
             }
         }
+
     }
 
-    private fun enableAddButtons( isPic: Boolean = false, isVid: Boolean = false, isFiles: Boolean = false ) {
+    private fun enableAddButtons(isPic: Boolean = false, isVid: Boolean = false, isFiles: Boolean = false) {
         btn_add_picture.isEnabled = isPic
         btn_add_video.isEnabled = isVid
         btn_add_files.isEnabled = isFiles
     }
+
     private fun ifHoriItemViewIsEmptyEnableAllAddButtons() {
         if (add_q_linearlayout.childCount == 0) {
             enableAddButtons(true, true, true)
@@ -375,6 +412,14 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         return Pair(width, height)
     }
 
+    private fun getRealPathFromURI(uri: Uri): String {
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor!!.moveToFirst()
+        val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+        val path = cursor.getString(idx)
+        cursor.close()
+        return path
+    }
 
     private fun getDisplay(): Point {
         val display = this.windowManager.defaultDisplay

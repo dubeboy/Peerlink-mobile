@@ -4,8 +4,11 @@ import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import timber.log.Timber
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -78,9 +81,13 @@ constructor(private val mMvpStarterService: MvpStarterService) {
                .toList()
     }
 
-    fun postQuestion(question: Question, retrofitFileParts: MutableList<MultipartBody.Part>): Single<StatusResponse<Question>> {
-        return mMvpStarterService.postQuestion(question, retrofitFileParts)
+    fun postQuestion(question: Question): Single<StatusResponse<Question>> {
+        return mMvpStarterService.postQuestion(question)
     }
 
+
+    fun postQuestionFiles(questionId: String, retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Question>> {
+        return mMvpStarterService.postQuestionFiles(questionId, retrofitFileParts)
+    }
 
 }

@@ -50,7 +50,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
         mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
 
         if (mQuestion == null) {
-            throw IllegalArgumentException("Detail Activity requires a pokemon name@")
+            throw IllegalArgumentException("Detail Activity requires a Question Instance")
         }
 
         setSupportActionBar(mToolbar)
@@ -77,6 +77,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener {
 
 
         mRecyclerData!!.adapter = mDetailAdapter
+        mRecyclerData!!.addOnScrollListener(scrollListener)
     }
 
 
