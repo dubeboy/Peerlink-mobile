@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong
  * Created by divine on 2017/09/27.
  */
 
-//todo not sure if this is the best IDEA
+//todo not sure if this is the best idea
 abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
 
 

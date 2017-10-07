@@ -22,6 +22,7 @@ import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.util.BasicUtils
+import com.dubedivine.samples.util.BasicUtils.getRealPathFromURI
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import droidninja.filepicker.FilePickerBuilder
@@ -65,7 +66,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
         tagsSuggestionsView = getInflatedTagsSuggestionView()
         tagsSuggestionListView = tagsSuggestionsView?.findViewById(R.id.tags_suggestion_listview)
-        popUpWindow = PopupWindow(this)
+        popUpWindow = PopupWindow(this) //https://www.google.com/search?client=ubuntu&channel=fs&q=android+popup+window+relative+to+the+coursor&ie=utf-8&oe=utf-8
         configurePopUpWindow(popUpWindow, tagsSuggestionsView!!)
 
         prog = ProgressDialog(this)
@@ -215,108 +216,115 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                 enableAddButtons(isPic = true, isVid = true, isFiles = true)
                 q_add.hint = "You can just type your question here, like you do on google, no need to greet we are all here to get answers :)"
             }
-            when (requestCode) {
-                REQUEST_VIDEO_CAPTURE -> {
-                    if (intent?.data != null) {
-                        q_add.hint = "add a tag to the attached video so that people can find it\n#math1b #drawingGraphs"
-                        enableAddButtons(isVid = true)
-                        if (add_q_linearlayout.childCount > 0) {
-                            snack("You can only add one video. press X to remove the previously add video to add another one")
-                            return
-                        }
-                        val vidUri = intent.data!!
-                        val vidUrl = getRealPathFromURI(vidUri)
-                        enableAddButtons(false) // disable the add buttons
-                        // q_vid.setVideoURI(intent.data!!)
-                        Log.d(TAG, "Initializing Video media")
-                        val file = File(vidUrl)
-                        Log.d(TAG, "the path is $vidUrl")
-                        val btnFile: CardView = BasicUtils.getFileViewInstance(this,
-                                Media(file.name,
-                                        file.length(),
-                                        Media.VIDEO_TYPE,
-                                        file.absolutePath), {
-                            Log.d(TAG, "the clicked file is $it")
-//                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
-//                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
-                            val vidIntent = Intent(Intent.ACTION_VIEW, vidUri)
-                            vidIntent.setDataAndType(vidUri, "video/*")
-                            startActivity(vidIntent)
-
-                        }, {
-                            if (it.parent != null) {
-                                (it.parent as ViewGroup).removeView(it)
-                                ifHoriItemViewIsEmptyEnableAllAddButtons()
-                            }
-
-                        })
-
-                        add_q_linearlayout.addView(btnFile)
-                        mediaFiles = if (add_q_linearlayout.childCount != 0) {
-                            hashMapOf(Media.VIDEO_TYPE to listOf(vidUrl))
-                        } else {
-                            null  //nothing
-
-                        }
-                    }
-                }
-
-                FilePickerConst.REQUEST_CODE_PHOTO -> {
-                    if (intent != null) {
-                        q_add.hint = "add a tag to the attached photo so that people can find it\n#math1b #drawingGraphs"
-                        enableAddButtons(isPic = true)
-                        val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
-                        Log.d(TAG, "the data that we got: Photos $photosPaths")
-                        photosPaths.forEach(
-                                {
-                                    l("Hello From Timber the path is $it")
-                                    val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this@AddQuestionActivity, it,
-                                            {
-                                                if (it.parent != null) {
-                                                    (it.parent as ViewGroup).removeView(it)
-                                                }
-                                                ifHoriItemViewIsEmptyEnableAllAddButtons()
-                                            }
-                                    )
-                                    add_q_linearlayout.addView(imagePreviewInstance)
-                                }
-                        )
-                        mediaFiles = hashMapOf(Media.PICTURE_TYPE to photosPaths)
-                    }
-                }
-
-                FilePickerConst.REQUEST_CODE_DOC -> {
-                    if (intent != null) {
-                        q_add.hint = "add a tag to the attached document so that people can find it\n#math1b #drawingGraphs"
-                        enableAddButtons(isFiles = true)
-                        val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS)
-                        Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
-                        photosPaths.forEach {
-                            Timber.i("Helllo the file has been selected $it")
-                            val fileViewInstance = BasicUtils.getFileViewInstance(this,
-                                    Media(it.substringAfterLast("/"), 0, Media.DOCS_TYPE, it),
-                                    { _ -> }, //not require but looks great ;)
-                                    {
-                                        if (it.parent != null) {
-                                            (it.parent as ViewGroup).removeView(it)
-                                        }
-                                        ifHoriItemViewIsEmptyEnableAllAddButtons()
-
-                                    }
-                            )
-                            add_q_linearlayout.addView(fileViewInstance)
-                        }
-                        mediaFiles = hashMapOf(Media.DOCS_TYPE to photosPaths)
-                    }
-                }
-
-            }
-
+            processTheInputRequest(requestCode, intent)
         }
     }
 
 
+
+
     //--------------------------private methods ------------------------
+
+
+    private fun processTheInputRequest(requestCode: Int, intent: Intent?) {
+        when (requestCode) {
+            REQUEST_VIDEO_CAPTURE -> {
+                if (intent?.data != null) {
+                    q_add.hint = "add a tag to the attached video so that people can find it\n#math1b #drawingGraphs"
+                    enableAddButtons(isVid = true)
+                    if (add_q_linearlayout.childCount > 0) {
+                        snack("You can only add one video. press X to remove the previously add video to add another one")
+                        return
+                    }
+                    val vidUri = intent.data!!
+                    val vidUrl = getRealPathFromURI(vidUri, this)
+                    enableAddButtons(false) // disable the add buttons
+                    // q_vid.setVideoURI(intent.data!!)
+                    Log.d(TAG, "Initializing Video media")
+                    val file = File(vidUrl)
+                    Log.d(TAG, "the path is $vidUrl")
+                    val btnFile: CardView = BasicUtils.getFileViewInstance(this,
+                            Media(file.name,
+                                    file.length(),
+                                    Media.VIDEO_TYPE,
+                                    file.absolutePath), {
+                        Log.d(TAG, "the clicked file is $it")
+//                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
+//                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
+                        val vidIntent = Intent(Intent.ACTION_VIEW, vidUri)
+                        vidIntent.setDataAndType(vidUri, "video/*")
+                        startActivity(vidIntent)
+
+                    }, {
+                        if (it.parent != null) {
+                            (it.parent as ViewGroup).removeView(it)
+                            ifHoriItemViewIsEmptyEnableAllAddButtons()
+                        }
+
+                    })
+
+                    add_q_linearlayout.addView(btnFile)
+                    mediaFiles = if (add_q_linearlayout.childCount != 0) {
+                        hashMapOf(Media.VIDEO_TYPE to listOf(vidUrl))
+                    } else {
+                        null  //nothing
+
+                    }
+                }
+            }
+
+            FilePickerConst.REQUEST_CODE_PHOTO -> {
+                if (intent != null) {
+                    q_add.hint = "add a tag to the attached photo so that people can find it\n#math1b #drawingGraphs"
+                    enableAddButtons(isPic = true)
+                    val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
+                    Log.d(TAG, "the data that we got: Photos $photosPaths")
+                    photosPaths.forEach(
+                            {
+                                l("Hello From Timber the path is $it")
+                                val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this@AddQuestionActivity, it,
+                                        {
+                                            if (it.parent != null) {
+                                                (it.parent as ViewGroup).removeView(it)
+                                            }
+                                            ifHoriItemViewIsEmptyEnableAllAddButtons()
+                                        }
+                                )
+                                add_q_linearlayout.addView(imagePreviewInstance)
+                            }
+                    )
+                    mediaFiles = hashMapOf(Media.PICTURE_TYPE to photosPaths)
+                }
+            }
+
+            FilePickerConst.REQUEST_CODE_DOC -> {
+                if (intent != null) {
+                    q_add.hint = "add a tag to the attached document so that people can find it\n#math1b #drawingGraphs"
+                    enableAddButtons(isFiles = true)
+                    val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS)
+                    Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
+                    photosPaths.forEach {
+                        Timber.i("Helllo the file has been selected $it")
+                        val fileViewInstance = BasicUtils.getFileViewInstance(this,
+                                Media(it.substringAfterLast("/"), 0, Media.DOCS_TYPE, it),
+                                { _ -> }, //not require but looks great ;)
+                                {
+                                    if (it.parent != null) {
+                                        (it.parent as ViewGroup).removeView(it)
+                                    }
+                                    ifHoriItemViewIsEmptyEnableAllAddButtons()
+
+                                }
+                        )
+                        add_q_linearlayout.addView(fileViewInstance)
+                    }
+                    mediaFiles = hashMapOf(Media.DOCS_TYPE to photosPaths)
+                }
+            }
+
+        }
+
+    }
 
     private fun publishNewQuestion() {
         //get the question text
@@ -398,6 +406,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         popUpWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
         popUpWindow.isFocusable = false
         popUpWindow.isOutsideTouchable = true
+
 //        popUpWindow.setBackgroundDrawable((android.R.drawable.spinner_dropdown_background))
 
         return popUpWindow
@@ -412,14 +421,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         return Pair(width, height)
     }
 
-    private fun getRealPathFromURI(uri: Uri): String {
-        val cursor = contentResolver.query(uri, null, null, null, null)
-        cursor!!.moveToFirst()
-        val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-        val path = cursor.getString(idx)
-        cursor.close()
-        return path
-    }
 
     private fun getDisplay(): Point {
         val display = this.windowManager.defaultDisplay

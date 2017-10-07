@@ -2,6 +2,8 @@ package com.dubedivine.samples.util
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.CardView
 import android.util.Log
@@ -166,6 +168,16 @@ object BasicUtils {
         }
         return buffer.toString()
     }
+
+    fun getRealPathFromURI(uri: Uri, context: Activity): String {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor!!.moveToFirst()
+        val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+        val path = cursor.getString(idx)
+        cursor.close()
+        return path
+    }
+
 
 
 

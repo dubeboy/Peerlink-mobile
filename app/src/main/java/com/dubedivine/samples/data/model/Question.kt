@@ -14,7 +14,7 @@ import kotlin.collections.ArrayList
 class Question(val title: String, val body: String, val votes: Long, val tags: List<Tag>  //todo: bad it should be mapping!!
                , val type: String) : Serializable {
     //for video we will add another constructor which has video here
-    val id: String? = null  // protected because it has a setter in the Elastic question child class
+    var id: String? = null  // protected because it has a setter in the Elastic question child class
     var comments: List<Comment>? = null
     @SerializedName("answers")
     var answers: ArrayList<Answer>? = null

@@ -31,7 +31,13 @@
         </activity>
         <activity
             android:name=".features.detail.DetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -54,11 +60,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".features.searchResults.SearchActivity" />
         <activity android:name=".features.addQuestion.AddQuestionActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
