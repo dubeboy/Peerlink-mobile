@@ -57,7 +57,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 
 
     private var mQuestion: Question? = null
-   private lateinit var docsList: ArrayList<String>
+    private val docsList: ArrayList<String> = ArrayList(0) //not sure weather there should be 0 , 1 or default init capacity, 0 for now
     private lateinit var newFragment: AddFilesDialogFragment
 
 
@@ -66,15 +66,15 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
         mDetailPresenter.attachView(this)
-
+        // todo: should look into delegate and lazy loading so that this is only create if the user wants to send file and its created once
+        newFragment = AddFilesDialogFragment.newInstance(this)
+        // newFragment.retainInstance = true // how do i manually kill it, onDetach?
 //        val alertDialogBuilder = AlertDialog.Builder(this)
 //        alertDialogBuilder.setTitle("Attach photos, videos or files ")
 //        val view =  layoutInflater.inflate(R.layout.alert_dialog_select_files, null)
 //        alertDialogBuilder.setView(view)
 //        setUpOnClickListenersForAlertButtons(view)
 //        alertDialogBuilder.create()
-
-
         val q = Question("Hello", "what does hello mean", 100, listOf<Tag>(Tag("hello", Date()), Tag("hello", Date())), "Q")
         q.id = "29292929"
 //        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
@@ -109,7 +109,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         mRecyclerData!!.adapter = mDetailAdapter
         mRecyclerData!!.addOnScrollListener(scrollListener)
 
-        //listners
+        //create a dialog that shows the files to attach
         btn_attach_files.setOnClickListener({
             val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag("dialog")
@@ -117,16 +117,13 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
                 ft.remove(prev)
             }
             ft.addToBackStack(null)
-
             // Create and show the dialog.
-            val parentHasAnyChildren = add_q_linearlayout.childCount > 0
-            newFragment = AddFilesDialogFragment.newInstance(parentHasAnyChildren, this)
             newFragment.show(ft, "dialog")
 
         })
 
         btn_answer_question.setOnClickListener({
-
+            Log.d(TAG, "posting answer")
         })
     }
 
@@ -203,13 +200,11 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         // todo: implement this
     }
 
+    //onclick event from the add files dialog fragment which gives this parent the required parameters to complete the task
     override fun onItemClick(fileList: List<String>, type: Char) {
-        lazy {
-            docsList = ArrayList(fileList)
-        }
+        docsList.addAll(fileList)
         newFragment.dismiss()
         Log.d(TAG, "__onItemClick this has also been called $type and the fileList: $fileList")
-        checkHoriElements()
         when (type) {
             Media.PICTURE_TYPE -> {
                 fileList.forEach { item ->
@@ -222,13 +217,13 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
             }
             Media.VIDEO_TYPE -> {
                 val file = File(fileList[0])
-                Log.d(AddQuestionActivity.TAG, "the path is ${fileList[0]}")
+                Log.d(TAG, "the path is ${fileList[0]}")
                 val btnFile: CardView = BasicUtils.getFileViewInstance(this,
                         Media(file.name,
                                 file.length(),
                                 Media.VIDEO_TYPE,
                                 file.absolutePath), {
-                    Log.d(AddQuestionActivity.TAG, "the clicked file is $it")
+                    Log.d(TAG, "the clicked file is $it")
 //                            val bottomSheetDialogFragment = VideoViewFragment.newInstance(vid_url.path)
 //                            bottomSheetDialogFragment.show(supportFragmentManager, bottomSheetDialogFragment.tag)
                     val vidIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fileList[0]))
@@ -242,7 +237,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
             }
             Media.DOCS_TYPE -> {
                 fileList.forEach { item ->
-                    Timber.i("Helllo the file has been selected $item")
+                    Timber.i("Hello the file has been selected $item")
                     val fileViewInstance = BasicUtils.getFileViewInstance(this,
                             Media(item.substringAfterLast("/"), 0, Media.DOCS_TYPE, item),
                             { _ -> },
@@ -254,6 +249,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
                 }
             }
         }
+        checkHoriElements()
     }
 
     private fun removeItem(item: String, it: View) {
@@ -262,7 +258,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         }
         docsList.remove(item)
         checkHoriElements()
-        removeItem(item, it)
     }
 
     private fun checkHoriElements() {
@@ -270,17 +265,14 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
             hori_scroll_view.visibility = View.VISIBLE
         } else {
             hori_scroll_view.visibility = View.GONE
+            newFragment.enableAllButtons()
         }
     }
 
-
-
-
-
     companion object {
 
-        val EXTRA_QUESTION = "EXTRA_QUESTION"
-        val TAG = "__DetailAc"
+        private const val EXTRA_QUESTION = "EXTRA_QUESTION"
+        const val TAG = "__DetailAc"
 
         fun getStartIntent(context: Context, question: Question): Intent {
             val intent = Intent(context, DetailActivity::class.java)

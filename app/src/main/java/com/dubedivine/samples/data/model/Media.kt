@@ -16,8 +16,8 @@ class Media(val name: String, val size: Long, val type: Char  // P-> picture, V-
 
     companion object {
         //enums are very expensive so we use chars instead!!
-        var VIDEO_TYPE = 'V'
-        var PICTURE_TYPE = 'P'
-        var DOCS_TYPE = 'D'
+        const val VIDEO_TYPE = 'V'
+        const val PICTURE_TYPE = 'P'
+        const val DOCS_TYPE = 'D'
     }
 }

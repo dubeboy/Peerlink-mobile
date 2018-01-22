@@ -57,10 +57,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         mAddQuestionPresenter.attachView(this)
         //fab_add set the drawable here of a tick
 
-        Log.d(TAG, "guys you are awesome")
-        l("trying timber for the last time")
-        Timber.i(TAG, "Timber is not so awesome")
-
         tagsSuggestionsAdapter = ArrayAdapter(this@AddQuestionActivity,
                 android.R.layout.simple_spinner_item)
 
@@ -436,8 +432,8 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     }
 
     companion object {
-        val TAG = "__AddQuestionActivity"
-        val REQUEST_VIDEO_CAPTURE = 1
+        private const val TAG = "__AddQuestionActivity"
+        const val REQUEST_VIDEO_CAPTURE = 1
         fun getStartIntent(context: Context): Intent {
             val intent = Intent(context, AddQuestionActivity::class.java)
             return intent

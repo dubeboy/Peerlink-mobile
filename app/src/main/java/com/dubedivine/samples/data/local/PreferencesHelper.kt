@@ -20,8 +20,21 @@ constructor(@ApplicationContext context: Context) {
         mPref.edit().clear().apply()
     }
 
-    companion object {
+    fun editor(): SharedPreferences.Editor {
+        return mPref.edit()
+    }
 
+    inline fun save(objectToBeSaved: SharedPreferences.Editor.() -> SharedPreferences.Editor) {
+        objectToBeSaved(editor()).commit()
+    }
+
+    fun getString(key: String, defaultString: String = ""): String {
+       return mPref.getString(key, defaultString)
+    }
+
+
+
+    companion object {
         val PREF_FILE_NAME = "mvpstarter_pref_file"
     }
 
