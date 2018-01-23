@@ -43,6 +43,13 @@ class DetailAdapter
 
     fun addAll(answers: List<Answer>) {
         mQuestion.answers?.addAll(answers)
+//        notifyDataSetChanged()
+
+    }
+
+    fun addAnswer(answer: Answer) {
+        mQuestion.answers?.add(answer)
+//        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DetailView {

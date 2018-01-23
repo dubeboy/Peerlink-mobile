@@ -66,7 +66,7 @@ class MainPresenterTest {
         mMainPresenter?.getPokemon(10)
 
         verify<MainMvpView>(mMockMainMvpView, times(2)).showProgress(anyBoolean())
-//        verify<MainMvpView>(mMockMainMvpView).showError(RuntimeException())
+//        verify<MainMvpView>(mMockMainMvpView).showUserError(RuntimeException())
         verify<MainMvpView>(mMockMainMvpView, never()).showPokemon(ArgumentMatchers.anyList<String>())
     }
 

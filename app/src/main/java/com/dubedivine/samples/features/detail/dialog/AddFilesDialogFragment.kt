@@ -192,6 +192,7 @@ class AddFilesDialogFragment : DialogFragment() {
                     val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
                     Log.d(TAG, "the data that we got: Photos $photosPaths")
                     mediaFiles = hashMapOf(Media.PICTURE_TYPE to photosPaths)
+//                    mediaFiles[Media.PICTURE_TYPE] = photosPaths
                 }
             }
 

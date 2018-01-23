@@ -5,7 +5,9 @@ import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Pokemon
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.injection.ConfigPersistent
+import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @ConfigPersistent
@@ -47,6 +49,41 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                        mvpView!!.showError(it)
                        mvpView!!.showProgress(false)
                    })
+        }
+    }
+
+    fun addAnswer(questionId: String, answer: String, fileSet: HashSet<String>) {
+        doLongTaskOnView {
+            mDataManager.postAnswer(questionId, Answer(answer, 0, false))
+                    .compose(SchedulerUtils.ioToMain())
+                    .subscribe({
+                        if (it.status!!) {
+
+                            if (fileSet.isNotEmpty()) {
+                                val distinctFiles: List<String> = fileSet.distinct()
+                                val retrofitFileParts: MutableList<MultipartBody.Part>
+                                        = BasicUtils.createMultiPartFromFile(distinctFiles)
+                                mDataManager.postAnswerFiles(questionId, it.entity!!.id!!, retrofitFileParts)
+                                        .compose(SchedulerUtils.ioToMain())
+                                        .subscribe({
+                                            mvpView!!.showProgress(false)
+                                            mvpView!!.showAnswer(it.entity!!)
+                                        },{
+                                            mvpView!!.showUserError("Failed to upload the file please try again")
+                                        })
+                            } else {
+                                mvpView!!.showAnswer(it.entity!!)
+                            }
+                        } else {
+                            mvpView!!.showProgress(false)
+                            mvpView!!.showError(Throwable("Failed to save answer"))
+
+                        }
+                    },
+                    {
+                        mvpView!!.showError(it)
+                        mvpView!!.showProgress(false)
+                    })
         }
     }
 }

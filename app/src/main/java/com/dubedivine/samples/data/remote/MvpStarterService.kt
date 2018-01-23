@@ -23,7 +23,7 @@ interface MvpStarterService {
     fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int): Single<StatusResponse<Boolean>>  // should return a single Boolean
 
     @POST("questions/{q_id}/vote/{a_id}")
-    fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: Long, @Query("vote") vote: Int): Single<Status>
+    fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: String?, @Query("vote") vote: Int): Single<Status>
 
     @GET("answers/{q_id}")
     fun getMoreAnswers(@Path("q_id") questionId: String, @Query("page") page: Int): Single<List<Answer>>
@@ -48,4 +48,14 @@ interface MvpStarterService {
     @Multipart
     @POST("questions/{q_id}/files")
     fun postQuestionFiles(@Path("q_id") @NotNull questionId: String, @Part files: List<MultipartBody.Part>): Single<StatusResponse<Question>>
+
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    @PUT("questions/{q_id}/answer")
+    fun postAnswer(@Path("q_id") questionId: String, @Body answer: Answer): Single<StatusResponse<Answer>>
+
+    @Multipart
+    @POST("questions/{q_id}/answers/{a_id}/files")
+    fun postAnswerFiles(@Path("q_id") questionId: String,
+                        @Path("a_id") answerId: String,
+                        @Part retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Answer>>
 }

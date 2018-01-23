@@ -18,7 +18,7 @@ class Answer : Serializable {
     var comments: List<Comment>? = null
     var video: Media? = null
     val files: List<Media>? = null
-    val id = System.currentTimeMillis()
+    val id: String? = null // UUID
 
     constructor() {}
 

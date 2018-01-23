@@ -6,12 +6,9 @@ import com.dubedivine.samples.data.model.Statistic
 import com.dubedivine.samples.features.base.MvpView
 
 interface DetailMvpView : MvpView {
-
     fun showQuestionsAndAnswers(pokemon: Pokemon)
-
     fun showStat(statistic: Statistic)
-
     fun addAnswers(answer: List<Answer>)
-
-
+    fun showUserError(error: String)
+    fun showAnswer(entity: Answer)
 }

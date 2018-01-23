@@ -24,12 +24,15 @@ import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.detail.dialog.AddFilesDialogFragment
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.log
+import com.dubedivine.samples.util.snack
+import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_detail.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 
 // in the future we should also get the question answers increnmentally so the
@@ -38,6 +41,7 @@ import kotlin.collections.ArrayList
 //todo look into the boom menu: https://github.com/Nightonke/BoomMenu
 //todo: should only search when the text is not a empty(space) key
 class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, AddFilesDialogFragment.OnItemClick {
+
 
     @Inject lateinit var mDetailPresenter: DetailPresenter
     @Inject lateinit var mDetailAdapter: DetailAdapter
@@ -57,10 +61,8 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 
 
     private var mQuestion: Question? = null
-    private val docsList: ArrayList<String> = ArrayList(0) //not sure weather there should be 0 , 1 or default init capacity, 0 for now
+    private val docsList: HashSet<String> = HashSet(0)//not sure weather there should be 0 , 1 or default init capacity, 0 for now
     private lateinit var newFragment: AddFilesDialogFragment
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +77,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 //        alertDialogBuilder.setView(view)
 //        setUpOnClickListenersForAlertButtons(view)
 //        alertDialogBuilder.create()
+
         val q = Question("Hello", "what does hello mean", 100, listOf<Tag>(Tag("hello", Date()), Tag("hello", Date())), "Q")
         q.id = "29292929"
 //        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
@@ -123,16 +126,25 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         })
 
         btn_answer_question.setOnClickListener({
-            Log.d(TAG, "posting answer")
+            val answer = et_answer_input.text
+
+            if (answer.isBlank()) {
+                snack("incorrect answer!")
+            } else {
+                Log.d(TAG, "posting answer and the posted files are $docsList")
+
+                mDetailPresenter.addAnswer(answer.toString(), answer.toString() , docsList)
+            }
         })
     }
 
-
-    private fun createAlertDialogWithCustomView(alertDialogBuilder: AlertDialog.Builder) {
-
-        alertDialogBuilder.show()
+    override fun showUserError(error: String) {
+       toast(error)
     }
 
+    override fun showAnswer(entity: Answer) {
+        mDetailAdapter.addAnswer(entity)
+    }
 //    private fun setUpOnClickListenersForAlertButtons(view: View) {
 //        val btnAttachPhotos = view.findViewById<FloatingActionButton>(R.id.btn_attach_photos)
 //        val btnAttachVideos = view.findViewById<FloatingActionButton>(R.id.btn_attach_video)
@@ -161,8 +173,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 //                    .pickFile(this)
 //        })
 //    }
-
-
     override val layout: Int
         get() = R.layout.activity_detail
 
@@ -183,6 +193,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
     override fun showError(error: Throwable) {
 //        mPokemonLayout?.visibility = View.GONE
 //        mErrorView?.visibility = View.VISIBLE
+        toast("Oops could not connect to the internet")
         Timber.e(error, "There was a problem retrieving the pokemon...")
         error.printStackTrace()
     }

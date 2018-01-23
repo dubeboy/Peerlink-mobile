@@ -4,11 +4,8 @@ import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import okhttp3.MediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import timber.log.Timber
-import java.io.File
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -60,25 +57,25 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     }
 
     //todo: should return a boolean
-    fun addVoteToAnswer(questionId: String, id: Long, vote: Int) {
+    fun addVoteToAnswer(questionId: String, id: String?, vote: Int) {
         mMvpStarterService.addVoteToAnswer(questionId, id, vote)
     }
 
     fun getMoreAnswers(questionId: String, page: Int): Single<List<Answer>> {
-      return  mMvpStarterService.getMoreAnswers(questionId, page)
+        return mMvpStarterService.getMoreAnswers(questionId, page)
                 .toObservable()
                 .flatMapIterable { it }
-                .map({title -> title})
+                .map({ title -> title })
                 .toList()
     }
 
     fun getTagSuggestion(tag: CharSequence): Single<List<Tag>> {
-       return mMvpStarterService
-               .getTagSuggestion(tag)
-               .toObservable()
-               .flatMapIterable { it }
-               .map { t -> t }
-               .toList()
+        return mMvpStarterService
+                .getTagSuggestion(tag)
+                .toObservable()
+                .flatMapIterable { it }
+                .map { t -> t }
+                .toList()
     }
 
     fun postQuestion(question: Question): Single<StatusResponse<Question>> {
@@ -88,6 +85,16 @@ constructor(private val mMvpStarterService: MvpStarterService) {
 
     fun postQuestionFiles(questionId: String, retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Question>> {
         return mMvpStarterService.postQuestionFiles(questionId, retrofitFileParts)
+    }
+
+    fun postAnswer(questionId: String, answer: Answer): Single<StatusResponse<Answer>> {
+        return mMvpStarterService.postAnswer(questionId, answer)
+    }
+
+    fun postAnswerFiles(questionId: String,
+                        answerId: String,
+                        retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Answer>> {
+        return mMvpStarterService.postAnswerFiles(questionId, answerId, retrofitFileParts)
     }
 
 }
