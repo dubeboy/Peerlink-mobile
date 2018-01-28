@@ -73,10 +73,11 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                                         })
                             } else {
                                 mvpView!!.showAnswer(it.entity!!)
+
                             }
                         } else {
                             mvpView!!.showProgress(false)
-                            mvpView!!.showError(Throwable("Failed to save answer"))
+                            mvpView!!.showUserError("Failed to save answer please try again")
 
                         }
                     },

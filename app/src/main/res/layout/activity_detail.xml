@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
         app:cardElevation="5dp"
+        android:layout_marginTop="1dp"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -49,16 +50,16 @@
                 </LinearLayout>
             </HorizontalScrollView>
             <LinearLayout
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="wrap_content">
                 <EditText
                     android:layout_width="0dp"
                     android:id="@+id/et_answer_input"
-                    android:hint="Type Answer here"
-                    android:layout_weight="12"
+                    android:hint="Type your answer here"
+                    android:layout_weight="16"
                     android:layout_height="wrap_content" />
                 <ImageButton
                     android:layout_marginTop="5dp"

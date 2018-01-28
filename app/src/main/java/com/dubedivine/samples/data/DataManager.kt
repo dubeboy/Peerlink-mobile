@@ -97,4 +97,11 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.postAnswerFiles(questionId, answerId, retrofitFileParts)
     }
 
+    fun postCommentQuestion(questionId: String, body: String) {
+    }
+
+    fun postCommentForAnswer(questionId: String, answerId: Long, body: String) {
+
+    }
+
 }

@@ -1,11 +1,11 @@
 package com.dubedivine.samples.features.detail
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -17,13 +17,12 @@ import android.widget.ProgressBar
 import butterknife.BindView
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.*
-import com.dubedivine.samples.features.addQuestion.AddQuestionActivity
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.EndlessRecyclerViewScrollListener
 import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.detail.dialog.AddFilesDialogFragment
 import com.dubedivine.samples.util.BasicUtils
-import com.dubedivine.samples.util.log
+import com.dubedivine.samples.util.ViewUtil
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -31,7 +30,6 @@ import timber.log.Timber
 import java.io.File
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
 
@@ -59,7 +57,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
     @JvmField
     var mRecyclerData: RecyclerView? = null
 
-
     private var mQuestion: Question? = null
     private val docsList: HashSet<String> = HashSet(0)//not sure weather there should be 0 , 1 or default init capacity, 0 for now
     private lateinit var newFragment: AddFilesDialogFragment
@@ -70,6 +67,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         mDetailPresenter.attachView(this)
         // todo: should look into delegate and lazy loading so that this is only create if the user wants to send file and its created once
         newFragment = AddFilesDialogFragment.newInstance(this)
+
         // newFragment.retainInstance = true // how do i manually kill it, onDetach?
 //        val alertDialogBuilder = AlertDialog.Builder(this)
 //        alertDialogBuilder.setTitle("Attach photos, videos or files ")
@@ -78,11 +76,11 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 //        setUpOnClickListenersForAlertButtons(view)
 //        alertDialogBuilder.create()
 
-        val q = Question("Hello", "what does hello mean", 100, listOf<Tag>(Tag("hello", Date()), Tag("hello", Date())), "Q")
-        q.id = "29292929"
-//        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
-        mQuestion = q
+//        val q = Question("Hello", "what does hello mean", 100, listOf<Tag>(Tag("hello", Date()), Tag("hello", Date())), "Q")
+//        q.id = "29292929"
+//        mQuestion = q
 
+        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
         if (mQuestion == null) {
             throw IllegalArgumentException("Detail Activity requires a Question Instance")
         }
@@ -131,9 +129,10 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
             if (answer.isBlank()) {
                 snack("incorrect answer!")
             } else {
+                toast("posting answer")
                 Log.d(TAG, "posting answer and the posted files are $docsList")
 
-                mDetailPresenter.addAnswer(answer.toString(), answer.toString() , docsList)
+                mDetailPresenter.addAnswer(mQuestion!!.id!!, answer.toString() , docsList)
             }
         })
     }
@@ -144,6 +143,9 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 
     override fun showAnswer(entity: Answer) {
         mDetailAdapter.addAnswer(entity)
+        snack("shared answer")
+        et_answer_input.setText("")
+        mRecyclerData!!.scrollToPosition(mRecyclerData!!.adapter.itemCount - 1)
     }
 //    private fun setUpOnClickListenersForAlertButtons(view: View) {
 //        val btnAttachPhotos = view.findViewById<FloatingActionButton>(R.id.btn_attach_photos)
@@ -193,7 +195,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
     override fun showError(error: Throwable) {
 //        mPokemonLayout?.visibility = View.GONE
 //        mErrorView?.visibility = View.VISIBLE
-        toast("Oops could not connect to the internet")
+     //   toast("Oops could not connect to the internet")
         Timber.e(error, "There was a problem retrieving the pokemon...")
         error.printStackTrace()
     }

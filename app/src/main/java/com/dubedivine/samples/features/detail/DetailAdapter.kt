@@ -9,9 +9,12 @@ import com.bumptech.glide.Glide
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.data.model.Answer
+import com.dubedivine.samples.data.model.Comment
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.common.FileView
+import com.dubedivine.samples.features.detail.comments.CommentsAdapter
+import com.dubedivine.samples.features.detail.comments.FullCommentsListFragment
 import com.dubedivine.samples.util.BasicUtils
 import javax.inject.Inject
 
@@ -26,8 +29,7 @@ import javax.inject.Inject
 //so i add the question as the top element on the list
 
 class DetailAdapter
-@Inject constructor(private val mDataManager: DataManager)
-    : RecyclerView.Adapter<DetailAdapter.DetailView>() {
+@Inject constructor(private val mDataManager: DataManager) : RecyclerView.Adapter<DetailAdapter.DetailView>() {
 
     private var _mQuestion: Question? = null
 
@@ -70,10 +72,10 @@ class DetailAdapter
     }
 
     // no need to be inner class from my perspective we don`t have to carry the ref of the parent class
-    class DetailView(view: View, private val mDataManager: DataManager) : RecyclerView.ViewHolder(view) {
+    class DetailView( private val view: View, private val mDataManager: DataManager) : RecyclerView.ViewHolder(view) {
 
-        private val btnVoteUp: Button = view.findViewById(R.id.btn_vote_up)
-        private val btnVoteDown: Button = view.findViewById(R.id.btn_vote_down)
+        private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
+        private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
         private val btnCorrectAnswer: Button = view.findViewById(R.id.btn_correct_answer)
         private val tvQuestionTitle: TextView = view.findViewById(R.id.q_title)
         private val tvQuestionBody: TextView = view.findViewById(R.id.q_body)
@@ -82,6 +84,11 @@ class DetailAdapter
         private val tagsLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_tags_linearlayout) // naming is a bit off...
         private val filesLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_files_linearlayout)
         private val tvVotes: TextView = view.findViewById(R.id.tv_vote_count)
+
+        private val recyclerComments: RecyclerView = view.findViewById(R.id.comments_recycler_list)
+        private val btnSubmitComment: ImageButton = view.findViewById(R.id.btn_comment_question)
+        private val btnMoreComments: ImageButton = view.findViewById(R.id.btn_vote_down)
+        private val etCommentBody: EditText = view.findViewById(R.id.et_comment_input)
 
         private var q: Question?= null
 
@@ -154,6 +161,13 @@ class DetailAdapter
                 mDataManager.addVote(q.id!!, -1)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() -1)}"
             })
+
+            btnSubmitComment.setOnClickListener({
+                handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString())
+            })
+
+            if(q.comments != null && q.comments!!.isNotEmpty())
+                attachCommentsAdapter(q.comments!!)
         }
 
         fun bindAnswer(ans: Answer) {
@@ -165,10 +179,39 @@ class DetailAdapter
                 tvVotes.text = "${(tvVotes.text.toString().toInt() +1)}"
                 //should set the button to be disabled here
             })
+
             btnVoteDown.setOnClickListener({
                 mDataManager.addVoteToAnswer(q!!.id!!, ans.id, -1)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() -1)}"
             })
+
+            btnSubmitComment.setOnClickListener({
+                handleCommentSubmissionForAnswer(q!!.id!! , ,  etCommentBody.text.toString())
+            })
+
+            if(ans.comments != null && ans.comments!!.isNotEmpty())
+                attachCommentsAdapter(ans.comments!!)
+        }
+
+        private fun attachCommentsAdapter(comments: List<Comment>) {
+            recyclerComments.visibility = View.VISIBLE
+            val commentsAdapter = CommentsAdapter(comments, true)
+            recyclerComments.adapter = commentsAdapter
+
+            if (comments.size > 5) {
+                btnMoreComments.visibility = View.VISIBLE
+                btnMoreComments.setOnClickListener({
+                    val commentsListFragment =  FullCommentsListFragment(view.context, comments)
+                    commentsListFragment.show()
+                })
+            }
+        }
+
+        private fun handleCommentSubmissionForQuestion(questionId: String, body: String) {
+            mDataManager.postCommentQuestion(questionId, body)
+        }
+        private fun handleCommentSubmissionForAnswer(questionId: String, answerId: Long, body: String) {
+            mDataManager.postCommentForAnswer(questionId, answerId, body)
         }
     }
 }
