@@ -52,13 +52,13 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     }
 
     //todo : should return a boolean
-    fun addVote(qId: String, vote: Int) {
-        mMvpStarterService.addVoteToQuestion(qId, vote)
+    fun addVote(qId: String, vote: Boolean): Single<StatusResponse<Boolean>> {
+        return mMvpStarterService.addVoteToQuestion(qId, vote)
     }
 
     //todo: should return a boolean
-    fun addVoteToAnswer(questionId: String, id: String?, vote: Int) {
-        mMvpStarterService.addVoteToAnswer(questionId, id, vote)
+    fun addVoteToAnswer(questionId: String, id: String?, vote: Boolean): Single<StatusResponse<Boolean>> {
+        return mMvpStarterService.addVoteToAnswer(questionId, id, vote)
     }
 
     fun getMoreAnswers(questionId: String, page: Int): Single<List<Answer>> {
@@ -97,11 +97,12 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.postAnswerFiles(questionId, answerId, retrofitFileParts)
     }
 
-    fun postCommentQuestion(questionId: String, body: String) {
+    fun postCommentQuestion(questionId: String, body: Comment): Single<StatusResponse<Comment>>{
+        return mMvpStarterService.postCommentQuestion(questionId, body)
     }
 
-    fun postCommentForAnswer(questionId: String, answerId: Long, body: String) {
-
+    fun postCommentForAnswer(questionId: String, answerId: String, body: Comment): Single<StatusResponse<Comment>> {
+        return mMvpStarterService.postCommentForAnswer(questionId, answerId, body)
     }
 
 }

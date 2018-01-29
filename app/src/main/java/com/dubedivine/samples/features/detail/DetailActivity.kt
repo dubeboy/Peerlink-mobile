@@ -1,6 +1,5 @@
 package com.dubedivine.samples.features.detail
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -22,13 +21,11 @@ import com.dubedivine.samples.features.common.EndlessRecyclerViewScrollListener
 import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.detail.dialog.AddFilesDialogFragment
 import com.dubedivine.samples.util.BasicUtils
-import com.dubedivine.samples.util.ViewUtil
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_detail.*
 import timber.log.Timber
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashSet
 
@@ -39,6 +36,7 @@ import kotlin.collections.HashSet
 //todo look into the boom menu: https://github.com/Nightonke/BoomMenu
 //todo: should only search when the text is not a empty(space) key
 class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, AddFilesDialogFragment.OnItemClick {
+
 
 
     @Inject lateinit var mDetailPresenter: DetailPresenter
@@ -95,7 +93,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         mErrorView!!.setErrorListener(this)
         //  mDetailPresenter.getPokemon(mQuestion)
         mDetailAdapter.mQuestion = mQuestion!!
-//        mDetailAdapter.
         val layoutManager = LinearLayoutManager(this)
         mRecyclerData!!.layoutManager = layoutManager
         val scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
@@ -137,8 +134,8 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         })
     }
 
-    override fun showUserError(error: String) {
-       toast(error)
+    override fun showUserMessage(msg: String) {
+       toast(msg) // toast or snack
     }
 
     override fun showAnswer(entity: Answer) {
@@ -263,6 +260,33 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
             }
         }
         checkHoriElements()
+    }
+
+    override fun downVoteAnswerAndDisableButton(answerId: String, detailView: DetailAdapter.DetailView) {
+        detailView.downVoteAnswerAndDisableButton(answerId)
+    }
+
+    override fun upVoteAnswerAndDisableButton(answerId: String, detailView: DetailAdapter.DetailView) {
+        detailView.upVoteAnswerAndDisableButton(answerId)
+
+    }
+
+    override fun downVoteAndDisableButton(detailView: DetailAdapter.DetailView) {
+        detailView.downVoteQuestionAndDisableButton()
+
+    }
+
+    override fun upVoteAndDisableButton(detailView: DetailAdapter.DetailView) {
+        detailView.upVoteQuestionAndDisableButton()
+
+    }
+
+    override fun showCommentForQuestion(questionId: String, comment: Comment, detailView: DetailAdapter.DetailView) {
+        mDetailAdapter.addCommentForQuestion(comment)
+    }
+
+    override fun showCommentForAnswer(answerId: String, comment1: Comment, detailView: DetailAdapter.DetailView) {
+        mDetailAdapter.addCommentForAnswer(answerId, comment1)
     }
 
     private fun removeItem(item: String, it: View) {

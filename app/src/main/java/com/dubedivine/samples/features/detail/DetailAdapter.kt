@@ -1,18 +1,20 @@
 package com.dubedivine.samples.features.detail
 
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.dubedivine.samples.R
-import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Comment
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.common.FileView
+import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
 import com.dubedivine.samples.features.detail.comments.CommentsAdapter
 import com.dubedivine.samples.features.detail.comments.FullCommentsListFragment
 import com.dubedivine.samples.util.BasicUtils
@@ -29,7 +31,8 @@ import javax.inject.Inject
 //so i add the question as the top element on the list
 
 class DetailAdapter
-@Inject constructor(private val mDataManager: DataManager) : RecyclerView.Adapter<DetailAdapter.DetailView>() {
+@Inject constructor(private val mDetailPresenter: DetailPresenter) :
+                    RecyclerView.Adapter<DetailAdapter.DetailView>() {
 
     private var _mQuestion: Question? = null
 
@@ -38,6 +41,28 @@ class DetailAdapter
         set(value) {
             _mQuestion = value
         }
+
+    fun addAnswer(answer: Answer) {
+        mQuestion.answers?.add(answer)
+//        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DetailView {
+        val view = LayoutInflater
+                .from(parent!!.context)
+                .inflate(R.layout.item_question_detail_thread, parent, false)
+        return DetailView(view, mDetailPresenter)
+    }
+
+    override fun getItemCount(): Int = (mQuestion.answers?.size ?: 0) + 1
+
+    override fun onBindViewHolder(holder: DetailView, position: Int) {
+        if (position == 0) {
+            holder.bindQuestion(mQuestion) // look at this this is how you can index an Item
+        } else { //position > 0
+            holder.bindAnswer(mQuestion.id!!, mQuestion.answers!![position - 1])  // so that I don`t miss the 0th element
+        }
+    }
 
     fun clear() {
         mQuestion.answers?.clear()
@@ -49,30 +74,8 @@ class DetailAdapter
 
     }
 
-    fun addAnswer(answer: Answer) {
-        mQuestion.answers?.add(answer)
-//        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DetailView {
-        val view = LayoutInflater
-                .from(parent!!.context)
-                .inflate(R.layout.item_question_detail_thread, parent, false)
-        return DetailView(view, mDataManager)
-    }
-
-    override fun getItemCount(): Int = (mQuestion.answers?.size ?: 0) + 1
-
-    override fun onBindViewHolder(holder: DetailView?, position: Int) {
-        if (position == 0) {
-            holder!!.bindQuestion(mQuestion) // look at this this is how you can index an Item
-        } else { //position > 0
-            holder!!.bindAnswer(mQuestion.answers!![position - 1])  // so that I don`t miss the 0th element
-        }
-    }
-
     // no need to be inner class from my perspective we don`t have to carry the ref of the parent class
-    class DetailView( private val view: View, private val mDataManager: DataManager) : RecyclerView.ViewHolder(view) {
+  inner class DetailView( private val view: View, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
 
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
@@ -153,49 +156,61 @@ class DetailAdapter
 
             //todo: once we have the user object then we can allow the changing of state of the answered object
             btnVoteUp.setOnClickListener({
-                mDataManager.addVote(q.id!!, 1)
+                mDetailPresenter.addVote(q.id!!, true, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() +1)}"
                 //should set the button to be disabled here
             })
             btnVoteDown.setOnClickListener({
-                mDataManager.addVote(q.id!!, -1)
+                mDetailPresenter.addVote(q.id!!, false, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() -1)}"
             })
 
             btnSubmitComment.setOnClickListener({
-                handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString())
+                handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this)
             })
 
             if(q.comments != null && q.comments!!.isNotEmpty())
                 attachCommentsAdapter(q.comments!!)
+            else  Log.d(TAG, "Could not attach comments recycler Q: ${q.comments}")
         }
 
-        fun bindAnswer(ans: Answer) {
+        fun bindAnswer(qId: String, ans: Answer) {
 
             bindCommonAnswer(ans)
 
             btnVoteUp.setOnClickListener({
-                mDataManager.addVoteToAnswer(q!!.id!!, ans.id, 1)
+                //should be done via the presenter
+                mDetailPresenter.addVoteToAnswer(qId, ans.id, true, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() +1)}"
                 //should set the button to be disabled here
+                btnVoteUp.isEnabled = false
             })
 
             btnVoteDown.setOnClickListener({
-                mDataManager.addVoteToAnswer(q!!.id!!, ans.id, -1)
+                //should be done via the presenter
+                mDetailPresenter.addVoteToAnswer(qId, ans.id, false, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() -1)}"
+                btnVoteDown.isEnabled = false
             })
 
             btnSubmitComment.setOnClickListener({
-                handleCommentSubmissionForAnswer(q!!.id!! , ,  etCommentBody.text.toString())
+                handleCommentSubmissionForAnswer(qId ,
+                        ans.id!!,
+                        etCommentBody.text.toString(),
+                        this)
             })
 
             if(ans.comments != null && ans.comments!!.isNotEmpty())
                 attachCommentsAdapter(ans.comments!!)
+            else
+                Log.d(TAG, "Could not attach comments recycler A: ${ans.comments}")
         }
 
         private fun attachCommentsAdapter(comments: List<Comment>) {
+            Log.d(TAG, "Attaching comments recycler view and the comments are $comments ")
             recyclerComments.visibility = View.VISIBLE
             val commentsAdapter = CommentsAdapter(comments, true)
+            recyclerComments.layoutManager = LinearLayoutManager(view.context)
             recyclerComments.adapter = commentsAdapter
 
             if (comments.size > 5) {
@@ -207,11 +222,45 @@ class DetailAdapter
             }
         }
 
-        private fun handleCommentSubmissionForQuestion(questionId: String, body: String) {
-            mDataManager.postCommentQuestion(questionId, body)
+        private fun handleCommentSubmissionForQuestion(questionId: String, body: String, detailView: DetailView) {
+            mDetailPresenter.postCommentQuestion(questionId, body, detailView)
         }
-        private fun handleCommentSubmissionForAnswer(questionId: String, answerId: Long, body: String) {
-            mDataManager.postCommentForAnswer(questionId, answerId, body)
+        private fun handleCommentSubmissionForAnswer(questionId: String, answerId: String, body: String, detailView: DetailView) {
+            mDetailPresenter.postCommentForAnswer(questionId, answerId, body, detailView)
         }
+
+        fun downVoteAnswerAndDisableButton(answerId: String) {
+
+        }
+
+        fun upVoteAnswerAndDisableButton(answerId: String) {
+
+        }
+
+        fun downVoteQuestionAndDisableButton() {
+            q!!.votes = q!!.votes - 1
+            btnVoteUp.isEnabled = true
+            notifyDataSetChanged()
+        }
+
+        fun upVoteQuestionAndDisableButton() {
+            q!!.votes = q!!.votes + 1
+            btnVoteDown.isEnabled = true
+            notifyDataSetChanged()
+        }
+
+        //lets see how much memory this leaks
+
     }
+
+    fun addCommentForQuestion(comment: Comment) {
+        mQuestion.comments!!.add(comment)
+        notifyDataSetChanged()
+    }
+
+    fun addCommentForAnswer(answerId: String, comment1: Comment) {
+        mQuestion.answers!!.find { it.id == answerId }!!.comments!!.add(comment1)
+        notifyDataSetChanged()
+    }
+
 }

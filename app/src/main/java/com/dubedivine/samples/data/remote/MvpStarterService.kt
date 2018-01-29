@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull
 import retrofit2.http.*
 
 interface MvpStarterService {
-
-
     @GET("pokemon")
     fun getPokemonList(@Query("limit") limit: Int): Single<PokemonListResponse>
 
@@ -20,26 +18,16 @@ interface MvpStarterService {
     fun getSearchSuggestions(@Query("text") charSequence: CharSequence): Single<List<Question>>
 
     @POST("questions/{q_id}/vote")
-    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Int): Single<StatusResponse<Boolean>>  // should return a single Boolean
+    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>  // should return a single Boolean
 
     @POST("questions/{q_id}/vote/{a_id}")
-    fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: String?, @Query("vote") vote: Int): Single<Status>
+    fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: String?, @Query("vote") vote: Boolean):Single<StatusResponse<Boolean>>
 
     @GET("answers/{q_id}")
     fun getMoreAnswers(@Path("q_id") questionId: String, @Query("page") page: Int): Single<List<Answer>>
 
     @GET("tags/suggest")
     fun getTagSuggestion(@Query("tag") tag: CharSequence): Single<List<Tag>>
-
-    //since we are adding a new question we want to put!!
-//    application/octet-stream
-//    @Headers({"Accept: application/json"})
-//    if(isMultipart)
-//    builder.add("Content-Type", "multipart/form-data; charset=utf-8; boundary=\"myboundary\"");
-
-
-    //    @Headers("Accept: application/json",
-    // "Content-Type: application/form-data; charset=utf-8; boundary=\"73379e6d-c34a-431a-827f-82b4981d54cb\"")
 
     @Headers("Accept: application/json", "Content-Type: application/json")
     @PUT("questions")
@@ -58,4 +46,13 @@ interface MvpStarterService {
     fun postAnswerFiles(@Path("q_id") questionId: String,
                         @Path("a_id") answerId: String,
                         @Part retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Answer>>
+
+    @POST("questions/{q_id}/comment")
+    fun postCommentQuestion(@Path("q_id") questionId: String,
+                            @Body body: Comment): Single<StatusResponse<Comment>>
+
+    @POST("questions/{q_id}/answer/{a_id}/comment")
+    fun postCommentForAnswer(@Path("q_id") questionId: String,
+                             @Path("a_id") answerId: String,
+                             @Body body: Comment): Single<StatusResponse<Comment>>
 }
