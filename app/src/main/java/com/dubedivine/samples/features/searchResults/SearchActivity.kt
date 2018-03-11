@@ -1,5 +1,4 @@
 package com.dubedivine.samples.features.searchResults
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -26,7 +25,6 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
     // all the common  injection i think that we should have another base baseActivity u feel!
     @Inject lateinit var searchPresenter: SearchPresenter
     @Inject lateinit var searchAdapter: SearchAdapter
-
     @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
     @BindView(R.id.progress) @JvmField var mProgress: ProgressBar? = null
     @BindView(R.id.recycler_data) @JvmField var mSearchResultsRecycler: RecyclerView? = null
@@ -48,7 +46,7 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         mSwipeRefreshLayout?.setColorSchemeResources(R.color.white)
         mSwipeRefreshLayout?.setOnRefreshListener {
             searchAdapter.clear() // clear items and then try again
-            searchPresenter.getSearchResults(searchTerm, 0 )
+            searchPresenter.getSearchResults(searchTerm, 0)
         }
 
         searchPresenter.getSearchResults(searchTerm, 0)  // initialize the questions
@@ -75,8 +73,6 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         snack("An error happened sorry!")
         Timber.e(error)
     }
-
-
 
     override val layout: Int
         get() = R.layout.activity_search

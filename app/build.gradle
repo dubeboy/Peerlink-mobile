@@ -93,6 +93,7 @@ android {
 configurations.all {
     resolutionStrategy {
         force 'com.squareup.okio:okio:1.11.0'
+
         force "com.squareup.okhttp3:okhttp:3.5.0"
         force 'org.jetbrains.kotlin:kotlin-stdlib:1.1.2-3'
     }

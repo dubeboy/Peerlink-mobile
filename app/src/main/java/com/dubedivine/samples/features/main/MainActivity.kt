@@ -1,12 +1,15 @@
 package com.dubedivine.samples.features.main
 
+import android.app.ActionBar
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MenuItem
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.ImageButton
@@ -21,9 +24,10 @@ import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.common.SearchArrayAdapter
 import com.dubedivine.samples.features.searchResults.SearchActivity
 import com.dubedivine.samples.util.snack
-import com.dubedivine.samples.util.toast
+import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import javax.inject.Inject
+
 
 //todo we should have better font thinner font please
 
@@ -38,14 +42,30 @@ class MainActivity :
     @Inject lateinit var mSearchArrayAdapter: SearchArrayAdapter
     @Inject lateinit var mMainPresenter: MainPresenter
 
-    @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
-    @BindView(R.id.progress) @JvmField var mProgress: ProgressBar? = null
-    @BindView(R.id.recycler_data) @JvmField var mPokemonRecycler: RecyclerView? = null
-    @BindView(R.id.swipe_to_refresh) @JvmField var mSwipeRefreshLayout: SwipeRefreshLayout? = null
-    @BindView(R.id.toolbar) @JvmField var mToolbar: Toolbar? = null
-    @BindView(R.id.main_btn_search) @JvmField var mSearchButton: ImageButton? = null
-    @BindView(R.id.main_auto_complete_input_search) @JvmField var mAutoCompleteSearchInputView: AutoCompleteTextView? = null
-    @BindView(R.id.search_progress_bar) @JvmField var mSearchProgressBar: ProgressBar? = null
+    @BindView(R.id.view_error)
+    @JvmField
+    var mErrorView: ErrorView? = null
+    @BindView(R.id.progress)
+    @JvmField
+    var mProgress: ProgressBar? = null
+    @BindView(R.id.recycler_data)
+    @JvmField
+    var mPokemonRecycler: RecyclerView? = null
+    @BindView(R.id.swipe_to_refresh)
+    @JvmField
+    var mSwipeRefreshLayout: SwipeRefreshLayout? = null
+    @BindView(R.id.toolbar)
+    @JvmField
+    var mToolbar: Toolbar? = null
+    @BindView(R.id.main_btn_search)
+    @JvmField
+    var mSearchButton: ImageButton? = null
+    @BindView(R.id.main_auto_complete_input_search)
+    @JvmField
+    var mAutoCompleteSearchInputView: AutoCompleteTextView? = null
+    @BindView(R.id.search_progress_bar)
+    @JvmField
+    var mSearchProgressBar: ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +73,9 @@ class MainActivity :
         mMainPresenter.attachView(this)
 
         setSupportActionBar(mToolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
         mSwipeRefreshLayout?.setProgressBackgroundColorSchemeResource(R.color.primary)
         mSwipeRefreshLayout?.setColorSchemeResources(R.color.white)
@@ -65,8 +88,6 @@ class MainActivity :
         mErrorView?.setErrorListener(this)
 
         mMainPresenter.getPokemon(POKEMON_COUNT) // gets the pokemon !!!
-
-//        mSearchButton?.setOnClickListener(this)  // no need butterKnife has my back
 
         //mAutoCompleteSearchInputView ----------------------------------------------------
         mSearchArrayAdapter.onItemClick = this
@@ -93,6 +114,22 @@ class MainActivity :
         mAutoCompleteSearchInputView?.setOnItemClickListener({ adapterView, view, i, l ->
             Timber.e("$adapterView is $view $i $l ayoba$$$$$$$$$$$$$$$$$$$")
         })
+
+        nav_view.setNavigationItemSelectedListener(
+                object : NavigationView.OnNavigationItemSelectedListener {
+                    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true)
+                        // close drawer when item is tapped
+                        drawer_layout.closeDrawers()
+
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+
+                        return true
+                    }
+                })
+
 
     }
 
@@ -142,7 +179,7 @@ class MainActivity :
     }
 
     override fun onPokemonClick(pokemon: String) {
-       // startActivity(DetailActivity.getStartIntent(this, pokemon))
+        // startActivity(DetailActivity.getStartIntent(this, pokemon))
     }
 
     @OnClick(R.id.main_btn_search)
@@ -158,8 +195,8 @@ class MainActivity :
     }
 
 
+    // click event from the searchAdapter
     override fun onItemClick(question: Question) {
-//        mMainPresenter.getQuestions(question)
         startActivity(SearchActivity.getStartIntent(this, question, mAutoCompleteSearchInputView!!.text.toString()))
     }
 
@@ -170,7 +207,7 @@ class MainActivity :
             // todo: should make the item un clickable
             mSearchProgressBar?.visibility = View.VISIBLE
             mSearchArrayAdapter.clear() // clear the available data and then just add one item that just says searching
-           // toast("Searching...", Toast.LENGTH_SHORT)
+            // toast("Searching...", Toast.LENGTH_SHORT)
         } else {
             mSearchProgressBar?.visibility = View.GONE
             mSearchArrayAdapter.clear() // just make the adapter ready for more input

@@ -2,6 +2,7 @@ package com.dubedivine.samples.features.base
 
 import android.os.Bundle
 import android.support.v4.util.LongSparseArray
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import butterknife.ButterKnife
@@ -10,6 +11,7 @@ import com.dubedivine.samples.injection.component.ActivityComponent
 import com.dubedivine.samples.injection.component.ConfigPersistentComponent
 import com.dubedivine.samples.injection.component.DaggerConfigPersistentComponent
 import com.dubedivine.samples.injection.module.ActivityModule
+import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicLong
 
@@ -67,9 +69,10 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                finish()
+                drawer_layout.openDrawer(GravityCompat.START)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

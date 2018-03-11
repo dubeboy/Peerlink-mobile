@@ -19,8 +19,6 @@ import javax.inject.Inject
  * Created by divine on 2017/09/09.
  */
 
-//should be moved to the search features package
-
 //todo: should inject this from the data base in the future
 open class SearchArrayAdapter @Inject
 constructor(context: Context,
@@ -39,7 +37,7 @@ constructor(context: Context,
             override fun performFiltering(charSequence: CharSequence?): Filter.FilterResults {
                 val fl = Filter.FilterResults()
                 if (charSequence != null) {
-                    Timber.i("performFiltering: the filterd data is %s", charSequence)
+                    Timber.i("performFiltering: the filtered data is %s", charSequence)
                     fl.values = questions
                 }
                 return fl

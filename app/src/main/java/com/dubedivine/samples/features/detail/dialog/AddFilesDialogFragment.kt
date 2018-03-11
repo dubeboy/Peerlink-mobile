@@ -34,7 +34,6 @@ import droidninja.filepicker.FilePickerConst
   * the type: Char is a problem its functionality should be removed its redundant
 * */
 class AddFilesDialogFragment : DialogFragment() {
-
     private var mediaFiles: HashMap<Char, List<String>> = HashMap() //Maps media type to Files
     private lateinit var onItemClick: OnItemClick
     private lateinit var btnAttachPhotos: FloatingActionButton

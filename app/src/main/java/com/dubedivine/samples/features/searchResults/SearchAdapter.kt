@@ -45,17 +45,21 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
         fun onQuestionClick(question: Question)
     }
 
-      class SearchViewHolder(view: View,
-                             private val clickListener: ClickListener?) : RecyclerView.ViewHolder(view) {
+    class SearchViewHolder(view: View,
+                           private val clickListener: ClickListener?) : RecyclerView.ViewHolder(view) {
 
-        @JvmField val questionStatus: TextView = view.findViewById(R.id.question_status)  //like: 10 answers, answered by Divine
-        @JvmField val questionTitle: TextView = view.findViewById(R.id.question_title)
-        @JvmField val questionBody: TextView = view.findViewById(R.id.question_body)
-        @JvmField val questionFilesHoriScrollView: HorizontalScrollView = view.findViewById(R.id.question_files_hori_scrollview)
-        @JvmField val questionTagsLayout: LinearLayout = view.findViewById(R.id.question_tags_layout)
+        @JvmField
+        val questionStatus: TextView = view.findViewById(R.id.question_status)  //like: 10 answers, answered by Divine
+        @JvmField
+        val questionTitle: TextView = view.findViewById(R.id.question_title)
+        @JvmField
+        val questionBody: TextView = view.findViewById(R.id.question_body)
+        @JvmField
+        val questionFilesHoriScrollView: HorizontalScrollView = view.findViewById(R.id.question_files_hori_scrollview)
+        @JvmField
+        val questionTagsLayout: LinearLayout = view.findViewById(R.id.question_tags_layout)
 
         init {
-
             ButterKnife.bind(this, itemView)
         }
 
@@ -73,13 +77,16 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
             }
             // not required
             if (question.tags.isNotEmpty()) { // a question should have atleast one tag yoh
+                // todo: clean the layout first
                 questionTagsLayout.visibility = View.VISIBLE
-                question.tags.forEach({
-                    questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
-                })
+                if (questionTagsLayout.childCount == 0) {
+                    question.tags.forEach(action = {
+                        questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
+                    })
+                }
             }
-            itemView.setOnClickListener( {
-               clickListener?.onQuestionClick(question)
+            itemView.setOnClickListener({
+                clickListener?.onQuestionClick(question)
             })
         }
     }

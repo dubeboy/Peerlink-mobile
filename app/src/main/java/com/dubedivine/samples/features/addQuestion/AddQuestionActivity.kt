@@ -40,7 +40,6 @@ import javax.inject.Inject
 //and it not using ButterKnife myabe there shold be a revolution
 class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
-
     @Inject lateinit var mAddQuestionPresenter: AddQuestionPresenter
 
     lateinit var tagsSuggestionsAdapter: ArrayAdapter<String>

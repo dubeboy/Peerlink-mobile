@@ -60,7 +60,7 @@ class DetailAdapter
         if (position == 0) {
             holder.bindQuestion(mQuestion) // look at this this is how you can index an Item
         } else { //position > 0
-            holder.bindAnswer(mQuestion.id!!, mQuestion.answers!![position - 1])  // so that I don`t miss the 0th element
+            holder.bindAnswer(mQuestion.id!!, mQuestion.answers!![position - 1])  // so that I don`t miss the 0th element in the answers arrayList
         }
     }
 
@@ -71,7 +71,6 @@ class DetailAdapter
     fun addAll(answers: List<Answer>) {
         mQuestion.answers?.addAll(answers)
 //        notifyDataSetChanged()
-
     }
 
     inner class DetailView(private val view: View, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
@@ -143,7 +142,9 @@ class DetailAdapter
             this.q = q
             q.tags.forEach({
                 val chip = BasicUtils.createTagsChip(itemView.context, it.name)
-                tagsLinearHorizontalView.addView(chip)
+                if (tagsLinearHorizontalView.childCount == 0)
+                    tagsLinearHorizontalView.addView(chip)
+
             })
 
             if (q.answered == true) {
@@ -163,6 +164,7 @@ class DetailAdapter
 
             btnSubmitComment.setOnClickListener({
                 handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this)
+                etCommentBody.setText("") //todo : bad should be in the callback when this is succes
             })
 
             if (q.comments != null && q.comments!!.isNotEmpty())
@@ -189,12 +191,13 @@ class DetailAdapter
                 btnVoteDown.isEnabled = false
             })
 
-            btnSubmitComment.setOnClickListener({
+            btnSubmitComment.setOnClickListener {
                 handleCommentSubmissionForAnswer(qId,
                         ans.id!!,
                         etCommentBody.text.toString(),
                         this) //todo: leaks
-            })
+                etCommentBody.setText("")
+            }
 
             if (ans.comments != null && ans.comments!!.isNotEmpty())
                 attachCommentsAdapter(ans.comments!!)
@@ -218,14 +221,12 @@ class DetailAdapter
                 showCommentsDetails()
             })
 
-            if (comments.size > 5) {
+            if (comments.size > 4) {
                 btnMoreComments.visibility = View.VISIBLE
                 btnMoreComments.setOnClickListener({
                     showCommentsDetails()
                 })
             }
-
-
         }
 
         private fun handleCommentSubmissionForQuestion(questionId: String, body: String, detailView: DetailView) {
@@ -264,7 +265,6 @@ class DetailAdapter
         mQuestion.comments!!.add(comment)
         notifyDataSetChanged()
     }
-
 
     // why don`t we just pass the index of the answer instead of this O(n) operation it got to be O(1)
     fun addCommentForAnswer(answerId: String, comment1: Comment) {

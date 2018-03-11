@@ -39,7 +39,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
             if (chars.length >= 5) {
                 Timber.i("getSuggestions is being called with text $chars")
                 Flowable
-                        .just(chars)
+                        .just(chars) //todo NB: does not work
                         .debounce(2, TimeUnit.SECONDS) // debouncing when the user is inputting the text
                         .subscribe({
                             Timber.i("getSuggestions: calling the api for some data with this title $it")
