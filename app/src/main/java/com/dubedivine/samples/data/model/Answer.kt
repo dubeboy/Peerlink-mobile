@@ -10,13 +10,13 @@ import kotlin.collections.ArrayList
  */
 class Answer : Serializable {
     var body: String? = null
-        private set
+        private set  // todo: this is ugly y not make it a val
     var votes: Long = 0
         private set
     var isChosen: Boolean = false
         private set
     val createAt = Date()
-    var comments: ArrayList<Comment>? = null
+    var comments: ArrayList<Comment> = ArrayList()
     var video: Media? = null
     val files: List<Media>? = null
     val id: String? = null // UUID

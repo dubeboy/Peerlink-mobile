@@ -24,7 +24,7 @@ class CommentsAdapter constructor(private val comment: List<Comment>,
         return DetailView(view)
     }
 
-    override fun getItemCount(): Int = if (comment.size > 5) 4 else comment.size
+    override fun getItemCount(): Int = if (showTwoMaxLinesOnEditText && comment.size > 4 ) 4 else comment.size
 
     override fun onBindViewHolder(holder: DetailView, position: Int) {
             holder.bind(comment[position], showTwoMaxLinesOnEditText)

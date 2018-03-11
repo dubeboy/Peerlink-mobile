@@ -37,11 +37,8 @@ import kotlin.collections.HashSet
 //todo: should only search when the text is not a empty(space) key
 class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, AddFilesDialogFragment.OnItemClick {
 
-
-
     @Inject lateinit var mDetailPresenter: DetailPresenter
     @Inject lateinit var mDetailAdapter: DetailAdapter
-
     @BindView(R.id.view_error)
     @JvmField
     var mErrorView: ErrorView? = null
@@ -59,21 +56,15 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
     private val docsList: HashSet<String> = HashSet(0)//not sure weather there should be 0 , 1 or default init capacity, 0 for now
     private lateinit var newFragment: AddFilesDialogFragment
 
+    override val layout: Int
+        get() = R.layout.activity_detail
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
         mDetailPresenter.attachView(this)
         // todo: should look into delegate and lazy loading so that this is only create if the user wants to send file and its created once
         newFragment = AddFilesDialogFragment.newInstance(this)
-
-        // newFragment.retainInstance = true // how do i manually kill it, onDetach?
-//        val alertDialogBuilder = AlertDialog.Builder(this)
-//        alertDialogBuilder.setTitle("Attach photos, videos or files ")
-//        val view =  layoutInflater.inflate(R.layout.alert_dialog_select_files, null)
-//        alertDialogBuilder.setView(view)
-//        setUpOnClickListenersForAlertButtons(view)
-//        alertDialogBuilder.create()
-
 //        val q = Question("Hello", "what does hello mean", 100, listOf<Tag>(Tag("hello", Date()), Tag("hello", Date())), "Q")
 //        q.id = "29292929"
 //        mQuestion = q
@@ -84,14 +75,12 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         }
 
         setSupportActionBar(mToolbar)
-
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
         title = mQuestion!!.title
 
         mErrorView!!.setErrorListener(this)
-        //  mDetailPresenter.getPokemon(mQuestion)
         mDetailAdapter.mQuestion = mQuestion!!
         val layoutManager = LinearLayoutManager(this)
         mRecyclerData!!.layoutManager = layoutManager
@@ -144,36 +133,8 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
         et_answer_input.setText("")
         mRecyclerData!!.scrollToPosition(mRecyclerData!!.adapter.itemCount - 1)
     }
-//    private fun setUpOnClickListenersForAlertButtons(view: View) {
-//        val btnAttachPhotos = view.findViewById<FloatingActionButton>(R.id.btn_attach_photos)
-//        val btnAttachVideos = view.findViewById<FloatingActionButton>(R.id.btn_attach_video)
-//        val btnAttachFiles = view.findViewById<FloatingActionButton>(R.id.btn_attach_filez)
-//
-//        btnAttachPhotos.setOnClickListener({
-//
-//            FilePickerBuilder.getInstance()
-//                    .setMaxCount(10)
-//                    .setActivityTheme(R.style.AppTheme)
-//                    .pickPhoto(this)
-//        })
-//
-//        btnAttachVideos.setOnClickListener({
-//            val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-//            if (takeVideoIntent.resolveActivity(packageManager) != null) {
-//                Log.d(AddQuestionActivity.TAG, " the data is ${takeVideoIntent.data}")
-//                startActivityForResult(takeVideoIntent, AddQuestionActivity.REQUEST_VIDEO_CAPTURE)
-//            }
-//        })
-//
-//        btnAttachFiles.setOnClickListener({
-//            FilePickerBuilder.getInstance()
-//                    .setMaxCount(10)
-//                    .setActivityTheme(R.style.AppTheme)
-//                    .pickFile(this)
-//        })
-//    }
-    override val layout: Int
-        get() = R.layout.activity_detail
+
+
 
     override fun showQuestionsAndAnswers(pokemon: Pokemon) {
     }

@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 class DetailAdapter
 @Inject constructor(private val mDetailPresenter: DetailPresenter) :
-                    RecyclerView.Adapter<DetailAdapter.DetailView>() {
+        RecyclerView.Adapter<DetailAdapter.DetailView>() {
 
     private var _mQuestion: Question? = null
 
@@ -74,9 +74,7 @@ class DetailAdapter
 
     }
 
-    // no need to be inner class from my perspective we don`t have to carry the ref of the parent class
-  inner class DetailView( private val view: View, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
-
+    inner class DetailView(private val view: View, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
         private val btnCorrectAnswer: Button = view.findViewById(R.id.btn_correct_answer)
@@ -87,13 +85,11 @@ class DetailAdapter
         private val tagsLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_tags_linearlayout) // naming is a bit off...
         private val filesLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_files_linearlayout)
         private val tvVotes: TextView = view.findViewById(R.id.tv_vote_count)
-
         private val recyclerComments: RecyclerView = view.findViewById(R.id.comments_recycler_list)
         private val btnSubmitComment: ImageButton = view.findViewById(R.id.btn_comment_question)
-        private val btnMoreComments: ImageButton = view.findViewById(R.id.btn_vote_down)
+        private val btnMoreComments: ImageButton = view.findViewById(R.id.btn_more_comments)
         private val etCommentBody: EditText = view.findViewById(R.id.et_comment_input)
-
-        private var q: Question?= null
+        private var q: Question? = null
 
         //it should have helped if both of our answers and question where of the same type hierarchy i think....
         // but that for some other day bro for now the painful method will work
@@ -157,21 +153,21 @@ class DetailAdapter
             //todo: once we have the user object then we can allow the changing of state of the answered object
             btnVoteUp.setOnClickListener({
                 mDetailPresenter.addVote(q.id!!, true, this)
-                tvVotes.text = "${(tvVotes.text.toString().toInt() +1)}"
+                tvVotes.text = "${(tvVotes.text.toString().toInt() + 1)}"
                 //should set the button to be disabled here
             })
             btnVoteDown.setOnClickListener({
                 mDetailPresenter.addVote(q.id!!, false, this)
-                tvVotes.text = "${(tvVotes.text.toString().toInt() -1)}"
+                tvVotes.text = "${(tvVotes.text.toString().toInt() - 1)}"
             })
 
             btnSubmitComment.setOnClickListener({
                 handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this)
             })
 
-            if(q.comments != null && q.comments!!.isNotEmpty())
+            if (q.comments != null && q.comments!!.isNotEmpty())
                 attachCommentsAdapter(q.comments!!)
-            else  Log.d(TAG, "Could not attach comments recycler Q: ${q.comments}")
+            else Log.d(TAG, "Could not attach comments recycler Q: ${q.comments}")
         }
 
         fun bindAnswer(qId: String, ans: Answer) {
@@ -181,7 +177,7 @@ class DetailAdapter
             btnVoteUp.setOnClickListener({
                 //should be done via the presenter
                 mDetailPresenter.addVoteToAnswer(qId, ans.id, true, this)
-                tvVotes.text = "${(tvVotes.text.toString().toInt() +1)}"
+                tvVotes.text = "${(tvVotes.text.toString().toInt() + 1)}"
                 //should set the button to be disabled here
                 btnVoteUp.isEnabled = false
             })
@@ -189,21 +185,21 @@ class DetailAdapter
             btnVoteDown.setOnClickListener({
                 //should be done via the presenter
                 mDetailPresenter.addVoteToAnswer(qId, ans.id, false, this)
-                tvVotes.text = "${(tvVotes.text.toString().toInt() -1)}"
+                tvVotes.text = "${(tvVotes.text.toString().toInt() - 1)}"
                 btnVoteDown.isEnabled = false
             })
 
             btnSubmitComment.setOnClickListener({
-                handleCommentSubmissionForAnswer(qId ,
+                handleCommentSubmissionForAnswer(qId,
                         ans.id!!,
                         etCommentBody.text.toString(),
-                        this)
+                        this) //todo: leaks
             })
 
-            if(ans.comments != null && ans.comments!!.isNotEmpty())
+            if (ans.comments != null && ans.comments!!.isNotEmpty())
                 attachCommentsAdapter(ans.comments!!)
             else
-                Log.d(TAG, "Could not attach comments recycler A: ${ans.comments}")
+                Log.i(TAG, "Could not attach comments recycler A: ${ans.comments}")
         }
 
         private fun attachCommentsAdapter(comments: List<Comment>) {
@@ -213,18 +209,29 @@ class DetailAdapter
             recyclerComments.layoutManager = LinearLayoutManager(view.context)
             recyclerComments.adapter = commentsAdapter
 
+            fun showCommentsDetails() {
+                val commentsListFragment = FullCommentsListFragment(view.context, comments)
+                commentsListFragment.show()
+            }
+
+            recyclerComments.setOnClickListener({
+                showCommentsDetails()
+            })
+
             if (comments.size > 5) {
                 btnMoreComments.visibility = View.VISIBLE
                 btnMoreComments.setOnClickListener({
-                    val commentsListFragment =  FullCommentsListFragment(view.context, comments)
-                    commentsListFragment.show()
+                    showCommentsDetails()
                 })
             }
+
+
         }
 
         private fun handleCommentSubmissionForQuestion(questionId: String, body: String, detailView: DetailView) {
             mDetailPresenter.postCommentQuestion(questionId, body, detailView)
         }
+
         private fun handleCommentSubmissionForAnswer(questionId: String, answerId: String, body: String, detailView: DetailView) {
             mDetailPresenter.postCommentForAnswer(questionId, answerId, body, detailView)
         }
@@ -258,9 +265,14 @@ class DetailAdapter
         notifyDataSetChanged()
     }
 
-    fun addCommentForAnswer(answerId: String, comment1: Comment) {
-        mQuestion.answers!!.find { it.id == answerId }!!.comments!!.add(comment1)
-        notifyDataSetChanged()
-    }
 
+    // why don`t we just pass the index of the answer instead of this O(n) operation it got to be O(1)
+    fun addCommentForAnswer(answerId: String, comment1: Comment) {
+        for (ans in mQuestion.answers!!) {
+            if (ans.id == answerId) {
+                ans.comments.add(comment1)
+                notifyDataSetChanged()
+            }
+        }
+    }
 }

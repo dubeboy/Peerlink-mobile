@@ -65,10 +65,11 @@ object BasicUtils {
         btnFile.text = file.name
         when (file.type) {
             Media.PICTURE_TYPE -> {
+                //todo: since all of
                 btnFile.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_image_black_24dp, 0, 0, 0)
             }
-            Media.PICTURE_TYPE -> {
+            Media.VIDEO_TYPE -> {
                 btnFile.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_ondemand_video_24dp, 0, 0, 0)
             }
@@ -156,17 +157,6 @@ object BasicUtils {
         }
         val body: MultipartBody = multiPartBuilder.build()
         return body.parts()
-    }
-
-
-     fun generateBoundary(): String {
-        val buffer = StringBuilder()
-        val rand = Random()
-        val count = rand.nextInt(11) + 30 // a random size from 30 to 40
-        for (i in 0 until count) {
-            buffer.append(MULTIPART_CHARS[rand.nextInt(MULTIPART_CHARS.size)])
-        }
-        return buffer.toString()
     }
 
     fun getRealPathFromURI(uri: Uri, context: Activity): String {

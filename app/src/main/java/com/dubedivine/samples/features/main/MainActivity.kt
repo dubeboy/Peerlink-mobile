@@ -170,7 +170,7 @@ class MainActivity :
             // todo: should make the item un clickable
             mSearchProgressBar?.visibility = View.VISIBLE
             mSearchArrayAdapter.clear() // clear the available data and then just add one item that just says searching
-            toast("Searching...", Toast.LENGTH_SHORT)
+           // toast("Searching...", Toast.LENGTH_SHORT)
         } else {
             mSearchProgressBar?.visibility = View.GONE
             mSearchArrayAdapter.clear() // just make the adapter ready for more input

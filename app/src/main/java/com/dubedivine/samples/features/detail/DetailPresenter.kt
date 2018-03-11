@@ -105,10 +105,11 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                     .subscribe({
                         mvpView!!.showProgress(false)
                         if (it.status!!) {
-                            // mvpView!!.showUserMessage("Your vote has been casted.")
+                             mvpView!!.showUserMessage("Your vote has been casted.")
                         } else {
                             //should only tell the user when there is an error and then do their opposite action
                             mvpView!!.showUserMessage("Sorry failed to cast your vote, please try again.")
+                            //TODO Not required!!!
                             when (vote) {
                                 true -> {
                                     mvpView!!.downVoteAndDisableButton(detailView)
@@ -180,6 +181,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                         .subscribe({
                             mvpView!!.showProgress(false)
                             if (it.status!!) {
+                                //todo creating a new comment object really?
                                 mvpView!!.showCommentForAnswer(answerId, Comment(body, 0), detailView)
                             } else {
                                 mvpView!!.showUserMessage("Failed to share comment, please try again")

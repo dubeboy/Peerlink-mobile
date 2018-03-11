@@ -3,6 +3,7 @@ package com.dubedivine.samples.util
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 
@@ -28,4 +29,6 @@ object ViewUtil {
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT)
     }
+
+
 }

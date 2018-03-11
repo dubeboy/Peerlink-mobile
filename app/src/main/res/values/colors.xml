@@ -12,5 +12,6 @@
     <color name="black">#000000</color>
     <color name="gray">#eeeeee</color>
     <color name="background_material_light">#bcaaa4</color>
+    <color name="dark_gray">#bdbdbd</color>
     <!--<color name="divider">#B6B6B6</color>-->
 </resources>

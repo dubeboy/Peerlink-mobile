@@ -1,7 +1,9 @@
 package com.dubedivine.samples.util
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.graphics.Color
+import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -57,4 +59,16 @@ fun View.removeFromParent() {
 fun Any.log(message: String) {
     val TAG = this::javaClass.name
     Log.d(TAG, message)
+}
+
+//todo: should replicate to create a progress dialog
+fun Activity.createDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null) {
+    val alertDialogBuilder = AlertDialog.Builder(this)
+    alertDialogBuilder.setTitle(title)
+    alertDialogBuilder.setMessage(msg)
+    if (resource != null) {
+        val view =  layoutInflater.inflate(resource, null)
+        alertDialogBuilder.setView(view)
+    }
+    alertDialogBuilder.create()
 }

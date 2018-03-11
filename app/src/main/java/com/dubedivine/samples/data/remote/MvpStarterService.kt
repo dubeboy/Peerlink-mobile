@@ -20,8 +20,10 @@ interface MvpStarterService {
     @POST("questions/{q_id}/vote")
     fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>  // should return a single Boolean
 
-    @POST("questions/{q_id}/vote/{a_id}")
-    fun addVoteToAnswer(@Path("q_id") questionId: String, @Path("q_id") id: String?, @Query("vote") vote: Boolean):Single<StatusResponse<Boolean>>
+    @POST("questions/{q_id}/vote/{a_id}/vote")
+    fun addVoteToAnswer(@Path("q_id") questionId: String,
+                        @Path("a_id") id: String?,
+                        @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>
 
     @GET("answers/{q_id}")
     fun getMoreAnswers(@Path("q_id") questionId: String, @Query("page") page: Int): Single<List<Answer>>
