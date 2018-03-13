@@ -38,6 +38,7 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     }
 
     //page is for pagination!!
+    @Deprecated("bad side effects")
     fun searchForQuestionUsingName(questionName: String, page: Int): Single<List<Question>> {
         val returnQuestions = mMvpStarterService.getSearchSuggestions(questionName)
                 .toObservable()
@@ -103,6 +104,10 @@ constructor(private val mMvpStarterService: MvpStarterService) {
 
     fun postCommentForAnswer(questionId: String, answerId: String, body: Comment): Single<StatusResponse<Comment>> {
         return mMvpStarterService.postCommentForAnswer(questionId, answerId, body)
+    }
+
+    fun signInUserWithServer(email: String, displayName: String, idToken: String): Single<StatusResponse<User>> {
+        return mMvpStarterService.postSignInUserWithServer(email, displayName, idToken)
     }
 
 }

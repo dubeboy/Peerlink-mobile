@@ -2,6 +2,7 @@ package com.dubedivine.samples.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.MediaStore
 import android.support.annotation.LayoutRes
@@ -32,8 +33,6 @@ object BasicUtils {
 
     private const val REGEX = "#(\\d*[A-Za-z_]+\\w*)\\b(?!;)"
     private const val TAG = "__BasicUtils"
-    private val MULTIPART_CHARS = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            .toCharArray()
 
 
     private val threeDp = ViewUtil.dpToPx(3)  // what do u think is it cool ? instead of ThreeDp or i could do this val `3dp` = "3dp"
@@ -110,7 +109,6 @@ object BasicUtils {
         return relativeLayout
 
     }
-
 
     // no need to export this if i need it will just use the  context... as X in the activity
    private fun <T : View> inflateFor(context: Activity, @LayoutRes layout: Int) : T {

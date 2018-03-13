@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.robertlevonyan.views.chip.Chip
+import kotlinx.android.synthetic.main.content_error_and_progress_view.*
 import timber.log.Timber
 
 /**
@@ -62,7 +63,7 @@ fun Any.log(message: String) {
 }
 
 //todo: should replicate to create a progress dialog
-fun Activity.createDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null) {
+fun Activity.createAlertDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null): AlertDialog {
     val alertDialogBuilder = AlertDialog.Builder(this)
     alertDialogBuilder.setTitle(title)
     alertDialogBuilder.setMessage(msg)
@@ -70,5 +71,9 @@ fun Activity.createDialog(title: String, msg: String? = null, @LayoutRes resourc
         val view =  layoutInflater.inflate(resource, null)
         alertDialogBuilder.setView(view)
     }
-    alertDialogBuilder.create()
+    return alertDialogBuilder.create()
+}
+
+fun Activity.showProgressAlertDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null) {
+    this.createAlertDialog(title, msg, null)
 }

@@ -45,22 +45,23 @@ abstract class BaseFragment : Fragment() {
         mFragmentComponent = configPersistentComponent.fragmentComponent(FragmentModule(this))
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view: View? = inflater?.inflate(layout, container, false)
+        val view: View? = inflater.inflate(layout, container, false)
         ButterKnife.bind(this, view as View)
         return view
     }
 
+
     abstract val layout: Int
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putLong(KEY_FRAGMENT_ID, mFragmentId)
+        outState.putLong(KEY_FRAGMENT_ID, mFragmentId)
     }
 
     override fun onDestroy() {
-        if (!activity.isChangingConfigurations) {
+        if (!activity!!.isChangingConfigurations) {
             Timber.i("Clearing ConfigPersistentComponent id=%d", mFragmentId)
             sComponentsArray.remove(mFragmentId)
         }

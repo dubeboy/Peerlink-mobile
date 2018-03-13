@@ -7,7 +7,7 @@ package com.dubedivine.samples.features.base
  * that then usually will be implemented by an Activity or Fragment.
  */
 interface MvpView {
-
+    //todo: Got a sudden light bulb these should be default methods
     fun showProgress(show: Boolean)
 
     fun showError(error: Throwable)

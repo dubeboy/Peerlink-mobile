@@ -1,8 +1,10 @@
 package com.dubedivine.samples.features.main
 
-import android.app.ActionBar
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -141,6 +143,16 @@ class MainActivity :
         mMainPresenter.detachView()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                drawer_layout.openDrawer(GravityCompat.START)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     //pveriden method from mvpView
     override fun showPokemon(pokemon: List<String>) {
         mPokemonAdapter.setPokemon(pokemon)
@@ -225,8 +237,12 @@ class MainActivity :
     }
 
     companion object {
-
         private val POKEMON_COUNT = 20
+
+        fun getStartIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
+
     }
 }
 
