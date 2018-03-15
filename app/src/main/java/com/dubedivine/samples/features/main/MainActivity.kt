@@ -1,12 +1,9 @@
 package com.dubedivine.samples.features.main
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
@@ -20,11 +17,13 @@ import android.widget.Toast
 import butterknife.BindView
 import butterknife.OnClick
 import com.dubedivine.samples.R
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.common.SearchArrayAdapter
 import com.dubedivine.samples.features.searchResults.SearchActivity
+import com.dubedivine.samples.features.signIn.SignIn
 import com.dubedivine.samples.util.snack
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -40,9 +39,12 @@ class MainActivity :
         ErrorView.ErrorListener, SearchArrayAdapter.OnItemClickListener {
 
 
-    @Inject lateinit var mPokemonAdapter: PokemonAdapter //The initialization of this one is injected here
-    @Inject lateinit var mSearchArrayAdapter: SearchArrayAdapter
-    @Inject lateinit var mMainPresenter: MainPresenter
+    @Inject
+    lateinit var mPokemonAdapter: PokemonAdapter //The initialization of this one is injected here
+    @Inject
+    lateinit var mSearchArrayAdapter: SearchArrayAdapter
+    @Inject
+    lateinit var mMainPresenter: MainPresenter
 
     @BindView(R.id.view_error)
     @JvmField
@@ -69,6 +71,8 @@ class MainActivity :
     @JvmField
     var mSearchProgressBar: ProgressBar? = null
 
+    private lateinit var mPreferencesHelper: PreferencesHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
@@ -76,20 +80,19 @@ class MainActivity :
 
         setSupportActionBar(mToolbar)
 
+        // add some bread crumbs
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+
+        //instantiate our prefs helper class
+        mPreferencesHelper = PreferencesHelper(this)
+
+        // start the sign in activity if the user is not signed in
+        checkIfUserSignedUp()
 
         mSwipeRefreshLayout?.setProgressBackgroundColorSchemeResource(R.color.primary)
         mSwipeRefreshLayout?.setColorSchemeResources(R.color.white)
         mSwipeRefreshLayout?.setOnRefreshListener { mMainPresenter.getPokemon(POKEMON_COUNT) }
-
-        mPokemonAdapter.setClickListener(this)
-        mPokemonRecycler?.layoutManager = LinearLayoutManager(this)
-        mPokemonRecycler?.adapter = mPokemonAdapter
-
-        mErrorView?.setErrorListener(this)
-
-        mMainPresenter.getPokemon(POKEMON_COUNT) // gets the pokemon !!!
 
         //mAutoCompleteSearchInputView ----------------------------------------------------
         mSearchArrayAdapter.onItemClick = this
@@ -98,17 +101,14 @@ class MainActivity :
 
         mAutoCompleteSearchInputView?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(text: Editable?) {
-                Timber.i("afterTextChanged:  the chars is [${text?.toString()}]")
             }
 
             override fun beforeTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                Timber.i("beforeTextChanged:  the chars is [${text?.toString()}]")
 
             }
 
             override fun onTextChanged(chars: CharSequence?, start: Int, before: Int, count: Int) {
                 //todo: this get the chars 2..infinity which is bad might have to use rxBind
-                Timber.i("onTextChanged:  the chars is [$chars]")
                 mMainPresenter.getSuggestions(chars)
             }
         })
@@ -133,6 +133,12 @@ class MainActivity :
                 })
 
 
+    }
+
+    private fun checkIfUserSignedUp() {
+        if (mPreferencesHelper.getString(SignIn.P_EMAIL).isBlank()) {
+          startActivity(SignIn.getStartIntent(this))
+        }
     }
 
     override val layout: Int
@@ -239,9 +245,6 @@ class MainActivity :
     companion object {
         private val POKEMON_COUNT = 20
 
-        fun getStartIntent(context: Context): Intent {
-            return Intent(context, MainActivity::class.java)
-        }
 
     }
 }

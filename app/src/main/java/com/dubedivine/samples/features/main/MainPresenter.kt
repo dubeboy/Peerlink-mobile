@@ -36,7 +36,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
         checkViewAttached()
         mvpView?.showProgressOnAutoComplete(true);
         if (chars != null) {
-            if (chars.length >= 5) {
+            if (chars.length >= 3) {
                 Timber.i("getSuggestions is being called with text $chars")
                 Flowable
                         .just(chars) //todo NB: does not work
@@ -59,7 +59,6 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
             }
         }
     }
-
 
     /**
      * @param question this is the one that will be passed to the search to be put on top

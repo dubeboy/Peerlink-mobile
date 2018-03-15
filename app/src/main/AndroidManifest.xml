@@ -12,7 +12,10 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".MvpStarterApplication"
@@ -24,21 +27,26 @@
         <activity
             android:name=".features.main.MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+
+
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
         </activity>
         <activity
             android:name=".features.detail.DetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            android:theme="@style/AppTheme.NoActionBar">
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
 
         <!--
@@ -56,22 +64,18 @@
         <activity
             android:name=".features.detail.MapsSampleActivity"
             android:label="@string/title_activity_maps_sample" />
-        <activity
-            android:name=".features.main.DemoAct"
-            android:label="@string/title_activity_demo"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".features.searchResults.SearchActivity" />
-        <activity android:name=".features.addQuestion.AddQuestionActivity">
-
+        <activity android:name=".features.addQuestion.AddQuestionActivity"></activity>
+        <activity
+            android:name=".features.signIn.SignIn"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".features.signIn.SignIn"
+        <activity android:name=".features.signIn.SignInMoreDetails"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

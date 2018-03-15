@@ -1,5 +1,6 @@
 package com.dubedivine.samples.features.signIn
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -50,16 +51,17 @@ class SignIn : BaseActivity(), SignInMvpView {
     }
 
     private fun signIn() {
-        val signInIntent = mGoogleSignInClient.getSignInIntent()
+        val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
 
     }
 
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account != null) {
-            startActivity(MainActivity.getStartIntent(this))
+            startActivity(SignInMoreDetails.getStartIntent(this))
         } else {
             Log.d(TAG, "the account is null")
+            toast("Could not sign you in please try again")
         }
     }
 
@@ -82,6 +84,8 @@ class SignIn : BaseActivity(), SignInMvpView {
         try {
             val account = task.getResult(ApiException::class.java)
             Log.d(TAG, "the account is $account")
+            // we want to send this data to the server if everything went well then we will
+            // save the user data
             if (account != null) {
                 mSignInPresenter.sendUserTokenToServer(account)
 
@@ -90,7 +94,8 @@ class SignIn : BaseActivity(), SignInMvpView {
         } catch (e: ApiException) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+            Log.w(TAG, "signInResult:failed code=${e.statusCode}")
+            Log.e(TAG, e.toString())
             updateUI(null)
         }
     }
@@ -131,6 +136,11 @@ class SignIn : BaseActivity(), SignInMvpView {
         const val P_DISPLAY_NAME = "email"
         const val P_PHOTO_URL = "email"
         const val TAG = "__SIGN_IN__"
+
+        fun getStartIntent(context: Context): Intent {
+            return Intent(context, SignIn::class.java)
+        }
+
     }
 }
 
