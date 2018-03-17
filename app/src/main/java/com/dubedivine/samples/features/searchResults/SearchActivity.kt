@@ -25,7 +25,6 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
     // all the common  injection i think that we should have another base baseActivity u feel!
     @Inject lateinit var searchPresenter: SearchPresenter
     @Inject lateinit var searchAdapter: SearchAdapter
-    @BindView(R.id.view_error) @JvmField var mErrorView: ErrorView? = null
     @BindView(R.id.progress) @JvmField var mProgress: ProgressBar? = null
     @BindView(R.id.recycler_data) @JvmField var mSearchResultsRecycler: RecyclerView? = null
     @BindView(R.id.swipe_to_refresh) @JvmField var mSwipeRefreshLayout: SwipeRefreshLayout? = null

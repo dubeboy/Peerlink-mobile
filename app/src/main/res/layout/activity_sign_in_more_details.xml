@@ -15,52 +15,46 @@
         android:background="@color/primary_dark"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="15dp">
 
-        <android.support.design.widget.TextInputLayout
+
+        <EditText
+            android:id="@+id/et_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@color/primary"
-            android:padding="5dp">
+            android:background="@drawable/round_edit_text"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:hint="Enter Nickname"
+            android:textColor="@color/white" />
 
-            <TextView
-                android:textColor="@color/white"
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="hello" />
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <EditText
+            android:background="@drawable/round_edit_text"
+            android:id="@+id/et_degree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/degree"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="hello" />
-
-        </android.support.design.widget.TextInputLayout>
+            android:padding="10dp"
+            android:hint="Enter Your Course Code"
+            android:textColor="@color/white" />
 
 
     </LinearLayout>
 
     <Button
-        style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/btn_next"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.507" />
 
 </android.support.constraint.ConstraintLayout>

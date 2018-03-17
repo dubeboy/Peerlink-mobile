@@ -1,6 +1,9 @@
 package com.dubedivine.samples.features.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.ConditionVariable
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -20,10 +23,10 @@ import com.dubedivine.samples.R
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.BaseActivity
-import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.common.SearchArrayAdapter
 import com.dubedivine.samples.features.searchResults.SearchActivity
 import com.dubedivine.samples.features.signIn.SignIn
+import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.util.snack
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -36,19 +39,14 @@ class MainActivity :
         BaseActivity(),
         MainMvpView,
         PokemonAdapter.ClickListener,
-        ErrorView.ErrorListener, SearchArrayAdapter.OnItemClickListener {
+       SearchArrayAdapter.OnItemClickListener {
 
 
-    @Inject
-    lateinit var mPokemonAdapter: PokemonAdapter //The initialization of this one is injected here
     @Inject
     lateinit var mSearchArrayAdapter: SearchArrayAdapter
     @Inject
     lateinit var mMainPresenter: MainPresenter
 
-    @BindView(R.id.view_error)
-    @JvmField
-    var mErrorView: ErrorView? = null
     @BindView(R.id.progress)
     @JvmField
     var mProgress: ProgressBar? = null
@@ -73,26 +71,27 @@ class MainActivity :
 
     private lateinit var mPreferencesHelper: PreferencesHelper
 
+    override val layout: Int
+        get() = R.layout.activity_main
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
         mMainPresenter.attachView(this)
 
         setSupportActionBar(mToolbar)
-
         // add some bread crumbs
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
-
         //instantiate our prefs helper class
         mPreferencesHelper = PreferencesHelper(this)
-
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()
-
         mSwipeRefreshLayout?.setProgressBackgroundColorSchemeResource(R.color.primary)
         mSwipeRefreshLayout?.setColorSchemeResources(R.color.white)
-        mSwipeRefreshLayout?.setOnRefreshListener { mMainPresenter.getPokemon(POKEMON_COUNT) }
+        mSwipeRefreshLayout?.setOnRefreshListener {
+//            mMainPresenter.getPokemon(POKEMON_COUNT)
+        }
 
         //mAutoCompleteSearchInputView ----------------------------------------------------
         mSearchArrayAdapter.onItemClick = this
@@ -136,13 +135,12 @@ class MainActivity :
     }
 
     private fun checkIfUserSignedUp() {
-        if (mPreferencesHelper.getString(SignIn.P_EMAIL).isBlank()) {
+        if (mPreferencesHelper.getString(SignInMoreDetails.P_EMAIL).isBlank()) {
           startActivity(SignIn.getStartIntent(this))
         }
     }
 
-    override val layout: Int
-        get() = R.layout.activity_main
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -161,36 +159,34 @@ class MainActivity :
 
     //pveriden method from mvpView
     override fun showPokemon(pokemon: List<String>) {
-        mPokemonAdapter.setPokemon(pokemon)
-        mPokemonAdapter.notifyDataSetChanged()
-
-        mPokemonRecycler?.visibility = View.VISIBLE
-        mSwipeRefreshLayout?.visibility = View.VISIBLE
+//        mPokemonAdapter.setPokemon(pokemon)
+//        mPokemonAdapter.notifyDataSetChanged()
+//
+//        mPokemonRecycler?.visibility = View.VISIBLE
+//        mSwipeRefreshLayout?.visibility = View.VISIBLE
     }
 
     override fun showProgress(show: Boolean) {
         Timber.i("show progress is being called dwag for lo")
-        if (show) {
-            if (mPokemonRecycler?.visibility == View.VISIBLE && mPokemonAdapter.itemCount > 0) {
-                mSwipeRefreshLayout?.isRefreshing = true
-            } else {
-                mProgress?.visibility = View.VISIBLE
-
-                mPokemonRecycler?.visibility = View.GONE
-                mSwipeRefreshLayout?.visibility = View.GONE
-            }
-
-            mErrorView?.visibility = View.GONE
-        } else {
+//        if (show) {
+//            if (mPokemonRecycler?.visibility == View.VISIBLE && mPokemonAdapter.itemCount > 0) {
+//                mSwipeRefreshLayout?.isRefreshing = true
+//            } else {
+//                mProgress?.visibility = View.VISIBLE
+//
+//                mPokemonRecycler?.visibility = View.GONE
+//                mSwipeRefreshLayout?.visibility = View.GONE
+//            }
+//
+//        } else {
             mSwipeRefreshLayout?.isRefreshing = false
             mProgress?.visibility = View.GONE
-        }
+//        }
     }
 
     override fun showError(error: Throwable) {
-        mPokemonRecycler?.visibility = View.GONE
+//        mPokemonRecycler?.visibility = View.GONE
         mSwipeRefreshLayout?.visibility = View.GONE
-        mErrorView?.visibility = View.VISIBLE
         //if the keyboard is currently active just show toast just in case
         Toast.makeText(this, "There was an error", Toast.LENGTH_LONG).show()
         Timber.e(error, "There was an error retrieving the pokemon")
@@ -237,15 +233,12 @@ class MainActivity :
         Timber.i("showSuggestions: is called with suggestions: $question")
         mSearchArrayAdapter.addAll(question)
     }
-
-    override fun onReloadData() {
-        mMainPresenter.getPokemon(POKEMON_COUNT)
-    }
-
     companion object {
         private val POKEMON_COUNT = 20
 
-
+        fun getStartIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
     }
 }
 

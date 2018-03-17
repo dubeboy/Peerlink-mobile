@@ -2,6 +2,7 @@ package com.dubedivine.samples.util
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.graphics.Color
 import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.robertlevonyan.views.chip.Chip
 import kotlinx.android.synthetic.main.content_error_and_progress_view.*
@@ -72,6 +74,15 @@ fun Activity.createAlertDialog(title: String, msg: String? = null, @LayoutRes re
         alertDialogBuilder.setView(view)
     }
     return alertDialogBuilder.create()
+}
+
+// can be replaced with a snack with a progress loader
+@Deprecated("we should find better ui to replace this")
+fun Activity.getProgressBarInstance(title: String, msg: String): ProgressDialog {
+    val prog = ProgressDialog(this)
+    prog.setMessage(msg)
+    prog.setTitle(title)
+    return prog
 }
 
 fun Activity.showProgressAlertDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null) {

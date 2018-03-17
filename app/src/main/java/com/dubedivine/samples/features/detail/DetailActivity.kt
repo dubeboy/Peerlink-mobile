@@ -35,13 +35,10 @@ import kotlin.collections.HashSet
 // we lazily load the the other children
 //todo look into the boom menu: https://github.com/Nightonke/BoomMenu
 //todo: should only search when the text is not a empty(space) key
-class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, AddFilesDialogFragment.OnItemClick {
+class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnItemClick {
 
     @Inject lateinit var mDetailPresenter: DetailPresenter
     @Inject lateinit var mDetailAdapter: DetailAdapter
-    @BindView(R.id.view_error)
-    @JvmField
-    var mErrorView: ErrorView? = null
     @BindView(R.id.progress)
     @JvmField
     var mProgress: ProgressBar? = null
@@ -80,7 +77,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
 
         title = mQuestion!!.title
 
-        mErrorView!!.setErrorListener(this)
         mDetailAdapter.mQuestion = mQuestion!!
         val layoutManager = LinearLayoutManager(this)
         mRecyclerData!!.layoutManager = layoutManager
@@ -146,7 +142,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
     }
 
     override fun showProgress(show: Boolean) {
-        mErrorView?.visibility = View.GONE
         mProgress?.visibility = if (show) View.VISIBLE else View.GONE
     }
 
@@ -156,10 +151,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, ErrorView.ErrorListener, A
      //   toast("Oops could not connect to the internet")
         Timber.e(error, "There was a problem retrieving the pokemon...")
         error.printStackTrace()
-    }
-
-    override fun onReloadData() {
-        // mDetailPresenter.getPokemon(mQuestion as String)
     }
 
     override fun onDestroy() {

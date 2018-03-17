@@ -1,14 +1,12 @@
 package com.dubedivine.samples.features.signIn
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.dubedivine.samples.R
-import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.features.base.BaseActivity
-import com.dubedivine.samples.features.main.MainActivity
-import com.dubedivine.samples.util.showProgressAlertDialog
 import com.dubedivine.samples.util.toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -18,27 +16,23 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_sign_in.*
-import javax.inject.Inject
 
 /**
  * Created by divine on 3/11/18.
  */
-class SignIn : BaseActivity(), SignInMvpView {
+
+class SignIn : BaseActivity() {
 
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    @Inject lateinit var mSignInPresenter: SignInPresenter
-    private lateinit var mPreferencesHelper: PreferencesHelper // todo: should also inject this
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
-        mSignInPresenter.attachView(this)
-        mPreferencesHelper = PreferencesHelper(this)
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestProfile()
+//                .requestIdToken() todo: should do this some time in the future
                 .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -46,6 +40,7 @@ class SignIn : BaseActivity(), SignInMvpView {
 
         sign_in_button.setSize(SignInButton.SIZE_WIDE)
         sign_in_button.setOnClickListener({
+            toast("Starting google sign in")
             signIn()
         })
     }
@@ -58,7 +53,10 @@ class SignIn : BaseActivity(), SignInMvpView {
 
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account != null) {
-            startActivity(SignInMoreDetails.getStartIntent(this))
+            val email = account.email
+            val photoUrl = account.photoUrl
+            Log.d(TAG, "$email and photo $photoUrl")
+            startActivity(SignInMoreDetails.getStartIntent(this, email!!, photoUrl?.toString()))
         } else {
             Log.d(TAG, "the account is null")
             toast("Could not sign you in please try again")
@@ -83,12 +81,12 @@ class SignIn : BaseActivity(), SignInMvpView {
     private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
         try {
             val account = task.getResult(ApiException::class.java)
-            Log.d(TAG, "the account is $account")
+            Log.d(TAG, "the account is ${account.email} ${account.photoUrl}")
             // we want to send this data to the server if everything went well then we will
             // save the user data
             if (account != null) {
-                mSignInPresenter.sendUserTokenToServer(account)
-
+                toast("Yay!!!, You have successfully signed in.")
+                updateUI(account)
             } else
                 updateUI(null)
         } catch (e: ApiException) {
@@ -100,41 +98,10 @@ class SignIn : BaseActivity(), SignInMvpView {
         }
     }
 
-    private fun persistUserDetails(account: GoogleSignInAccount) {
-        val email = account.email
-        val displayName = account.displayName
-        val photoUrl = account.photoUrl
 
-        mPreferencesHelper.save {
-            putString(P_EMAIL, email)
-            putString(P_DISPLAY_NAME, displayName)
-            putString(P_PHOTO_URL, photoUrl.toString())
-        }
-
-    }
-
-    override fun showProgress(show: Boolean) {
-
-    }
-
-    override fun showError(error: Throwable) {
-        toast("Oops something went wrong")
-    }
-
-    override fun signedIn(account: GoogleSignInAccount) {
-        persistUserDetails(account)
-        updateUI(account)
-    }
-
-    override fun showProgressWithMessage(show: Boolean, title: String, msg: String) {
-        showProgressAlertDialog(title, msg)
-    }
 
     companion object {
         const val RC_SIGN_IN = 100
-        const val P_EMAIL = "email"
-        const val P_DISPLAY_NAME = "email"
-        const val P_PHOTO_URL = "email"
         const val TAG = "__SIGN_IN__"
 
         fun getStartIntent(context: Context): Intent {

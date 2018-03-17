@@ -59,7 +59,5 @@ interface MvpStarterService {
                              @Body body: Comment): Single<StatusResponse<Comment>>
 
     @POST("users")
-    fun postSignInUserWithServer(@Query("email") email: String,
-                                 @Query("display_name") displayName: String,
-                                 @Query("id_token") idToken: String): Single<StatusResponse<User>>
+    fun postSignInUserWithServer(@Body user: User): Single<StatusResponse<User>>
 }

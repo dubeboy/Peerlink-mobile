@@ -39,7 +39,7 @@ object BasicUtils {
     fun createTheStatusTextViewInfo(question: Question): String {
         return if (question.answers?.size != null) {
             Timber.d("the answer is: ${question.answers}")
-            "answers ${(question.answers?.size)}, answered by ${question.user?.name}"
+            "answers ${(question.answers?.size)}, answered by ${question.user?.nickname}"
         } else {
             "answers 0"
         }

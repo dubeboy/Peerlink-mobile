@@ -106,8 +106,8 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.postCommentForAnswer(questionId, answerId, body)
     }
 
-    fun signInUserWithServer(email: String, displayName: String, idToken: String): Single<StatusResponse<User>> {
-        return mMvpStarterService.postSignInUserWithServer(email, displayName, idToken)
+    fun signInUserWithServer(user: User): Single<StatusResponse<User>> {
+        return mMvpStarterService.postSignInUserWithServer(user)
     }
 
 }

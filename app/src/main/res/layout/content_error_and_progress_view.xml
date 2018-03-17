@@ -2,12 +2,6 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <com.dubedivine.samples.features.common.ErrorView
-        android:id="@+id/view_error"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"

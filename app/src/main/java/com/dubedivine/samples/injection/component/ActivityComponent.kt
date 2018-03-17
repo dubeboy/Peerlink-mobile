@@ -6,6 +6,7 @@ import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.features.main.MainActivity
 import com.dubedivine.samples.features.searchResults.SearchActivity
 import com.dubedivine.samples.features.signIn.SignIn
+import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.PerActivity
 import com.dubedivine.samples.injection.module.ActivityModule
 import dagger.Subcomponent
@@ -27,4 +28,6 @@ interface ActivityComponent {
     fun inject(addQuestionActivity: AddQuestionActivity)
 
     fun inject(signIn: SignIn)
+
+    fun inject(signIn: SignInMoreDetails)
 }
