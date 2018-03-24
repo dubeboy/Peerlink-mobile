@@ -1,8 +1,10 @@
 package com.dubedivine.samples.features.main
 
 import com.dubedivine.samples.data.DataManager
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.BasePresenter
+import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import io.reactivex.Flowable
@@ -66,5 +68,6 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
     fun getQuestions(question: Question?) {
         Timber.d("getQuestions: calling the api to get the questions with name ")
     }
+
 
 }

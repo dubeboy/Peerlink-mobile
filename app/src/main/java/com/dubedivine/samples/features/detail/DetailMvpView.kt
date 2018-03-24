@@ -1,9 +1,6 @@
 package com.dubedivine.samples.features.detail
 
-import com.dubedivine.samples.data.model.Answer
-import com.dubedivine.samples.data.model.Comment
-import com.dubedivine.samples.data.model.Pokemon
-import com.dubedivine.samples.data.model.Statistic
+import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.MvpView
 
 interface DetailMvpView : MvpView {
@@ -30,4 +27,6 @@ interface DetailMvpView : MvpView {
 
     //TODO: @Deprecated detailView
     fun showCommentForAnswer(answerId: String, comment1: Comment, detailView: DetailAdapter.DetailView)
+
+    fun showQuestion(question: Question)
 }

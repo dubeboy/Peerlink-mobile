@@ -18,12 +18,12 @@ import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.EndlessRecyclerViewScrollListener
-import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.detail.dialog.AddFilesDialogFragment
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.content_swipe_refresh.*
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -70,6 +70,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         if (mQuestion == null) {
             throw IllegalArgumentException("Detail Activity requires a Question Instance")
         }
+        setUpSwipeRecyclerView(mQuestion!!.id!!)
 
         setSupportActionBar(mToolbar)
         val actionBar = supportActionBar
@@ -133,6 +134,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
 
 
     override fun showQuestionsAndAnswers(pokemon: Pokemon) {
+
     }
 
     override fun showStat(statistic: Statistic) {
@@ -160,6 +162,13 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
 
     override fun addAnswers(answer: List<Answer>) {
         // todo: implement this
+    }
+
+    override fun showQuestion(question: Question) {
+        mDetailAdapter.clear()
+        mDetailAdapter.mQuestion = question
+        mDetailAdapter.notifyDataSetChanged()
+        swipe_to_refresh.isRefreshing = false
     }
 
     //onclick event from the add files dialog fragment which gives this parent the required parameters to complete the task
@@ -255,6 +264,16 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         } else {
             hori_scroll_view.visibility = View.GONE
             newFragment.enableAllButtons()
+        }
+    }
+
+    private fun setUpSwipeRecyclerView(questionId: String) {
+        //should be added to the base class
+        swipe_to_refresh.setProgressBackgroundColorSchemeResource(R.color.primary)
+        swipe_to_refresh.setColorSchemeResources(R.color.white)
+        swipe_to_refresh.setOnRefreshListener {
+            swipe_to_refresh.isRefreshing = true
+            mDetailPresenter.getFullQuestion(questionId)
         }
     }
 

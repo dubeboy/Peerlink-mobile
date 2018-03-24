@@ -57,6 +57,8 @@
 
         <AutoCompleteTextView
             android:id="@+id/q_add_title"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:labelFor="@+id/et_question"
             android:layout_width="match_parent"
             android:hint="Please type question title here, eg: what is an Atom?"
@@ -65,6 +67,8 @@
 
         <AutoCompleteTextView
             android:id="@+id/q_add"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:labelFor="@+id/et_question"
             android:layout_width="match_parent"
             android:hint="You can just type your question here, like you do on google, no need to greet we are all here to get answers :)"

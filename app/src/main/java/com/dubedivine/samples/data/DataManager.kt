@@ -83,7 +83,6 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.postQuestion(question)
     }
 
-
     fun postQuestionFiles(questionId: String, retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Question>> {
         return mMvpStarterService.postQuestionFiles(questionId, retrofitFileParts)
     }
@@ -110,4 +109,7 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         return mMvpStarterService.postSignInUserWithServer(user)
     }
 
+    fun getQuestion(questionId: String): Single<StatusResponse<Question>> {
+        return mMvpStarterService.getQuestion(questionId)
+    }
 }

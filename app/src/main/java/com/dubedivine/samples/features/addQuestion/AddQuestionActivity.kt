@@ -56,6 +56,9 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         mAddQuestionPresenter.attachView(this)
         //fab_add set the drawable here of a tick
 
+        //todo: grant android.permission.READ_EXTERNAL_STORAGE
+
+
         tagsSuggestionsAdapter = ArrayAdapter(this@AddQuestionActivity,
                 android.R.layout.simple_spinner_item)
 
@@ -131,6 +134,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         btn_add_picture.setOnClickListener {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
+                    .showGifs(true)
                     .setActivityTheme(R.style.AppTheme)
                     .pickPhoto(this)
         }

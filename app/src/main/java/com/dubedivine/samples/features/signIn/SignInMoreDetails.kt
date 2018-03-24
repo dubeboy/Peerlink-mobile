@@ -3,7 +3,6 @@ package com.dubedivine.samples.features.signIn
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import com.dubedivine.samples.R
@@ -32,7 +31,18 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
         activityComponent().inject(this)
         mSignInPresenter.attachView(this)
         mPreferencesHelper = PreferencesHelper(this)
-        progressDialog =  getProgressBarInstance("Loading", "Signing in")
+        progressDialog = getProgressBarInstance("Loading", "Signing in")
+
+
+        // we pass the email only because that is what is needed to check if the user existss
+        mSignInPresenter.startMainIfUserIsRegistered(
+                User("",
+                        intent.getStringExtra(P_EMAIL),
+                        null,
+                        "",
+                        "",
+                        null))
+
 
         btn_next.setOnClickListener({
             //upload all the data to the server

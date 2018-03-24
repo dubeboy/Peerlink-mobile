@@ -2,9 +2,7 @@ package com.dubedivine.samples.features.detail
 
 import android.util.Log
 import com.dubedivine.samples.data.DataManager
-import com.dubedivine.samples.data.model.Answer
-import com.dubedivine.samples.data.model.Comment
-import com.dubedivine.samples.data.model.Pokemon
+import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
 import com.dubedivine.samples.injection.ConfigPersistent
@@ -22,6 +20,18 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
 
     override fun attachView(mvpView: DetailMvpView) {
         super.attachView(mvpView)
+    }
+
+    fun getFullQuestion(questionId: String) = doLongTaskOnView {
+        mDataManager.getQuestion(questionId)
+                .compose(SchedulerUtils.ioToMain<StatusResponse<Question>>())
+                .subscribe({
+                    mvpView?.showQuestion(it.entity!!)
+                    mvpView?.showProgress(false)
+                }) { throwable ->
+                    mvpView?.showProgress(false)
+                    mvpView?.showError(throwable)
+                }
     }
 
     fun getPokemon(name: String) {

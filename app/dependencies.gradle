@@ -73,7 +73,6 @@ ext {
     divineDeps = [
             chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1",
             filePicker : "com.droidninja:filepicker:2.0.8"
-            //sideNavigationHelperLib: "compile 'com.mindorks:placeholderview:0.2.7"
     ]
 
     supportLibs = supportDeps.values()

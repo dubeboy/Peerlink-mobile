@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_home"
             android:icon="@drawable/ic_file"
-            android:title="Import" />
+            android:title="Home" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_trending"
             android:icon="@drawable/ic_comment"
-            android:title="gallary" />
+            android:title="Trending" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_interests"
             android:icon="@drawable/ic_add_black_24dp"
-            android:title="slide" />
+            android:title="Interests" />
     </group>
 </menu>

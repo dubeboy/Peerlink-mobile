@@ -12,7 +12,6 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="380dp"
-        android:background="@color/primary_dark"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="15dp">
@@ -21,8 +20,8 @@
         <EditText
             android:id="@+id/et_nickname"
             android:layout_width="match_parent"
+            android:textColorHint="@color/white"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_edit_text"
             android:padding="10dp"
             android:layout_marginBottom="10dp"
             android:hint="Enter Nickname"
@@ -30,9 +29,9 @@
 
 
         <EditText
-            android:background="@drawable/round_edit_text"
             android:id="@+id/et_degree"
             android:layout_width="match_parent"
+            android:textColorHint="@color/white"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:hint="Enter Your Course Code"
