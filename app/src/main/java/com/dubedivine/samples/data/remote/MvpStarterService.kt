@@ -61,6 +61,6 @@ interface MvpStarterService {
     @POST("users")
     fun postSignInUserWithServer(@Body user: User): Single<StatusResponse<User>>
 
-    @GET("questions")
-    fun getQuestion(questionId: String): Single<StatusResponse<Question>>
+    @GET("questions/{q_id}")
+    fun getQuestion(@Path("q_id") questionId: String): Single<StatusResponse<Question>>
 }

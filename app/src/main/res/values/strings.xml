@@ -27,4 +27,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="comments">Comments</string>
     <string name="about_app">App that connects student that need answers to those that have them.</string>
+    <string name="title_activity_hellee">Hellee</string>
 </resources>

@@ -37,6 +37,9 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         activityComponent().inject(this)
         searchPresenter.attachView(this)
 
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
         mQuestion = intent.getSerializableExtra(SELECTED_TOP_QUESTION) as Question?
         val searchTerm = intent.getStringExtra(SEARCH_TERM)
 

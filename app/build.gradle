@@ -130,7 +130,7 @@ dependencies {
     kapt daggerCompiler
     kaptTest daggerCompiler
     kaptAndroidTest daggerCompiler
-    // tests
+    // testsw
     testImplementation unitTestLibs
     androidTestImplementation androidTestsLibs
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"

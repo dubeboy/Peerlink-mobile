@@ -33,11 +33,8 @@ constructor(private val mDataManager: DataManager) : BasePresenter<SignInMvpView
     fun startMainIfUserIsRegistered(user: User) = doLongTaskOnView {
         mDataManager.signInUserWithServer(user)
                 .compose(SchedulerUtils.ioToMain())
-
                 .subscribe({
                     Timber.i("the result is $it")
-                    // here the status indicates weather a new account was created?
-                    // true if a new account was not created and the user was already registered
                     if (it.status!!) {
                         mvpView?.signedIn(it.entity!!)
                     }

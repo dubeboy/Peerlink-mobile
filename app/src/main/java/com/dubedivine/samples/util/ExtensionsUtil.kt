@@ -12,8 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.dubedivine.samples.R
+import com.dubedivine.samples.R.id.swipe_to_refresh
 import com.robertlevonyan.views.chip.Chip
 import kotlinx.android.synthetic.main.content_error_and_progress_view.*
+import kotlinx.android.synthetic.main.content_swipe_refresh.*
 import timber.log.Timber
 
 /**
@@ -88,3 +91,4 @@ fun Activity.getProgressBarInstance(title: String, msg: String): ProgressDialog 
 fun Activity.showProgressAlertDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null) {
     this.createAlertDialog(title, msg, null)
 }
+

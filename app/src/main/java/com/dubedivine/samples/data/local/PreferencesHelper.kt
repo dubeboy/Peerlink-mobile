@@ -17,7 +17,7 @@ constructor(@ApplicationContext context: Context) {
     }
 
     fun clear() {
-        mPref.edit().clear().apply()
+        mPref.edit().clear().commit()
     }
 
     fun editor(): SharedPreferences.Editor {

@@ -64,14 +64,19 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
                                             )
                                 } else {
                                     mvpView!!.showQuestion(it.entity!!)
+                                    mvpView?.showProgress(false)
                                 }
                             }
                             false -> {
                                 mvpView!!.showError(Throwable("Sorry failed to upload Question"))
+                                mvpView?.showProgress(false)
+
                             }
                         }
                     }, {
                         mvpView!!.showError(it)
+                        mvpView?.showProgress(false)
+
                     })
         }
     }

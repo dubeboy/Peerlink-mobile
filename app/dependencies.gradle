@@ -71,8 +71,9 @@ ext {
 
     // my miscellaneous dependencies ;)
     divineDeps = [
-            chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1",
-            filePicker : "com.droidninja:filepicker:2.0.8"
+            chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1", // todo: replace this please
+            filePicker : "com.droidninja:filepicker:2.0.8",
+            betterChips : "com.github.pchmn:MaterialChipsInput:1.0.8" //replace the above
     ]
 
     supportLibs = supportDeps.values()

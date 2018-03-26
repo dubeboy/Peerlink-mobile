@@ -31,7 +31,7 @@ constructor() : RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonViewHolder {
         val view = LayoutInflater
                 .from(parent.context)
-                .inflate(R.layout.item_pokemon, parent, false)
+                .inflate(R.layout.item_tag, parent, false)
         return PokemonViewHolder(view)
     }
 
@@ -53,7 +53,7 @@ constructor() : RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder>() {
     inner class PokemonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var mPokemon: String? = null
-        @BindView(R.id.text_name) @JvmField var nameText: TextView? = null
+        @BindView(R.id.tag_name) @JvmField var nameText: TextView? = null
 
         init {
             ButterKnife.bind(this, itemView)

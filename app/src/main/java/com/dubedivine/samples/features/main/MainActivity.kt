@@ -7,6 +7,7 @@ import android.os.ConditionVariable
 import android.support.design.widget.NavigationView
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -127,22 +128,18 @@ class MainActivity :
 
             when (menuItem.itemId) {
                 R.id.nav_home -> {
-                    // todo: insert the home fragment
-//                    val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-//                    val prev = supportFragmentManager.findFragmentByTag("welcomeFragment")
-//                    if (prev != null) {
-//                        ft.remove(prev)
-//                    }
-//                    ft.addToBackStack(null)
-//                    // Create and show the dialog.
-//                    ft.add(welcomeFragment, "welcomeFragment")
-//                    ft.commit()
+                    
                 }
                 R.id.nav_trending -> {
 
                 }
                 R.id.nav_interests -> {
 
+                }
+                R.id.nav_logout -> {
+                    mPreferencesHelper.clear()
+                    checkIfUserSignedUp()
+                    snack("Successfully Logged out.")
                 }
             }
             // close drawer when item is tapped
@@ -171,6 +168,8 @@ class MainActivity :
                 .load(photoUrl)
                 .into(tvUserUserProfilePhoto)
     }
+
+
 
     private fun isUserLoggedIn(): Boolean {
         val email = mPreferencesHelper.getString(SignInMoreDetails.P_EMAIL)

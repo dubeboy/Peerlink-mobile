@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.ButterKnife
 import com.dubedivine.samples.MvpStarterApplication
+import com.dubedivine.samples.R
 import com.dubedivine.samples.injection.component.ConfigPersistentComponent
 import com.dubedivine.samples.injection.component.DaggerConfigPersistentComponent
 import com.dubedivine.samples.injection.component.FragmentComponent
 import com.dubedivine.samples.injection.module.FragmentModule
+import kotlinx.android.synthetic.main.content_swipe_refresh.*
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicLong
 
@@ -70,6 +72,15 @@ abstract class BaseFragment : Fragment() {
 
     fun fragmentComponent(): FragmentComponent {
         return mFragmentComponent as FragmentComponent
+    }
+
+    inline fun setUpSwipeRecyclerView(crossinline refreshListener: () -> Unit) {
+        //should be added to the base class
+        swipe_to_refresh?.setProgressBackgroundColorSchemeResource(R.color.primary)
+        swipe_to_refresh?.setColorSchemeResources(R.color.white)
+        swipe_to_refresh?.setOnRefreshListener {
+            refreshListener()
+        }
     }
 
     companion object {

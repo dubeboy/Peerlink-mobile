@@ -15,7 +15,9 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="15dp">
-
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/et_nickname"
@@ -26,8 +28,11 @@
             android:layout_marginBottom="10dp"
             android:hint="Enter Nickname"
             android:textColor="@color/white" />
+        </android.support.design.widget.TextInputLayout>
 
-
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:id="@+id/et_degree"
             android:layout_width="match_parent"
@@ -36,7 +41,21 @@
             android:padding="10dp"
             android:hint="Enter Your Course Code"
             android:textColor="@color/white" />
+        </android.support.design.widget.TextInputLayout>
 
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_modules"
+                android:layout_width="match_parent"
+                android:textColorHint="@color/white"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:hint="Enter your modules eg: physics,math,pmg"
+                android:textColor="@color/white" />
+        </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
 

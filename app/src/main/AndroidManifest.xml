@@ -29,25 +29,15 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-             <intent-filter>
-             <action android:name="android.intent.action.MAIN" />
-
-
-             <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".features.detail.DetailActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -64,19 +54,20 @@
         <activity
             android:name=".features.detail.MapsSampleActivity"
             android:label="@string/title_activity_maps_sample" />
-        <activity android:name=".features.searchResults.SearchActivity" />
-        <activity android:name=".features.addQuestion.AddQuestionActivity"></activity>
+        <activity android:name=".features.searchResults.SearchActivity"  />
+        <activity android:name=".features.addQuestion.AddQuestionActivity" />
         <activity
             android:name=".features.signIn.SignIn"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".features.signIn.SignInMoreDetails"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".features.signIn.SignInMoreDetails"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".features.profile.Hellee"
+            android:label="@string/title_activity_hellee"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

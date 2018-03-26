@@ -1,14 +1,17 @@
 package com.dubedivine.samples.features.addQuestion
 
+import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Point
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.CardView
 import android.text.Editable
 import android.text.TextWatcher
@@ -35,14 +38,14 @@ import java.util.*
 import javax.inject.Inject
 
 
-//todo: this class breaks the constency rule one its not using timber!!
+//todo: this class breaks the consistency rule one its not using timber!!
 //todo : should the question title have suggestions?
 //and it not using ButterKnife myabe there shold be a revolution
 class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
     @Inject lateinit var mAddQuestionPresenter: AddQuestionPresenter
 
-    lateinit var tagsSuggestionsAdapter: ArrayAdapter<String>
+    private lateinit var tagsSuggestionsAdapter: ArrayAdapter<String>
     private var tagsSuggestionsView: View? = null
     private var tagsSuggestionListView: ListView? = null
     private lateinit var popUpWindow: PopupWindow
@@ -54,11 +57,11 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
         mAddQuestionPresenter.attachView(this)
-        //fab_add set the drawable here of a tick
 
-        //todo: grant android.permission.READ_EXTERNAL_STORAGE
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
-
+        checkPermissions()
         tagsSuggestionsAdapter = ArrayAdapter(this@AddQuestionActivity,
                 android.R.layout.simple_spinner_item)
 
@@ -219,12 +222,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         }
     }
 
-
-
-
     //--------------------------private methods ------------------------
-
-
     private fun processTheInputRequest(requestCode: Int, intent: Intent?) {
         when (requestCode) {
             REQUEST_VIDEO_CAPTURE -> {
@@ -271,7 +269,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     }
                 }
             }
-
             FilePickerConst.REQUEST_CODE_PHOTO -> {
                 if (intent != null) {
                     q_add.hint = "add a tag to the attached photo so that people can find it\n#math1b #drawingGraphs"
@@ -295,7 +292,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     mediaFiles = hashMapOf(Media.PICTURE_TYPE to photosPaths)
                 }
             }
-
             FilePickerConst.REQUEST_CODE_DOC -> {
                 if (intent != null) {
                     q_add.hint = "add a tag to the attached document so that people can find it\n#math1b #drawingGraphs"
@@ -434,9 +430,23 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         return inflater.inflate(R.layout.activity_popup_tag_suggestion, null)
     }
 
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            /*ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
+                    Manifest.permission.READ_CONTACTS)*/
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
+        }
+    }
+
     companion object {
         private const val TAG = "__AddQuestionActivity"
         const val REQUEST_VIDEO_CAPTURE = 1
+        const val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 100
         fun getStartIntent(context: Context): Intent {
             val intent = Intent(context, AddQuestionActivity::class.java)
             return intent

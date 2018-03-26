@@ -12,6 +12,13 @@
         <item
             android:id="@+id/nav_interests"
             android:icon="@drawable/ic_add_black_24dp"
-            android:title="Interests" />
+            android:title="Tags of interest">
+        </item>
+    </group>
+    <group android:id="@+id/nav_footer">
+
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout" />
     </group>
 </menu>

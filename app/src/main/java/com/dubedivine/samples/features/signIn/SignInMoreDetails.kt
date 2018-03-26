@@ -11,6 +11,7 @@ import com.dubedivine.samples.data.model.User
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.main.MainActivity
 import com.dubedivine.samples.util.getProgressBarInstance
+import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_sign_in_more_details.*
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
                         intent.getStringExtra(P_EMAIL),
                         null,
                         "",
+                        emptySet(),
                         "",
                         null))
 
@@ -48,12 +50,13 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
             //upload all the data to the server
             val degree = et_degree.text.toString()
             val nickname = et_nickname.text.toString()
+            val modules = et_modules.text.toString().split(",").toSet()
 
-            if (degree.isNotBlank() && nickname.isNotBlank()) {
+            if (degree.isNotBlank() && nickname.isNotBlank() && modules.isNotEmpty()) {
                 val user = User(nickname,
                         intent.getStringExtra(P_EMAIL),
                         intent.getStringExtra(P_PHOTO_URL),
-                        degree)
+                        degree, modules)
 
                 Log.d(TAG, "sending this user data $user")
                 mSignInPresenter.sendUserTokenToServer(user)
@@ -61,14 +64,14 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
             } else {
                 if (nickname.isBlank()) {
                     et_degree.error = "Please enter nickname"
-                    toast("Please enter degree")
-                    return@setOnClickListener
                 }
                 if (degree.isBlank()) {
                     et_degree.error = "Please enter degree"
-                    toast("Please enter degree")
-                    return@setOnClickListener
                 }
+                if (modules.isEmpty()) {
+                    et_modules.error = "Please enter your modules"
+                }
+                snack("Please make sure that all the fields are filled in.")
             }
         })
     }
@@ -98,13 +101,14 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
     }
 
     private fun persistUserDetails(user: User) {
-        val (nickname, email, photoUrl, degree, id) = user
+        val (nickname, email, photoUrl, degree, modules, id) = user
 
         mPreferencesHelper.save {
             putString(P_EMAIL, email)
             putString(P_NICKNAME, nickname)
             putString(P_PHOTO_URL, photoUrl)
             putString(P_DEGREE, degree)
+            putStringSet(P_MODULES, modules)
             putString(P_ID, id)
         }
 
@@ -115,6 +119,7 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
         const val P_NICKNAME = "nickname"
         const val P_PHOTO_URL = "photoUrl"
         const val P_DEGREE = "degree"
+        const val P_MODULES = "modules"
         const val P_ID = "id"
         const val TAG = "__SIGN_IN_MORE_DET__"
 

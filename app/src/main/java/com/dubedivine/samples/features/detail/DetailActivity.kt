@@ -62,15 +62,16 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         mDetailPresenter.attachView(this)
         // todo: should look into delegate and lazy loading so that this is only create if the user wants to send file and its created once
         newFragment = AddFilesDialogFragment.newInstance(this)
-//        val q = Question("Hello", "what does hello mean", 100, listOf<Tag>(Tag("hello", Date()), Tag("hello", Date())), "Q")
-//        q.id = "29292929"
-//        mQuestion = q
 
         mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
         if (mQuestion == null) {
             throw IllegalArgumentException("Detail Activity requires a Question Instance")
         }
+
         setUpSwipeRecyclerView(mQuestion!!.id!!)
+        //reload the question from the server
+        swipe_to_refresh.isRefreshing = true
+        mDetailPresenter.getFullQuestion(mQuestion!!.id!!)
 
         setSupportActionBar(mToolbar)
         val actionBar = supportActionBar
@@ -160,8 +161,10 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         mDetailPresenter.detachView()
     }
 
+
+    //this is the pagination of the answers
     override fun addAnswers(answer: List<Answer>) {
-        // todo: implement this
+        // todo: implement this pagination
     }
 
     override fun showQuestion(question: Question) {
