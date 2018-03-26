@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.Range
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -25,6 +26,7 @@ import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.SearchArrayAdapter
+import com.dubedivine.samples.features.main.fragment.TagsSubscribedFragment
 import com.dubedivine.samples.features.main.fragment.WelcomeFragment
 import com.dubedivine.samples.features.searchResults.SearchActivity
 import com.dubedivine.samples.features.signIn.SignIn
@@ -34,6 +36,7 @@ import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 
@@ -77,7 +80,6 @@ class MainActivity :
     override val layout: Int
         get() = R.layout.activity_main
 
-    private lateinit var welcomeFragment: WelcomeFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +94,6 @@ class MainActivity :
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()
         setupSideNavigation()
-        welcomeFragment  =  WelcomeFragment()
 
 
 
@@ -128,13 +129,13 @@ class MainActivity :
 
             when (menuItem.itemId) {
                 R.id.nav_home -> {
-                    
-                }
-                R.id.nav_trending -> {
-
+                   addFragment(savedInstanceState, 1)
                 }
                 R.id.nav_interests -> {
-
+                    addFragment(savedInstanceState, 2)
+                }
+                R.id.nav_trending -> {
+                    addFragment(savedInstanceState, 3)
                 }
                 R.id.nav_logout -> {
                     mPreferencesHelper.clear()
@@ -172,13 +173,35 @@ class MainActivity :
 
 
     private fun isUserLoggedIn(): Boolean {
-        val email = mPreferencesHelper.getString(SignInMoreDetails.P_EMAIL)
-        return email.isBlank()
+        return mPreferencesHelper.getString(SignInMoreDetails.P_EMAIL).isBlank()
     }
 
     private fun checkIfUserSignedUp() {
         if (isUserLoggedIn()) {
           startActivity(SignIn.getStartIntent(this))
+        }
+    }
+
+    private fun addFragment(savedInstanceState: Bundle?, num: Int)  {
+        //this is when we are rotating the screen bruv so that we dont overlapt the fragments
+        if(savedInstanceState != null) return
+        val transaction = supportFragmentManager.beginTransaction()
+        when (num) {
+            1 -> {
+                transaction.replace(R.id.fragment_framelayout, WelcomeFragment())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
+            2 -> {
+                transaction.replace(R.id.fragment_framelayout, TagsSubscribedFragment())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
+            3 -> {
+                transaction.replace(R.id.fragment_framelayout, TagsSubscribedFragment())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
         }
     }
 

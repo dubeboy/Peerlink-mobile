@@ -37,7 +37,8 @@ interface MvpStarterService {
 
     @Multipart
     @POST("questions/{q_id}/files")
-    fun postQuestionFiles(@Path("q_id") @NotNull questionId: String, @Part files: List<MultipartBody.Part>): Single<StatusResponse<Question>>
+    fun postQuestionFiles(@Path("q_id") questionId: String,
+                          @Part files: List<MultipartBody.Part>): Single<StatusResponse<Question>>
 
     @Headers("Accept: application/json", "Content-Type: application/json")
     @PUT("questions/{q_id}/answer")

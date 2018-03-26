@@ -23,17 +23,17 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
 
     fun getTagSuggestion(tag: CharSequence, tagStartIndex: Int, tagStopIndex: Int) {
         checkViewAttached()
-            mvpView!!.showProgress(false)  // diable the default behaviour
-             mvpView!!.showTagSuggestionProgress(true)
-            mDataManager.getTagSuggestion(tag)
-                    .compose(SchedulerUtils.ioToMain<List<Tag>>())
-                    .subscribe({
-                        mvpView!!.showTagSuggestionProgress(false)
-                        mvpView!!.showTagsSuggestion(it, tag, tagStartIndex, tagStopIndex)
-                    }, {
-                        mvpView!!.showError(it)
-                        mvpView!!.showTagSuggestionProgress(false)
-                    })
+        mvpView!!.showProgress(false)  // diable the default behaviour
+        mvpView!!.showTagSuggestionProgress(true)
+        mDataManager.getTagSuggestion(tag)
+                .compose(SchedulerUtils.ioToMain<List<Tag>>())
+                .subscribe({
+                    mvpView!!.showTagSuggestionProgress(false)
+                    mvpView!!.showTagsSuggestion(it, tag, tagStartIndex, tagStopIndex)
+                }, {
+                    mvpView!!.showError(it)
+                    mvpView!!.showTagSuggestionProgress(false)
+                })
     }
 
     fun publishNewQuestion(question: Question, files: List<String>? = null) {
@@ -46,20 +46,21 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
                             true -> {
                                 mvpView!!.showProgress(false)
                                 if (files != null && files.isNotEmpty()) {
-                                    mvpView!!.showProgress(true, "Now saving attached question file(s)., just a sec...")
+                                    mvpView!!.showProgress(true)
                                     val retrofitFileParts: MutableList<MultipartBody.Part> =
                                             BasicUtils.createMultiPartFromFile(files)
                                     mDataManager.postQuestionFiles(it.entity!!.id!!, retrofitFileParts)
                                             .compose(SchedulerUtils.ioToMain<StatusResponse<Question>>())
                                             .subscribe(
-                                                    { // todo should check status here
-                                                        mvpView!!.showProgress(false, "...")
-                                                        Log.d(TAG, "We are now here we hot the question $it")
+                                                    {
+                                                        // todo should check status here
+                                                        Log.d(TAG, "We are now here we got the question $it")
+                                                        mvpView!!.showProgress(false)
                                                         mvpView!!.showQuestion(it.entity!!)
                                                     },
                                                     {
                                                         mvpView!!.showError(it)
-                                                        mvpView!!.showProgress(false, "...")
+                                                        mvpView!!.showProgress(false)
                                                     }
                                             )
                                 } else {

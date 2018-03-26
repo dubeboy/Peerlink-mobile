@@ -15,7 +15,7 @@
             android:orientation="horizontal"
             android:layout_height="wrap_content">
             <Button
-                android:background="@drawable/button_card_layout"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:id="@+id/btn_add_picture"
                 android:layout_width="0dp"
                 android:padding="5dp"
@@ -24,8 +24,7 @@
                 android:drawableLeft="@drawable/ic_image_black_24dp"
                 android:layout_height="wrap_content" />
             <Button
-                android:background="@drawable/button_card_layout"
-                android:padding="5dp"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:id="@+id/btn_add_video"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -33,7 +32,7 @@
                 android:drawableLeft="@drawable/ic_ondemand_video_24dp"
                 android:layout_height="wrap_content" />
             <Button
-                android:background="@drawable/button_card_layout"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:id="@+id/btn_add_files"
                 android:layout_width="0dp"
                 android:padding="5dp"

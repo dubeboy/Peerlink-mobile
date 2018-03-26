@@ -190,7 +190,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     }
 
     override fun showProgress(show: Boolean, msg: String) {
-        val prog = getProgressBarInstance("Attaching files", msg)
+        val prog = getProgressBarInstance("Attaching files", "Now saving attached question file(s)., just a sec...")
         if (show) prog.show() else prog.dismiss()
     }
 

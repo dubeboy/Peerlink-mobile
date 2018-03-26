@@ -3,16 +3,16 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_file"
+            android:icon="@drawable/ic_home_black"
             android:title="Home" />
         <item
             android:id="@+id/nav_trending"
-            android:icon="@drawable/ic_comment"
+            android:icon="@drawable/ic_whatshot"
             android:title="Trending" />
         <item
             android:id="@+id/nav_interests"
-            android:icon="@drawable/ic_add_black_24dp"
-            android:title="Tags of interest">
+            android:icon="@drawable/ic_subscribed"
+            android:title="Tags Of Interest">
         </item>
     </group>
     <group android:id="@+id/nav_footer">
