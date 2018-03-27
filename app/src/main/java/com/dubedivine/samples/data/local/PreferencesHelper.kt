@@ -2,6 +2,9 @@ package com.dubedivine.samples.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.dubedivine.samples.data.model.User
+import com.dubedivine.samples.features.signIn.SignIn
+import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,7 +35,9 @@ constructor(@ApplicationContext context: Context) {
        return mPref.getString(key, defaultString)
     }
 
-
+    fun getUserId(): String {
+        return getString(SignInMoreDetails.P_ID)
+    }
 
     companion object {
         val PREF_FILE_NAME = "mvpstarter_pref_file"

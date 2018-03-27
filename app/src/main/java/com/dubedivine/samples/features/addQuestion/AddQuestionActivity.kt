@@ -19,6 +19,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import com.dubedivine.samples.R
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.model.Tag
@@ -37,13 +38,10 @@ import java.io.File
 import java.util.*
 import javax.inject.Inject
 
-
-//todo: this class breaks the consistency rule one its not using timber!!
-//todo : should the question title have suggestions?
-//and it not using ButterKnife myabe there shold be a revolution
 class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
-    @Inject lateinit var mAddQuestionPresenter: AddQuestionPresenter
+    @Inject
+    lateinit var mAddQuestionPresenter: AddQuestionPresenter
 
     private lateinit var tagsSuggestionsAdapter: ArrayAdapter<String>
     private var tagsSuggestionsView: View? = null
@@ -51,7 +49,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     private lateinit var popUpWindow: PopupWindow
     private var mediaFiles: Map<Char, List<String>>? = null //Maps media type to Files
     private lateinit var prog: ProgressDialog
-
+    private lateinit var mPref: PreferencesHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,18 +58,15 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-
+        mPref = PreferencesHelper(this)
         checkPermissions()
         tagsSuggestionsAdapter = ArrayAdapter(this@AddQuestionActivity,
                 android.R.layout.simple_spinner_item)
-
         tagsSuggestionsView = getInflatedTagsSuggestionView()
         tagsSuggestionListView = tagsSuggestionsView?.findViewById(R.id.tags_suggestion_listview)
         popUpWindow = PopupWindow(this) //https://www.google.com/search?client=ubuntu&channel=fs&q=android+popup+window+relative+to+the+coursor&ie=utf-8&oe=utf-8
         configurePopUpWindow(popUpWindow, tagsSuggestionsView!!)
-
         prog = ProgressDialog(this)
-
         q_add.addTextChangedListener(object : TextWatcher {  // its a singleton so good
             var tagStartIndex = 0 // assume that the tag starts at 0
             var tagStopIndex = 0 // assume that the tag stop at 0 meaning no tag, basic math!! hahaha
@@ -116,7 +111,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                 }
             }
         })
-
         btn_add_files.setOnClickListener {
 
             FilePickerBuilder.getInstance()
@@ -125,15 +119,15 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     .pickFile(this)
 
         }
-
         btn_add_video.setOnClickListener {
             val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 60) // you have one min to say what ever you want
+            //if the camera exists
             if (takeVideoIntent.resolveActivity(packageManager) != null) {
                 Log.d(TAG, " the data is ${takeVideoIntent.data}")
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
             }
         }
-
         btn_add_picture.setOnClickListener {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
@@ -141,7 +135,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     .setActivityTheme(R.style.AppTheme)
                     .pickPhoto(this)
         }
-
         fab_add.setOnClickListener {
             publishNewQuestion()
         }
@@ -200,7 +193,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     }
 
     override fun showTagSuggestionProgress(show: Boolean) {
-        toast("Suggesting tags")
+//        toast("Suggesting tags")
     }
 
     override fun showError(error: Throwable) {
@@ -240,6 +233,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     Log.d(TAG, "Initializing Video media")
                     val file = File(vidUrl)
                     Log.d(TAG, "the path is $vidUrl")
+                    //creating the file view instance that shows the video name
                     val btnFile: CardView = BasicUtils.getFileViewInstance(this,
                             Media(file.name,
                                     file.length(),
@@ -252,13 +246,14 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                         vidIntent.setDataAndType(vidUri, "video/*")
                         startActivity(vidIntent)
 
-                    }, {
-                        if (it.parent != null) {
-                            (it.parent as ViewGroup).removeView(it)
-                            ifHoriItemViewIsEmptyEnableAllAddButtons()
-                        }
-
-                    })
+                    },
+                            {
+                                if (it.parent != null) {
+                                    (it.parent as ViewGroup).removeView(it)
+                                    ifHoriItemViewIsEmptyEnableAllAddButtons()
+                                }
+                            }
+                    )
 
                     add_q_linearlayout.addView(btnFile)
                     mediaFiles = if (add_q_linearlayout.childCount != 0) {
@@ -328,7 +323,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         val docsListPaths = mediaFiles?.get(Media.DOCS_TYPE)
         val videoListPaths = mediaFiles?.get(Media.VIDEO_TYPE)
         val picturesListPaths = mediaFiles?.get(Media.PICTURE_TYPE)
-        Log.d(TAG, "The values are: " +  mediaFiles?.values?.toString())
+        Log.d(TAG, "The values are: " + mediaFiles?.values?.toString())
 
         val questionBody = q_add.text.toString()
         val questionTitle = q_add_title.text.toString()
@@ -436,10 +431,10 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                 != PackageManager.PERMISSION_GRANTED) {
             /*ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
                     Manifest.permission.READ_CONTACTS)*/
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
         }
     }
 
