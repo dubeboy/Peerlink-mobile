@@ -294,7 +294,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS)
                     Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
                     photosPaths.forEach {
-                        Timber.i("Helllo the file has been selected $it")
+                        Timber.i("Hello the file has been selected $it")
                         val fileViewInstance = BasicUtils.getFileViewInstance(this,
                                 Media(it.substringAfterLast("/"), 0, Media.DOCS_TYPE, it),
                                 { _ -> }, //not require but looks great ;)
@@ -303,7 +303,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                                         (it.parent as ViewGroup).removeView(it)
                                     }
                                     ifHoriItemViewIsEmptyEnableAllAddButtons()
-
                                 }
                         )
                         add_q_linearlayout.addView(fileViewInstance)

@@ -47,8 +47,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
                                 mvpView!!.showProgress(false)
                                 if (files != null && files.isNotEmpty()) {
                                     mvpView!!.showProgress(true)
-                                    val retrofitFileParts: MutableList<MultipartBody.Part> =
-                                            BasicUtils.createMultiPartFromFile(files)
+                                    val retrofitFileParts: MutableList<MultipartBody.Part> = BasicUtils.createMultiPartFromFile(files)
                                     mDataManager.postQuestionFiles(it.entity!!.id!!, retrofitFileParts)
                                             .compose(SchedulerUtils.ioToMain<StatusResponse<Question>>())
                                             .subscribe(

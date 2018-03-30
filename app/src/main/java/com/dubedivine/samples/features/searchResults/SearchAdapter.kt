@@ -5,11 +5,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.ButterKnife
 import com.dubedivine.samples.R
+import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.common.FileView
 import com.dubedivine.samples.features.searchResults.SearchAdapter.SearchViewHolder
@@ -24,7 +26,7 @@ import javax.inject.Inject
 class SearchAdapter @Inject
 constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHolder>() {
 
-    private var clickListener: ClickListener? = null
+    private var clickListener: ClickListener? = null // should use property style
     private val mQuestion: ArrayList<Question> = arrayListOf()
 
     //binding each element to the view boss!!!
@@ -38,7 +40,7 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
         val view = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.item_question, parent, false)
-        return SearchViewHolder(view, clickListener)
+        return SearchViewHolder(view, context, clickListener)
     }
 
     interface ClickListener {
@@ -46,22 +48,14 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
     }
 
     class SearchViewHolder(view: View,
+                           private val context: Activity,
                            private val clickListener: ClickListener?) : RecyclerView.ViewHolder(view) {
 
-        @JvmField
-        val questionStatus: TextView = view.findViewById(R.id.question_status)  //like: 10 answers, answered by Divine
-        @JvmField
-        val questionTitle: TextView = view.findViewById(R.id.question_title)
-        @JvmField
-        val questionBody: TextView = view.findViewById(R.id.question_body)
-        @JvmField
-        val questionFilesHoriScrollView: HorizontalScrollView = view.findViewById(R.id.question_files_hori_scrollview)
-        @JvmField
-        val questionTagsLayout: LinearLayout = view.findViewById(R.id.question_tags_layout)
-
-        init {
-            ButterKnife.bind(this, itemView)
-        }
+        private val questionStatus: TextView = view.findViewById(R.id.question_status)  //like: 10 answers, answered by Divine
+        private val questionTitle: TextView = view.findViewById(R.id.question_title)
+        private val questionBody: TextView = view.findViewById(R.id.question_body)
+        private val tvNumberOfMediaFiles: TextView = view.findViewById(R.id.tv_number_of_media_files)
+        private val questionTagsLayout: LinearLayout = view.findViewById(R.id.question_tags_layout)
 
         fun bind(question: Question) {
             Timber.i("is it null?:  $questionTitle")
@@ -69,11 +63,30 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
             questionBody.text = question.body
             questionTitle.text = question.title
             if (question.files != null && question.files!!.size > 0) {
-                questionFilesHoriScrollView.visibility = View.VISIBLE
-                question.files!!.forEach({
-                    val fileView = FileView(itemView.context, it)
-                    questionFilesHoriScrollView.addView(fileView)
-                })
+//                for (it in question.files!!) {
+//                    val fileView = BasicUtils.getFileViewInstance(context, it, {}, {})
+//        //                    questionFilesHoriScrollView.addView(Button(context))
+//                    questionFilesHoriScrollView.addView(fileView)
+//                }
+                tvNumberOfMediaFiles.visibility = View.VISIBLE
+                when (question.files!![0].type) {
+                    Media.PICTURE_TYPE -> {
+                        tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_black_24dp, 0, 0, 0)
+                        val x = question.files!!.size.toString()
+                        tvNumberOfMediaFiles.text = "$x Pictures"
+                    }
+                    Media.VIDEO_TYPE -> {
+                        tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_ondemand_video_24dp, 0, 0, 0)
+                        val x = question.files!!.size.toString()
+                        tvNumberOfMediaFiles.text = "$x Videos"
+                    }
+                    Media.DOCS_TYPE -> {
+                        tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_24dp, 0, 0, 0)
+                        val x = question.files!!.size.toString()
+                        tvNumberOfMediaFiles.text = "$x Documents"
+                    }
+                }
+
             }
             // not required
             if (question.tags.isNotEmpty()) { // a question should have atleast one tag yoh
@@ -102,14 +115,14 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
 
     fun setTopQuestion(question: Question) { // todo: sending the whole question inefficient
         Timber.i("here is the Questions List from DB $mQuestion")
-        Timber.i("and the passed in qiestion is $question")
+        Timber.i("and the passed in question is $question")
         var indexOfQ = -1
-        mQuestion.forEachIndexed({ i, item ->
+        mQuestion.forEachIndexed { i, item ->
             if (item.title == question.title) {
                 indexOfQ = i
                 return@forEachIndexed
             }
-        })
+        }
         if (indexOfQ != -1)
             Collections.swap(mQuestion, indexOfQ, 0)
     }

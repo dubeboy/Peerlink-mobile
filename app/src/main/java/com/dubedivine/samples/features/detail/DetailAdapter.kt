@@ -1,5 +1,6 @@
 package com.dubedivine.samples.features.detail
 
+import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -13,7 +14,6 @@ import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Comment
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
-import com.dubedivine.samples.features.common.FileView
 import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
 import com.dubedivine.samples.features.detail.comments.CommentsAdapter
 import com.dubedivine.samples.features.detail.comments.FullCommentsListFragment
@@ -31,7 +31,7 @@ import javax.inject.Inject
 //so i add the question as the top element on the list
 
 class DetailAdapter
-@Inject constructor(private val mDetailPresenter: DetailPresenter) :
+@Inject constructor(private val mDetailPresenter: DetailPresenter, private val activity: Activity) :
         RecyclerView.Adapter<DetailAdapter.DetailView>() {
 
     private var _mQuestion: Question? = null
@@ -51,7 +51,7 @@ class DetailAdapter
         val view = LayoutInflater
                 .from(parent!!.context)
                 .inflate(R.layout.item_question_detail_thread, parent, false)
-        return DetailView(view, mDetailPresenter)
+        return DetailView(view, activity, mDetailPresenter)
     }
 
     override fun getItemCount(): Int = (mQuestion.answers?.size ?: 0) + 1
@@ -73,7 +73,9 @@ class DetailAdapter
 //        notifyDataSetChanged()
     }
 
-    inner class DetailView(private val view: View, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
+
+    //this inner is not so efficient causes leaks.. i think
+    inner class DetailView(private val view: View,private val context: Activity, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
         private val btnCorrectAnswer: Button = view.findViewById(R.id.btn_correct_answer)
@@ -96,42 +98,55 @@ class DetailAdapter
         private fun bindCommonQuestion(q: Question) {
             tvQuestionTitle.text = q.title
             tvQuestionBody.text = q.body
-            bindFileView(q.files)
             bindVotes(q.votes)
-            bindVideo(q.video)
+            bindFileView(q.files)
+            bindVideoView(q.video)
+            bindPictureView(q.files)
         }
 
         private fun bindCommonAnswer(a: Answer) {
             tvQuestionTitle.visibility = View.GONE
             tvQuestionBody.text = a.body
-            bindFileView(a.files)
             bindVotes(a.votes)
-            bindVideo(a.video)
+            bindFileView(a.files)
+            bindVideoView(a.video)
+            bindPictureView(a.files)
         }
 
         private fun bindFileView(files: List<Media>?) {
             if (files != null) {
                 filesLinearHorizontalView.visibility = View.VISIBLE
                 files.forEach({
-                    val fileView = FileView(itemView.context, it)
+                    val fileView = BasicUtils.getFileViewInstance(context, it, {}, {}, false)
                     filesLinearHorizontalView.addView(fileView)
                 })
             }
         }
 
-        private fun bindVideo(video: Media?) {
-            if (video?.location != null) {
-                questionVidView.visibility = View.VISIBLE
-                if (video.type == Media.VIDEO_TYPE) {
-//                    questionVidView.setV
-//                     load the video here please
-                } else if (video.type == Media.PICTURE_TYPE) {
+        private fun bindPictureView(picture: List<Media>?) {
+            Log.d(TAG, "binding picture view")
+            if (picture != null) {
+                questionImageView.visibility = View.VISIBLE
+                if (picture[0].type == Media.PICTURE_TYPE) {
                     Glide.with(itemView.context)
-                            .load(video.location)
+                            .load(BasicUtils.genMediaFullUrl(picture[0].location))
                             .into(questionImageView)
                 }
             }
         }
+
+        private fun bindVideoView(video: Media?) {
+            Log.d(TAG, "binding picture view")
+            if (video?.location != null) {
+                questionVidView.visibility = View.VISIBLE
+                if (video.type == Media.VIDEO_TYPE) {
+                    Glide.with(itemView.context)
+                            .load(BasicUtils.genMediaFullUrl(video.location))
+                            .into(questionImageView)
+                }
+            }
+        }
+
 
         private fun bindVotes(votes: Long) {
             tvVotes.text = votes.toString()

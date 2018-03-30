@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListener {
 
-    //todo: should not be repeationg all of this please, try to see wheather base activity can handle
+    //todo: should not be repeating all of this please, try to see wheather base activity can handle
     // all the common  injection i think that we should have another base baseActivity u feel!
     @Inject lateinit var searchPresenter: SearchPresenter
     @Inject lateinit var searchAdapter: SearchAdapter
@@ -103,8 +103,8 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
 
     companion object {
 
-        val SELECTED_TOP_QUESTION = "selected_top_question"
-        val SEARCH_TERM = "search_term"
+        const val SELECTED_TOP_QUESTION = "selected_top_question"
+        const val SEARCH_TERM = "search_term"
 
         fun getStartIntent(context: Context, question: Question?, searchTerm: String): Intent {
             val intent = Intent(context, SearchActivity::class.java)

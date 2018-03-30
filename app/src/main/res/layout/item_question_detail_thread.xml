@@ -107,7 +107,10 @@
 
                 <ImageView
                     android:id="@+id/q_image"
+                    tools:visibility="visible"
                     android:visibility="gone"
+                    android:scaleType="centerCrop"
+                    android:maxHeight="200dp"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:contentDescription="question image" />

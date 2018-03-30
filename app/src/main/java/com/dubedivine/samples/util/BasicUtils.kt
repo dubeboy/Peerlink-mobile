@@ -2,7 +2,6 @@ package com.dubedivine.samples.util
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.MediaStore
 import android.support.annotation.LayoutRes
@@ -13,17 +12,16 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
+import com.dubedivine.samples.BuildConfig
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
 import com.robertlevonyan.views.chip.Chip
-import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import timber.log.Timber
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -56,13 +54,18 @@ object BasicUtils {
         return chip
     }
 
-    fun getFileViewInstance(context: Activity, file: Media, onButtonClick: (media: Media) -> Unit,
-                            onCloseButtonClick: (thisView: CardView) -> Unit): CardView {
+    fun getFileViewInstance(
+            context: Activity,
+            file: Media,
+            onFileViewButtonClick: (media: Media) -> Unit,
+            onCloseButtonClick: (thisView: CardView) -> Unit, showCloseButton: Boolean = true): CardView {
+
         val cardView = inflateFor<CardView>(context, R.layout.view_file)
         val btnFile = cardView.findViewById<Button>(R.id.btn_show_files)
         val closeButton = cardView.findViewById<ImageView>(R.id.view_file_btn_close)
         btnFile.text = file.name
         when (file.type) {
+
             Media.PICTURE_TYPE -> {
                 //todo: since all of
                 btnFile.setCompoundDrawablesWithIntrinsicBounds(
@@ -79,8 +82,12 @@ object BasicUtils {
 
         }
 
+        if (!showCloseButton) {
+            closeButton.visibility = View.GONE
+        }
+
         btnFile.setOnClickListener({
-            onButtonClick(file)
+            onFileViewButtonClick(file)
         })
         closeButton.setOnClickListener({
             onCloseButtonClick(cardView)
@@ -93,7 +100,7 @@ object BasicUtils {
     }
 
     fun getImagePreviewInstance(context: Activity, path: String,
-                                onCloseImageView: (layout: RelativeLayout) -> Unit ) : RelativeLayout {
+                                onCloseImageView: (layout: RelativeLayout) -> Unit): RelativeLayout {
         val relativeLayout = inflateFor<RelativeLayout>(context, R.layout.view_image)
         val imageView = relativeLayout.findViewById<ImageView>(R.id.view_image_preview)
         val btnCloseImage = relativeLayout.findViewById<ImageView>(R.id.btn_image_close)
@@ -111,9 +118,9 @@ object BasicUtils {
     }
 
     // no need to export this if i need it will just use the  context... as X in the activity
-   private fun <T : View> inflateFor(context: Activity, @LayoutRes layout: Int) : T {
-       return context.layoutInflater.inflate(layout, null) as T
-   }
+    private fun <T : View> inflateFor(context: Activity, @LayoutRes layout: Int): T {
+        return context.layoutInflater.inflate(layout, null) as T
+    }
 
     fun getCleanTextAndTags(text: String): Pair<String, Set<String>> {
         Log.d(TAG, "the text is: $text")
@@ -125,12 +132,12 @@ object BasicUtils {
             println("yeye thete are tags $tag ")
             tags.add(tag)
         }
-        val  cleanSearchText =  p.matcher(text).replaceAll(" ")
+        val cleanSearchText = p.matcher(text).replaceAll(" ")
         println("these are the tags fam $tags")
         return Pair(cleanSearchText, tags)
     }
 
-    private  fun getPattern(): Pattern = Pattern.compile(REGEX)
+    private fun getPattern(): Pattern = Pattern.compile(REGEX)
 
     private fun getMimeType(image: String): String {
         val indexOf = image.lastIndexOf(".") + 1
@@ -138,17 +145,20 @@ object BasicUtils {
         if (s == "jpg") {
             s = "jpeg"
         }
-        return "image/" + s
+//       ContentResolver cR = context.getContentResolver();
+//        MimeTypeMap mime = MimeTypeMap.getSingleton();
+//        String type = mime.getExtensionFromMimeType(cR.getType(uri));
+        return "image/$s"
     }
 
-    fun createMultiPartFromFile(uris: List<String>): MutableList<MultipartBody.Part> {
+    fun createMultiPartFromFile(uris: List<String>, context: Context? = null): MutableList<MultipartBody.Part> {
         val multiPartBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
 
         for (imageUri in uris) {
             Log.d("BASIC_UTIL_MIME", "The file name is $uris")
             val file = File(imageUri)
             val mime = getMimeType(imageUri)
-            Log.d("BASIC_UTIL_MIME", "the mime is " + mime)
+            Log.d("BASIC_UTIL_MIME", "the mime is $mime")
             val reqFile = RequestBody.create(MediaType.parse(mime), file)
             //                 MultipartBody.Part body = MultipartBody.Part.createFormData("images", file.getName(), reqFile);
             multiPartBuilder.addFormDataPart("files", file.name, reqFile)
@@ -167,5 +177,8 @@ object BasicUtils {
     }
 
 
+    fun genMediaFullUrl(mediaID: String): String {
+        return BuildConfig.BASE_API_URL + mediaID
+    }
 
 }

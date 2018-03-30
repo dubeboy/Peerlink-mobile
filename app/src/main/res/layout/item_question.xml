@@ -38,22 +38,34 @@
             android:paddingBottom="10dp"
             android:layout_height="wrap_content" />
 
-        <HorizontalScrollView
-            android:visibility="gone"
-            android:id="@+id/question_files_hori_scrollview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <!--programmatically insert the files asscited with this question-->
-
-        </HorizontalScrollView>
-
         <LinearLayout
+            tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/question_tags_layout"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
                 <!--progm insert the tags with chips-->
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="end"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_number_of_media_files"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                tools:text="0 files"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingEnd="5dp"
+                android:drawableLeft="@drawable/ic_attach_file_24dp"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
     </LinearLayout>

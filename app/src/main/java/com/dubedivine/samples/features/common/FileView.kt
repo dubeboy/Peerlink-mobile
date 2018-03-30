@@ -77,7 +77,7 @@ class FileView : LinearLayout {
                     btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
                                 R.drawable.ic_image_black_24dp, 0, 0 , 0)
                 }
-                Media.PICTURE_TYPE -> {
+                Media.VIDEO_TYPE -> {
                     btnFile!!.setCompoundDrawablesWithIntrinsicBounds(
                             R.drawable.ic_ondemand_video_24dp, 0, 0, 0)
                 }
