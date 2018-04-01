@@ -32,6 +32,7 @@ import droidninja.filepicker.FilePickerConst
 /*
  *
   * the type: Char is a problem its functionality should be removed its redundant
+  * it uses prefs which is no need we should fix this
 * */
 class AddFilesDialogFragment : DialogFragment() {
     private var mediaFiles: HashMap<Char, List<String>> = HashMap() //Maps media type to Files
@@ -43,7 +44,6 @@ class AddFilesDialogFragment : DialogFragment() {
     private var type: Char = NO_MEDIA //default type is NO_MEDIA
     private var permissionGranted = true
 
-    //todo: inject this  gradle clean first
     private lateinit var pref: PreferencesHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {

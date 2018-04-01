@@ -30,6 +30,8 @@ import javax.inject.Inject
 import kotlin.collections.HashSet
 
 
+
+
 // in the future we should also get the question answers increnmentally so the
 // serialized Question should contain a max of 5 children each comments and answers and then
 // we lazily load the the other children
@@ -37,8 +39,10 @@ import kotlin.collections.HashSet
 //todo: should only search when the text is not a empty(space) key
 class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnItemClick {
 
-    @Inject lateinit var mDetailPresenter: DetailPresenter
-    @Inject lateinit var mDetailAdapter: DetailAdapter
+    @Inject
+    lateinit var mDetailPresenter: DetailPresenter
+    @Inject
+    lateinit var mDetailAdapter: DetailAdapter
     @BindView(R.id.progress)
     @JvmField
     var mProgress: ProgressBar? = null
@@ -116,22 +120,28 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
                 toast("posting answer")
                 Log.d(TAG, "posting answer and the posted files are $docsList")
 
-                mDetailPresenter.addAnswer(mQuestion!!.id!!, answer.toString() , docsList)
+                mDetailPresenter.addAnswer(mQuestion!!.id!!, answer.toString(), docsList)
             }
         })
     }
 
     override fun showUserMessage(msg: String) {
-       toast(msg) // toast or snack
+        toast(msg) // toast or snack
     }
 
     override fun showAnswer(entity: Answer) {
         mDetailAdapter.addAnswer(entity)
         snack("shared answer")
         et_answer_input.setText("")
+        // this check is for when the user has posted one with files
+        if (docsList.size > 0) {
+            docsList.clear()
+            add_q_linearlayout.removeAllViews()
+            checkHoriElementsAndFragmentButtons()
+        }
+
         mRecyclerData!!.scrollToPosition(mRecyclerData!!.adapter.itemCount - 1)
     }
-
 
 
     override fun showQuestionsAndAnswers(pokemon: Pokemon) {
@@ -151,7 +161,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
     override fun showError(error: Throwable) {
 //        mPokemonLayout?.visibility = View.GONE
 //        mErrorView?.visibility = View.VISIBLE
-     //   toast("Oops could not connect to the internet")
+        //   toast("Oops could not connect to the internet")
         Timber.e(error, "There was a problem retrieving the pokemon...")
         error.printStackTrace()
     }
@@ -183,9 +193,9 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             Media.PICTURE_TYPE -> {
                 fileList.forEach { item ->
                     val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this, item,
-                     {
-                        removeItem(item, it)
-                    })
+                            {
+                                removeItem(item, it)
+                            })
                     add_q_linearlayout.addView(imagePreviewInstance)
                 }
             }
@@ -216,14 +226,14 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
                             Media(item.substringAfterLast("/"), 0, Media.DOCS_TYPE, item),
                             { _ -> },
                             {
-                              removeItem(item, it)
+                                removeItem(item, it)
                             }
                     )
                     add_q_linearlayout.addView(fileViewInstance)
                 }
             }
         }
-        checkHoriElements()
+        checkHoriElementsAndFragmentButtons()
     }
 
     override fun downVoteAnswerAndDisableButton(answerId: String, detailView: DetailAdapter.DetailView) {
@@ -258,15 +268,16 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             (it.parent as ViewGroup).removeView(it)
         }
         docsList.remove(item)
-        checkHoriElements()
+        checkHoriElementsAndFragmentButtons()
     }
 
-    private fun checkHoriElements() {
+    private fun checkHoriElementsAndFragmentButtons() {
         if (add_q_linearlayout.childCount > 0) {
             hori_scroll_view.visibility = View.VISIBLE
         } else {
             hori_scroll_view.visibility = View.GONE
-            newFragment.enableAllButtons()
+            if (docsList.size > 0)
+                newFragment.enableAllButtons()
         }
     }
 

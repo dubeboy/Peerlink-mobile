@@ -44,8 +44,8 @@ class DetailAdapter
         }
 
     fun addAnswer(answer: Answer) {
-        mQuestion.answers?.add(answer)
-//        notifyDataSetChanged()
+        mQuestion.answers!!.add(answer)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DetailView {

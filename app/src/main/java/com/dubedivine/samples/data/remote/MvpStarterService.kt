@@ -45,7 +45,7 @@ interface MvpStarterService {
     fun postAnswer(@Path("q_id") questionId: String, @Body answer: Answer): Single<StatusResponse<Answer>>
 
     @Multipart
-    @POST("questions/{q_id}/answers/{a_id}/files")
+    @POST("questions/{q_id}/answer/{a_id}/files")
     fun postAnswerFiles(@Path("q_id") questionId: String,
                         @Path("a_id") answerId: String,
                         @Part retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Answer>>
