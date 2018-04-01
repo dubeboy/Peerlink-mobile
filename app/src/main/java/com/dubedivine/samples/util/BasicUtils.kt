@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.support.annotation.LayoutRes
 import android.support.constraint.ConstraintLayout
@@ -78,7 +79,6 @@ object BasicUtils {
         when (file.type) {
 
             Media.PICTURE_TYPE -> {
-                //todo: since all of
                 btnFile.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_image_black_24dp, 0, 0, 0)
             }
@@ -211,6 +211,8 @@ object BasicUtils {
                                             mDetailPresenter: DetailPresenter,
                                             enableImageViewClick: Boolean = true) {
 
+        //enableImageViewClick is for when we are not in the ShowFullImageFragment so be default its true
+
         // we wnat it to have 0 children at first
         if (pictures != null) {
             horizontalScrollView.visibility = View.VISIBLE
@@ -222,7 +224,13 @@ object BasicUtils {
                         val imageView = constraintLayout.findViewById<ImageView>(R.id.img_full_image_view)
                         val progressBar = constraintLayout.findViewById<ProgressBar>(R.id.progress_image_loading)
                         //change the params so that they give other items space
-                        imageView.layoutParams = LinearLayout.LayoutParams(ViewUtil.dpToPx(300), ViewUtil.dpToPx(300))
+                        if (enableImageViewClick)
+                            imageView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ViewUtil.dpToPx(300))
+                        else
+                            imageView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ViewUtil.dpToPx(450))
+
+                        imageView.setPadding(0, 0, ViewUtil.dpToPx(2), 0)
+
                         Glide.with(context)
                                 .load(BasicUtils.genMediaFullUrl(location))
                                 .listener(object : RequestListener<Drawable?> {
@@ -248,5 +256,6 @@ object BasicUtils {
             )
         }
     }
+
 
 }

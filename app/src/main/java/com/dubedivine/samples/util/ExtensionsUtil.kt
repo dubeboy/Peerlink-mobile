@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.dubedivine.samples.BuildConfig
 import com.dubedivine.samples.R
 import com.dubedivine.samples.R.id.swipe_to_refresh
 import com.robertlevonyan.views.chip.Chip
@@ -62,11 +63,6 @@ fun View.removeFromParent() {
     }
 }
 
-fun Any.log(message: String) {
-    val TAG = this::javaClass.name
-    Log.d(TAG, message)
-}
-
 //todo: should replicate to create a progress dialog
 fun Activity.createAlertDialog(title: String, msg: String? = null, @LayoutRes resource: Int? = null): AlertDialog {
     val alertDialogBuilder = AlertDialog.Builder(this)
@@ -92,3 +88,9 @@ fun Activity.showProgressAlertDialog(title: String, msg: String? = null, @Layout
     this.createAlertDialog(title, msg, null)
 }
 
+//my timber!!
+fun Any.log(message: String) {
+    if (BuildConfig.DEBUG) {
+        Log.d(this.javaClass.simpleName, message)
+    }
+}

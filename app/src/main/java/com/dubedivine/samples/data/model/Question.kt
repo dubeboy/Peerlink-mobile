@@ -9,7 +9,7 @@ import kotlin.collections.ArrayList
  * Created by divine on 2017/09/10.
  */
 
-// todo: should not deserialize the the nested objects?
+// todo: should not deserialize the the nested objects? , Divine months later, like what was I saying here...?
 
 class Question(val title: String, val body: String, var votes: Long, val tags: List<Tag>, val type: String) : Serializable {
     //for video we will add another constructor which has video here

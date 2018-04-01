@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="450dp"
+    android:fitsSystemWindows="true"
+    android:background="@color/dark_gray"
     tools:context=".features.detail.dialog.ShowFullImage">
 
   <LinearLayout
       android:orientation="horizontal"
       android:id="@+id/linearLayout_images"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="match_parent">
 
   </LinearLayout>

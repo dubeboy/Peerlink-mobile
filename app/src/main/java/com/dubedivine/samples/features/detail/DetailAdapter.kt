@@ -189,7 +189,7 @@ class DetailAdapter
 
             btnSubmitComment.setOnClickListener({
                 handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this)
-                etCommentBody.setText("") //todo : bad should be in the callback when this is succes
+                etCommentBody.setText("") //todo : bad should be in the callback when this is success
             })
 
             if (q.comments != null && q.comments!!.isNotEmpty())

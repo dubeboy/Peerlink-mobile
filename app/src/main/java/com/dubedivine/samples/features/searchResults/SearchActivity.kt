@@ -14,8 +14,10 @@ import com.dubedivine.samples.features.addQuestion.AddQuestionActivity
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.ErrorView
 import com.dubedivine.samples.features.detail.DetailActivity
+import com.dubedivine.samples.util.log
 import com.dubedivine.samples.util.snack
 import kotlinx.android.synthetic.main.content_fab_add.*
+import kotlinx.android.synthetic.main.content_swipe_refresh.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,6 +55,7 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
 
         searchPresenter.getSearchResults(searchTerm, 0)  // initialize the questions
 
+        log("setting the onclick listener")
         searchAdapter.setClickListener(this)
 
         mSearchResultsRecycler?.layoutManager = LinearLayoutManager(this)
@@ -80,7 +83,8 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         get() = R.layout.activity_search
 
     override fun onQuestionClick(question: Question) {
-       startActivity(DetailActivity.getStartIntent(this, question))
+        log("on QuestionClick has been clicked")
+        startActivity(DetailActivity.getStartIntent(this, question))
     }
 
     override fun showQuestionsSearchResults(questions: List<Question>) {

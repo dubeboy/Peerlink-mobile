@@ -16,6 +16,7 @@ import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.common.FileView
 import com.dubedivine.samples.features.searchResults.SearchAdapter.SearchViewHolder
 import com.dubedivine.samples.util.BasicUtils
+import com.dubedivine.samples.util.log
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -40,7 +41,7 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
         val view = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.item_question, parent, false)
-        return SearchViewHolder(view, context, clickListener)
+        return SearchViewHolder(view, clickListener)
     }
 
     interface ClickListener {
@@ -48,7 +49,6 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
     }
 
     class SearchViewHolder(view: View,
-                           private val context: Activity,
                            private val clickListener: ClickListener?) : RecyclerView.ViewHolder(view) {
 
         private val questionStatus: TextView = view.findViewById(R.id.question_status)  //like: 10 answers, answered by Divine
@@ -74,13 +74,11 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
                             tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_black_24dp, 0, 0, 0)
                             val x = question.files!!.size
                             tvNumberOfMediaFiles.text = "Picture".pluralise(x)
-                            return
                         }
                         Media.DOCS_TYPE -> {
                             tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_24dp, 0, 0, 0)
                             val x = question.files!!.size
                             tvNumberOfMediaFiles.text = "Document".pluralise(x)
-                            return
                         }
                     }
 
@@ -91,19 +89,22 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
                 // todo: clean the layout first
                 questionTagsLayout.visibility = View.VISIBLE
                 if (questionTagsLayout.childCount == 0) {
-                    question.tags.forEach(action = {
-                        questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
-                    })
+                    question.tags.forEach(
+                            {
+                                questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
+                            }
+                    )
                 }
             }
             itemView.setOnClickListener({
+                log("on QuestionClick has been clicked for $question")
                 clickListener?.onQuestionClick(question)
             })
         }
 
         private fun String.pluralise(x: Int): String {
             if (x != 1) {
-              return """$x ${this}s"""
+                return """$x ${this}s"""
             }
             return """$x ${this}"""
         }
@@ -130,6 +131,10 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
         }
         if (indexOfQ != -1)
             Collections.swap(mQuestion, indexOfQ, 0)
+
+        notifyDataSetChanged()
+
+
     }
 
     fun clear() {

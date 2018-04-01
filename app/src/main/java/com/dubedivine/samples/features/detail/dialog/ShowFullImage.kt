@@ -4,6 +4,7 @@ package com.dubedivine.samples.features.detail.dialog
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v7.app.AppCompatActivity
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,8 @@ import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.features.detail.DetailPresenter
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.ViewUtil
+import com.dubedivine.samples.util.log
+import kotlin.math.roundToInt
 
 
 class ShowFullImage : BottomSheetDialogFragment() {
@@ -42,6 +45,7 @@ class ShowFullImage : BottomSheetDialogFragment() {
 
         val h = horizontalView as HorizontalScrollView
 
+        // todo does not work
         // estimated the that each image would be about 400dp so
         // then move multiply to get three of those images therefore getting the length therefor the pixels to scroll to
         h.scrollTo(clickedPosition!! * ViewUtil.dpToPx(400), 0)
@@ -54,7 +58,15 @@ class ShowFullImage : BottomSheetDialogFragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        val metrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(metrics)
+        val height = metrics.heightPixels
+        log("the height of the ShowFullImageFragMent is $height")
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, height )
 
+    }
 
     companion object {
 
