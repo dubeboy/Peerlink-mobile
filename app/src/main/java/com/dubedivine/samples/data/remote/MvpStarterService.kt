@@ -1,9 +1,9 @@
 package com.dubedivine.samples.data.remote
 
-
 import com.dubedivine.samples.data.model.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import org.jetbrains.annotations.NotNull
 import retrofit2.http.*
 
@@ -64,4 +64,8 @@ interface MvpStarterService {
 
     @GET("questions/{q_id}")
     fun getQuestion(@Path("q_id") questionId: String): Single<StatusResponse<Question>>
+
+    @Streaming
+    @GET("{video_id}")
+    fun getVideo(@Path("video_id") videoLocation: String): Single<ResponseBody>
 }

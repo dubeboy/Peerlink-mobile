@@ -62,31 +62,29 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
             questionStatus.text = BasicUtils.createTheStatusTextViewInfo(question)
             questionBody.text = question.body
             questionTitle.text = question.title
-            if (question.files != null && question.files!!.size > 0) {
-//                for (it in question.files!!) {
-//                    val fileView = BasicUtils.getFileViewInstance(context, it, {}, {})
-//        //                    questionFilesHoriScrollView.addView(Button(context))
-//                    questionFilesHoriScrollView.addView(fileView)
-//                }
+            if (question.video != null) {
                 tvNumberOfMediaFiles.visibility = View.VISIBLE
-                when (question.files!![0].type) {
-                    Media.PICTURE_TYPE -> {
-                        tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_black_24dp, 0, 0, 0)
-                        val x = question.files!!.size.toString()
-                        tvNumberOfMediaFiles.text = "$x Pictures"
+                tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_ondemand_video_24dp, 0, 0, 0)
+                tvNumberOfMediaFiles.text = "1 Video"
+            } else {
+                if (question.files != null && question.files!!.size > 0) {
+                    tvNumberOfMediaFiles.visibility = View.VISIBLE
+                    when (question.files!![0].type) {
+                        Media.PICTURE_TYPE -> {
+                            tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_black_24dp, 0, 0, 0)
+                            val x = question.files!!.size
+                            tvNumberOfMediaFiles.text = "Picture".pluralise(x)
+                            return
+                        }
+                        Media.DOCS_TYPE -> {
+                            tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_24dp, 0, 0, 0)
+                            val x = question.files!!.size
+                            tvNumberOfMediaFiles.text = "Document".pluralise(x)
+                            return
+                        }
                     }
-                    Media.VIDEO_TYPE -> {
-                        tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_ondemand_video_24dp, 0, 0, 0)
-                        val x = question.files!!.size.toString()
-                        tvNumberOfMediaFiles.text = "$x Videos"
-                    }
-                    Media.DOCS_TYPE -> {
-                        tvNumberOfMediaFiles.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_attach_file_24dp, 0, 0, 0)
-                        val x = question.files!!.size.toString()
-                        tvNumberOfMediaFiles.text = "$x Documents"
-                    }
-                }
 
+                }
             }
             // not required
             if (question.tags.isNotEmpty()) { // a question should have atleast one tag yoh
@@ -101,6 +99,13 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
             itemView.setOnClickListener({
                 clickListener?.onQuestionClick(question)
             })
+        }
+
+        private fun String.pluralise(x: Int): String {
+            if (x != 1) {
+              return """$x ${this}s"""
+            }
+            return """$x ${this}"""
         }
     }
 

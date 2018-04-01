@@ -1,14 +1,21 @@
 package com.dubedivine.samples.features.detail
 
+import android.app.Activity
 import android.util.Log
 import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
+import com.dubedivine.samples.features.detail.dialog.ShowVideoFragment
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import javax.inject.Inject
 
 /*
@@ -115,7 +122,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                     .subscribe({
                         mvpView!!.showProgress(false)
                         if (it.status!!) {
-                             mvpView!!.showUserMessage("Your vote has been casted.")
+                            mvpView!!.showUserMessage("Your vote has been casted.")
                         } else {
                             //should only tell the user when there is an error and then do their opposite action
                             mvpView!!.showUserMessage("Sorry failed to cast your vote, please try again.")
@@ -166,7 +173,8 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
         if (body.isNotBlank()) {
             doLongTaskOnView {
 
-                mDataManager.postCommentQuestion(questionId, Comment(body, 0)).compose(SchedulerUtils.ioToMain())
+                mDataManager.postCommentQuestion(questionId, Comment(body, 0))
+                        .compose(SchedulerUtils.ioToMain())
                         .subscribe({
                             mvpView!!.showProgress(false)
                             if (it.status!!) {
@@ -204,5 +212,44 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
             }
 
         } else mvpView!!.showUserMessage("Please type a comment")
+    }
+
+    // for fragments the call back is on the method because it does not make sense right now to create
+    // a mvp view just for this fragment
+
+    fun fragmentFetchVideo(peerlinkDirectory: String, videoLocation: String,
+                           success: (isSuccess: Boolean, message: String, file: File?) -> Unit, progress: (prog: Long, fileSize: Long) -> Unit) {
+        // sane check to see where there the string had just empty characters
+        if (videoLocation.isNotBlank()) {
+            mDataManager.getVideo(videoLocation)
+                    .compose(SchedulerUtils.ioToMain())
+                    .subscribe({
+                        val fileReader = ByteArray(4096)
+                        val fileSize = it.contentLength()
+                        var fileSizeDownloaded = 0L
+                        val inputStream = it.byteStream()
+                        val parentFile = File(peerlinkDirectory)
+                        parentFile.mkdirs()
+                        val f = File(parentFile, "${videoLocation}_${System.currentTimeMillis()}")
+                        val outputStream = FileOutputStream(f)
+                        while (true) {
+                            val read = inputStream.read(fileReader)
+                            if (read == -1) {
+                                break
+                            }
+                            outputStream.write(fileReader, 0, read)
+                            fileSizeDownloaded += read
+                            progress(fileSizeDownloaded, fileSize)
+//                            Log.d(TAG, "file size downloaded$fileSizeDownloaded of $fileSize")
+                        }
+                        outputStream.flush()
+                        inputStream.close()
+                        outputStream.close()
+                        success(true, "file downloaded", f)
+                    }, {
+                        it.printStackTrace()
+                        success(false, "failed to download the video", null)
+                    })
+        }
     }
 }

@@ -34,6 +34,7 @@ import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import timber.log.Timber
 import java.util.*
@@ -63,9 +64,6 @@ class MainActivity :
     @BindView(R.id.toolbar)
     @JvmField
     var mToolbar: Toolbar? = null
-    @BindView(R.id.main_btn_search)
-    @JvmField
-    var mSearchButton: ImageButton? = null
     @BindView(R.id.main_auto_complete_input_search)
     @JvmField
     var mAutoCompleteSearchInputView: AutoCompleteTextView? = null
@@ -94,7 +92,9 @@ class MainActivity :
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()
         setupSideNavigation()
-
+        main_btn_search.setOnClickListener({
+            onSearchButtonClick()
+        })
 
 
 
@@ -282,10 +282,9 @@ class MainActivity :
         // startActivity(DetailActivity.getStartIntent(this, pokemon))
     }
 
-    @OnClick(R.id.main_btn_search)
     fun onSearchButtonClick() {
         Timber.d("btn search clicked")
-        if (!mAutoCompleteSearchInputView!!.text.toString().isBlank()) {
+        if (mAutoCompleteSearchInputView!!.text.toString().isNotBlank()) {
             startActivity(SearchActivity.getStartIntent(this, null,
                     mAutoCompleteSearchInputView!!.text.toString()))
         } else {
@@ -293,7 +292,6 @@ class MainActivity :
         }
 
     }
-
 
     // click event from the searchAdapter
     override fun onItemClick(question: Question) {

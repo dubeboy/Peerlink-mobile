@@ -131,7 +131,7 @@
                 <HorizontalScrollView
                     android:id="@+id/hori_files_list"
                     android:layout_width="wrap_content"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_height="wrap_content">
                     <LinearLayout
                         android:id="@+id/q_files_linearlayout"

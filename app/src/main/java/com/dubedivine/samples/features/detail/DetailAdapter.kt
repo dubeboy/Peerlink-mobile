@@ -1,6 +1,7 @@
 package com.dubedivine.samples.features.detail
 
 import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -8,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.bumptech.glide.Glide
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Comment
@@ -17,6 +17,7 @@ import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
 import com.dubedivine.samples.features.detail.comments.CommentsAdapter
 import com.dubedivine.samples.features.detail.comments.FullCommentsListFragment
+import com.dubedivine.samples.features.detail.dialog.ShowVideoFragment
 import com.dubedivine.samples.util.BasicUtils
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ class DetailAdapter
         val view = LayoutInflater
                 .from(parent!!.context)
                 .inflate(R.layout.item_question_detail_thread, parent, false)
-        return DetailView(view, activity, mDetailPresenter)
+        return DetailView(view, activity as AppCompatActivity, mDetailPresenter)
     }
 
     override fun getItemCount(): Int = (mQuestion.answers?.size ?: 0) + 1
@@ -73,15 +74,16 @@ class DetailAdapter
 //        notifyDataSetChanged()
     }
 
-
     //this inner is not so efficient causes leaks.. i think
-    inner class DetailView(private val view: View,private val context: Activity, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
+    inner class DetailView(private val view: View, private val context: AppCompatActivity, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
         private val btnCorrectAnswer: Button = view.findViewById(R.id.btn_correct_answer)
         private val tvQuestionTitle: TextView = view.findViewById(R.id.q_title)
         private val tvQuestionBody: TextView = view.findViewById(R.id.q_body)
+        @Deprecated("useless", ReplaceWith("delete"))
         private val questionVidView: VideoView = view.findViewById(R.id.q_vid)
+        @Deprecated("useless", ReplaceWith("delete"))
         private val questionImageView: ImageView = view.findViewById(R.id.q_image)
         private val tagsLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_tags_linearlayout) // naming is a bit off...
         private val filesLinearHorizontalView: LinearLayout = view.findViewById(R.id.q_files_linearlayout)
@@ -99,6 +101,7 @@ class DetailAdapter
             tvQuestionTitle.text = q.title
             tvQuestionBody.text = q.body
             bindVotes(q.votes)
+
             bindFileView(q.files)
             bindVideoView(q.video)
             bindPictureView(q.files)
@@ -108,6 +111,7 @@ class DetailAdapter
             tvQuestionTitle.visibility = View.GONE
             tvQuestionBody.text = a.body
             bindVotes(a.votes)
+
             bindFileView(a.files)
             bindVideoView(a.video)
             bindPictureView(a.files)
@@ -116,6 +120,7 @@ class DetailAdapter
         private fun bindFileView(files: List<Media>?) {
             if (files != null) {
                 filesLinearHorizontalView.visibility = View.VISIBLE
+                if (filesLinearHorizontalView.childCount > 0) filesLinearHorizontalView.removeAllViewsInLayout()
                 files.forEach({
                     val fileView = BasicUtils.getFileViewInstance(context, it, {}, {}, false)
                     filesLinearHorizontalView.addView(fileView)
@@ -126,23 +131,27 @@ class DetailAdapter
         private fun bindPictureView(picture: List<Media>?) {
             Log.d(TAG, "binding picture view")
             if (picture != null) {
-                questionImageView.visibility = View.VISIBLE
-                if (picture[0].type == Media.PICTURE_TYPE) {
-                    Glide.with(itemView.context)
-                            .load(BasicUtils.genMediaFullUrl(picture[0].location))
-                            .into(questionImageView)
-                }
+                BasicUtils.addPicturesListToHorizontalListView(filesLinearHorizontalView, ArrayList(picture.map { it.location }), context, mDetailPresenter)
             }
         }
 
+
+
         private fun bindVideoView(video: Media?) {
-            Log.d(TAG, "binding picture view")
+            Log.d(TAG, "binding video view")
             if (video?.location != null) {
-                questionVidView.visibility = View.VISIBLE
+                // in the future we should be able to use glide and show a thumbnail of the video
                 if (video.type == Media.VIDEO_TYPE) {
-                    Glide.with(itemView.context)
-                            .load(BasicUtils.genMediaFullUrl(video.location))
-                            .into(questionImageView)
+                    val fileView = BasicUtils.getFileViewInstance(context, video, {
+                        Log.d(TAG, "the clicked file is $it")
+                        ShowVideoFragment.newInstance(mDetailPresenter, it.location)
+                                .show(context.supportFragmentManager, "ShowVideoFrag")
+
+                    }, {}, false)
+                    if (filesLinearHorizontalView.childCount > 0) {
+                        filesLinearHorizontalView.removeAllViewsInLayout()
+                    }
+                    filesLinearHorizontalView.addView(fileView)
                 }
             }
         }
@@ -152,6 +161,7 @@ class DetailAdapter
             tvVotes.text = votes.toString()
         }
 
+        // the main binder
         fun bindQuestion(q: Question) {
             bindCommonQuestion(q)
             this.q = q
@@ -214,8 +224,8 @@ class DetailAdapter
                 etCommentBody.setText("")
             }
 
-            if (ans.comments != null && ans.comments!!.isNotEmpty())
-                attachCommentsAdapter(ans.comments!!)
+            if (ans.comments != null && ans.comments.isNotEmpty())
+                attachCommentsAdapter(ans.comments)
             else
                 Log.i(TAG, "Could not attach comments recycler A: ${ans.comments}")
         }

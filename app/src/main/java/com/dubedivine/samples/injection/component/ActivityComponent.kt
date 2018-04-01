@@ -13,7 +13,6 @@ import dagger.Subcomponent
 
 //component glue module with the injection
 // makes this live for a component only
-//todo: any new activity added should be added here
 @PerActivity
 @Subcomponent(modules = arrayOf(ActivityModule::class))
 interface ActivityComponent {

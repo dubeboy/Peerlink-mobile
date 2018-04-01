@@ -5,6 +5,7 @@ import com.dubedivine.samples.data.remote.MvpStarterService
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -111,5 +112,9 @@ constructor(private val mMvpStarterService: MvpStarterService) {
 
     fun getQuestion(questionId: String): Single<StatusResponse<Question>> {
         return mMvpStarterService.getQuestion(questionId)
+    }
+
+    fun getVideo(videoLocation: String): Single<ResponseBody> {
+        return mMvpStarterService.getVideo(videoLocation)
     }
 }

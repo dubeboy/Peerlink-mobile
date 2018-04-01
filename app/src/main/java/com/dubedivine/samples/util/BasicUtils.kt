@@ -1,21 +1,32 @@
 package com.dubedivine.samples.util
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.support.annotation.LayoutRes
+import android.support.constraint.ConstraintLayout
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RelativeLayout
+import android.widget.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.dubedivine.samples.BuildConfig
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.model.Media
 import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.features.detail.DetailPresenter
+import com.dubedivine.samples.features.detail.dialog.ShowFullImage
 import com.robertlevonyan.views.chip.Chip
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -179,6 +190,63 @@ object BasicUtils {
 
     fun genMediaFullUrl(mediaID: String): String {
         return BuildConfig.BASE_API_URL + mediaID
+    }
+
+    fun checkExternalReadWritePermissions(activity: Activity, requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            /*ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
+                    Manifest.permission.READ_CONTACTS)*/
+            ActivityCompat.requestPermissions(activity,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    requestCode)
+        }
+    }
+
+
+    fun addPicturesListToHorizontalListView(horizontalScrollView: LinearLayout,
+                                            pictures: List<String>?,
+                                            context: AppCompatActivity,
+                                            mDetailPresenter: DetailPresenter,
+                                            enableImageViewClick: Boolean = true) {
+
+        // we wnat it to have 0 children at first
+        if (pictures != null) {
+            horizontalScrollView.visibility = View.VISIBLE
+            if (horizontalScrollView.childCount > 0) horizontalScrollView.removeAllViewsInLayout()
+            pictures.forEachIndexed(
+                    { i: Int, location: String ->
+                        // since its an Item we inflate it many times
+                        val constraintLayout = BasicUtils.inflateFor<ConstraintLayout>(context, R.layout.item_fragment_full_image_view)
+                        val imageView = constraintLayout.findViewById<ImageView>(R.id.img_full_image_view)
+                        val progressBar = constraintLayout.findViewById<ProgressBar>(R.id.progress_image_loading)
+                        //change the params so that they give other items space
+                        imageView.layoutParams = LinearLayout.LayoutParams(ViewUtil.dpToPx(300), ViewUtil.dpToPx(300))
+                        Glide.with(context)
+                                .load(BasicUtils.genMediaFullUrl(location))
+                                .listener(object : RequestListener<Drawable?> {
+                                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+                                        progressBar.visibility = View.GONE
+                                        return false
+                                    }
+
+                                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                                        progressBar.visibility = View.GONE
+                                        return false
+                                    }
+                                })
+                                .into(imageView)
+                        if (enableImageViewClick) {
+                            imageView.setOnClickListener({
+                                ShowFullImage.newInstance(mDetailPresenter, i, pictures)
+                                        .show(context.supportFragmentManager, "showFullImagesFragments")
+                            })
+                        }
+                        horizontalScrollView.addView(constraintLayout)
+                    }
+            )
+        }
     }
 
 }

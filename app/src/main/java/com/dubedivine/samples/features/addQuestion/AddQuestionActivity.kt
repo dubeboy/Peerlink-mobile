@@ -1,17 +1,13 @@
 package com.dubedivine.samples.features.addQuestion
 
-import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.CardView
 import android.text.Editable
 import android.text.TextWatcher
@@ -28,7 +24,6 @@ import com.dubedivine.samples.features.detail.DetailActivity
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.BasicUtils.getRealPathFromURI
 import com.dubedivine.samples.util.snack
-import com.dubedivine.samples.util.toast
 import droidninja.filepicker.FilePickerBuilder
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_question.*
@@ -59,11 +54,11 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         mPref = PreferencesHelper(this)
-        checkPermissions()
+        BasicUtils.checkExternalReadWritePermissions(this, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
         tagsSuggestionsAdapter = ArrayAdapter(this@AddQuestionActivity,
                 android.R.layout.simple_spinner_item)
         tagsSuggestionsView = getInflatedTagsSuggestionView()
-        tagsSuggestionListView = tagsSuggestionsView?.findViewById(R.id.tags_suggestion_listview)
+        tagsSuggestionListView = tagsSuggestionsView!!.findViewById(R.id.tags_suggestion_listview)
         popUpWindow = PopupWindow(this) //https://www.google.com/search?client=ubuntu&channel=fs&q=android+popup+window+relative+to+the+coursor&ie=utf-8&oe=utf-8
         configurePopUpWindow(popUpWindow, tagsSuggestionsView!!)
         prog = ProgressDialog(this)
@@ -122,6 +117,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         btn_add_video.setOnClickListener {
             val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
             takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 60) // you have one min to say what ever you want
+            takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0) // you have one min to say what ever you want
             //if the camera exists
             if (takeVideoIntent.resolveActivity(packageManager) != null) {
                 Log.d(TAG, " the data is ${takeVideoIntent.data}")
@@ -178,7 +174,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     }
 
     override fun showProgress(show: Boolean) {
-        val prog = getProgressBarInstance("Asking question", "Please wait asking question...")
+        getProgressBarInstance("Asking question", "Please wait asking question...")
         if (show) prog.show() else prog.dismiss()
     }
 
@@ -215,7 +211,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         }
     }
 
-    //--------------------------private methods ------------------------
     private fun processTheInputRequest(requestCode: Int, intent: Intent?) {
         when (requestCode) {
             REQUEST_VIDEO_CAPTURE -> {
@@ -424,18 +419,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         return inflater.inflate(R.layout.activity_popup_tag_suggestion, null)
     }
 
-    private fun checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            /*ActivityCompat.shouldShowRequestPermissionRationale(thisActivity,
-                    Manifest.permission.READ_CONTACTS)*/
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
-        }
-    }
+
 
     companion object {
         private const val TAG = "__AddQuestionActivity"
