@@ -1,10 +1,13 @@
 package com.dubedivine.samples.features.addQuestion
 
+import android.app.Activity
 import android.util.Log
 import com.dubedivine.samples.data.DataManager
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.model.StatusResponse
 import com.dubedivine.samples.data.model.Tag
+import com.dubedivine.samples.data.model.User
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
@@ -16,7 +19,10 @@ import javax.inject.Inject
  */
 
 class AddQuestionPresenter @Inject
-constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMvpView>() {
+constructor(private val mDataManager: DataManager, activity: Activity) : BasePresenter<AddQuestionMvpView>() {
+
+    private var mPref: PreferencesHelper = PreferencesHelper(activity)
+
     override fun attachView(mvpView: AddQuestionMvpView) {
         super.attachView(mvpView)
     }
@@ -38,6 +44,8 @@ constructor(private val mDataManager: DataManager) : BasePresenter<AddQuestionMv
 
     fun publishNewQuestion(question: Question, files: List<String>? = null) {
         doLongTaskOnView {
+            // set the user of this question
+            question.user = User(mPref.getUserId())
             mDataManager.postQuestion(question)
                     .compose(SchedulerUtils.ioToMain<StatusResponse<Question>>())
                     .subscribe({

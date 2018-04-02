@@ -54,13 +54,13 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     }
 
     //todo : should return a boolean
-    fun addVote(qId: String, vote: Boolean): Single<StatusResponse<Boolean>> {
-        return mMvpStarterService.addVoteToQuestion(qId, vote)
+    fun addVote(qId: String, userId: String, vote: Boolean): Single<StatusResponse<Boolean>> {
+        return mMvpStarterService.addVoteToQuestion(qId, userId,  vote)
     }
 
     //todo: should return a boolean
-    fun addVoteToAnswer(questionId: String, id: String?, vote: Boolean): Single<StatusResponse<Boolean>> {
-        return mMvpStarterService.addVoteToAnswer(questionId, id, vote)
+    fun addVoteToAnswer(questionId: String, userId: String, id: String, vote: Boolean): Single<StatusResponse<Boolean>> {
+        return mMvpStarterService.addVoteToAnswer(questionId, id, userId,  vote)
     }
 
     fun getMoreAnswers(questionId: String, page: Int): Single<List<Answer>> {

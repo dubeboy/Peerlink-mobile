@@ -1,17 +1,20 @@
 package com.dubedivine.samples.data.local
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import com.dubedivine.samples.data.model.User
+import com.dubedivine.samples.features.addQuestion.AddQuestionActivity
 import com.dubedivine.samples.features.signIn.SignIn
 import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.ApplicationContext
+import com.dubedivine.samples.util.log
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PreferencesHelper @Inject
-constructor(@ApplicationContext context: Context) {
+constructor(@ApplicationContext private val context: Context) {
 
     private val mPref: SharedPreferences
 
@@ -36,7 +39,16 @@ constructor(@ApplicationContext context: Context) {
     }
 
     fun getUserId(): String {
-        return getString(SignInMoreDetails.P_ID)
+        val userId = getString(SignInMoreDetails.P_ID)
+        checkIfUserIsSignedIn(userId)
+        return userId
+    }
+
+    private fun checkIfUserIsSignedIn(userId: String) {
+        if (userId.isBlank()) {
+            log("the user id is blank")
+            context.startActivity(Intent(context, SignIn::class.java))
+        }
     }
 
     companion object {

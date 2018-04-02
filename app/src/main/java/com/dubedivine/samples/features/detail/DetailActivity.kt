@@ -64,6 +64,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
         mDetailPresenter.attachView(this)
+        mDetailPresenter.context = this // todo remove please there is a better way
         // todo: should look into delegate and lazy loading so that this is only create if the user wants to send file and its created once
         newFragment = AddFilesDialogFragment.newInstance(this)
 

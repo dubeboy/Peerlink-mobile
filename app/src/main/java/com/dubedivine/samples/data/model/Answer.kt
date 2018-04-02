@@ -20,20 +20,23 @@ class Answer : Serializable {
     var video: Media? = null
     val files: List<Media>? = null
     val id: String? = null // UUID
+    var user:User? = null
 
     constructor() {}
 
-    constructor(body: String, votes: Long, isChosen: Boolean) {
+    constructor(body: String, votes: Long, isChosen: Boolean, user:User) {
         this.body = body
         this.votes = votes
         this.isChosen = isChosen
+        this.user = user
     }
 
-    constructor(body: String, votes: Long, isChosen: Boolean, comments: ArrayList<Comment>, video: Media) {
+    constructor(body: String, votes: Long, isChosen: Boolean, comments: ArrayList<Comment>, video: Media, user:User) {
         this.body = body
         this.votes = votes
         this.isChosen = isChosen
         this.comments = comments
         this.video = video
+        this.user = user
     }
 }

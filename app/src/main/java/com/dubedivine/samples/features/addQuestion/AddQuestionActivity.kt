@@ -150,7 +150,6 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                                     typedWord: CharSequence,
                                     tagStartIndex: Int,
                                     tagStopIndex: Int) {
-
         tagsSuggestionsAdapter.clear()
         for (tag in tags) {
             tagsSuggestionsAdapter.add(tag.name)
@@ -305,9 +304,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                     mediaFiles = hashMapOf(Media.DOCS_TYPE to photosPaths)
                 }
             }
-
         }
-
     }
 
     private fun publishNewQuestion() {
@@ -325,45 +322,31 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         when {
             questionTitle.isBlank() -> {
                 snack("Please add a brief title about your question")
-                return
-            }
-            questionTitle.isBlank() -> {
-                snack("Please add a brief title about your question")
-                return
             }
             questionBody.isBlank() -> {
                 snack("You did not type the actual question")
-                return
             }
             BasicUtils.textHasNoTags(questionBody) -> {  // the last && is not required just for clearity
                 snack("please add at least one tag to this question so that people can find it")
-                return
             }
             else -> {
                 val (_, tags) = BasicUtils.getCleanTextAndTags(questionBody)
                 val questionToPost = Question(questionTitle, questionBody, 0, tags.map { Tag(it, Date()) }, Question.TYPE_Q)
 
-                when {
-
-                    docsListPaths != null && docsListPaths.isNotEmpty() -> {
-                        mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
-                        return
-                    }
-                    videoListPaths != null && videoListPaths.isNotEmpty() -> {
-                        mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
-                        return
-                    }
-                    picturesListPaths != null && picturesListPaths.isNotEmpty() -> {
-                        mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
-                        return
-                    }
-                    questionBody.isNotBlank() -> {
-                        mAddQuestionPresenter.publishNewQuestion(questionToPost)
-                        return
-                    }
-                    else -> {
-                        snack("Please also add a question body")
-                    }
+                if (docsListPaths != null && docsListPaths.isNotEmpty()) {
+                    mAddQuestionPresenter.publishNewQuestion(questionToPost, docsListPaths)
+                }
+                else if (videoListPaths != null && videoListPaths.isNotEmpty()) {
+                    mAddQuestionPresenter.publishNewQuestion(questionToPost, videoListPaths)
+                }
+                else if (picturesListPaths != null && picturesListPaths.isNotEmpty()) {
+                    mAddQuestionPresenter.publishNewQuestion(questionToPost, picturesListPaths)
+                }
+                else if (questionBody.isNotBlank()) {
+                    mAddQuestionPresenter.publishNewQuestion(questionToPost)
+                }
+                else {
+                    snack("Please also add a question body")
                 }
             }
         }
@@ -426,8 +409,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         const val REQUEST_VIDEO_CAPTURE = 1
         const val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 100
         fun getStartIntent(context: Context): Intent {
-            val intent = Intent(context, AddQuestionActivity::class.java)
-            return intent
+            return Intent(context, AddQuestionActivity::class.java)
         }
     }
 }

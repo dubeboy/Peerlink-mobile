@@ -18,11 +18,14 @@ interface MvpStarterService {
     fun getSearchSuggestions(@Query("text") charSequence: CharSequence): Single<List<Question>>
 
     @POST("questions/{q_id}/vote")
-    fun addVoteToQuestion(@Path("q_id") qId: String, @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>  // should return a single Boolean
+    fun addVoteToQuestion(@Path("q_id") qId: String,
+                          @Query("user_id") userId: String,
+                          @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>  // should return a single Boolean
 
     @POST("questions/{q_id}/vote/{a_id}/vote")
     fun addVoteToAnswer(@Path("q_id") questionId: String,
-                        @Path("a_id") id: String?,
+                        @Path("a_id") id: String,
+                        @Query("user_id") userId: String,
                         @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>
 
     @GET("answers/{q_id}")

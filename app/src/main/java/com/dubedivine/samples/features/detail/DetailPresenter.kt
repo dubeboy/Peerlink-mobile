@@ -3,19 +3,16 @@ package com.dubedivine.samples.features.detail
 import android.app.Activity
 import android.util.Log
 import com.dubedivine.samples.data.DataManager
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
-import com.dubedivine.samples.features.detail.dialog.ShowVideoFragment
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import okhttp3.MultipartBody
-import okhttp3.ResponseBody
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import javax.inject.Inject
 
 /*
@@ -24,6 +21,22 @@ import javax.inject.Inject
 @ConfigPersistent
 class DetailPresenter @Inject
 constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView>() {
+
+
+    // ugly code start ---------------------------------------------
+
+    private lateinit var mPref: PreferencesHelper
+    //   @Inject
+    private lateinit var _context: Activity
+    var context: Activity
+        get() = _context
+        set(value) {
+            this._context = value
+            mPref = PreferencesHelper(context)
+        }
+
+    // ugly code stop ------------------------------------------------
+
 
     override fun attachView(mvpView: DetailMvpView) {
         super.attachView(mvpView)
@@ -77,7 +90,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
 
     fun addAnswer(questionId: String, answer: String, fileSet: HashSet<String>) {
         doLongTaskOnView {
-            mDataManager.postAnswer(questionId, Answer(answer, 0, false))
+            mDataManager.postAnswer(questionId, Answer(answer, 0, false, User(mPref.getUserId())))
                     .compose(SchedulerUtils.ioToMain())
                     .subscribe({
                         if (it.status!!) {
@@ -118,7 +131,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
      * */
     fun addVote(qId: String, vote: Boolean, detailView: DetailAdapter.DetailView) {
         doLongTaskOnView {
-            mDataManager.addVote(qId, vote).compose(SchedulerUtils.ioToMain())
+            mDataManager.addVote(qId, mPref.getUserId(), vote).compose(SchedulerUtils.ioToMain())
                     .subscribe({
                         mvpView!!.showProgress(false)
                         if (it.status!!) {
@@ -146,7 +159,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
 
     fun addVoteToAnswer(qId: String, ansId: String?, vote: Boolean, detailView: DetailAdapter.DetailView) {
         doLongTaskOnView {
-            mDataManager.addVoteToAnswer(qId, ansId, vote).compose(SchedulerUtils.ioToMain())
+            mDataManager.addVoteToAnswer(qId, mPref.getUserId(), ansId!!, vote).compose(SchedulerUtils.ioToMain())
                     .subscribe({
                         mvpView!!.showProgress(false)
                         if (it.status!!) {
@@ -154,7 +167,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                             mvpView!!.showUserMessage("Sorry failed to cast your vote, please try again.")
                             when (vote) {
                                 true -> {
-                                    mvpView!!.downVoteAnswerAndDisableButton(ansId!!, detailView)
+                                    mvpView!!.downVoteAnswerAndDisableButton(ansId, detailView)
                                 }
                                 false -> {
                                     mvpView!!.upVoteAnswerAndDisableButton(ansId!!, detailView)
@@ -172,13 +185,12 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
     fun postCommentQuestion(questionId: String, body: String, detailView: DetailAdapter.DetailView) {
         if (body.isNotBlank()) {
             doLongTaskOnView {
-
-                mDataManager.postCommentQuestion(questionId, Comment(body, 0))
+                mDataManager.postCommentQuestion(questionId, Comment(body, 0, User(mPref.getUserId())))
                         .compose(SchedulerUtils.ioToMain())
                         .subscribe({
                             mvpView!!.showProgress(false)
                             if (it.status!!) {
-                                mvpView!!.showCommentForQuestion(questionId, Comment(body, 0), detailView)
+                                mvpView!!.showCommentForQuestion(questionId, Comment(body, 0, User(mPref.getUserId())), detailView)
                             } else {
                                 mvpView!!.showUserMessage("Failed to share comment, please try again")
                             }
@@ -195,12 +207,13 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
     fun postCommentForAnswer(questionId: String, answerId: String, body: String, detailView: DetailAdapter.DetailView) {
         if (body.isNotBlank()) {
             doLongTaskOnView {
-                mDataManager.postCommentForAnswer(questionId, answerId, Comment(body, 0)).compose(SchedulerUtils.ioToMain())
+                mDataManager.postCommentForAnswer(questionId, answerId, Comment(body, 0, User(mPref.getUserId())))
+                        .compose(SchedulerUtils.ioToMain())
                         .subscribe({
                             mvpView!!.showProgress(false)
                             if (it.status!!) {
                                 //todo creating a new comment object really?
-                                mvpView!!.showCommentForAnswer(answerId, Comment(body, 0), detailView)
+                                mvpView!!.showCommentForAnswer(answerId, Comment(body, 0, User(mPref.getUserId())), detailView)
                             } else {
                                 mvpView!!.showUserMessage("Failed to share comment, please try again")
                             }
@@ -218,7 +231,8 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
     // a mvp view just for this fragment
 
     fun fragmentFetchVideo(peerlinkDirectory: String, videoLocation: String,
-                           success: (isSuccess: Boolean, message: String, file: File?) -> Unit, progress: (prog: Long, fileSize: Long) -> Unit) {
+                           success: (isSuccess: Boolean, message: String, file: File?) ->
+                           Unit, progress: (prog: Long, fileSize: Long) -> Unit) {
         // sane check to see where there the string had just empty characters
         if (videoLocation.isNotBlank()) {
             mDataManager.getVideo(videoLocation)
