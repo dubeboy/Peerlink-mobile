@@ -23,7 +23,7 @@ constructor(@ApplicationContext private val context: Context) {
     }
 
     fun clear() {
-        mPref.edit().clear().commit()
+        mPref.edit().clear().apply()
     }
 
     fun editor(): SharedPreferences.Editor {

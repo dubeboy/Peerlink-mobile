@@ -92,9 +92,6 @@ class MainActivity :
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()
         setupSideNavigation()
-        main_btn_search.setOnClickListener({
-            onSearchButtonClick()
-        })
 
 
 
@@ -122,6 +119,15 @@ class MainActivity :
         mAutoCompleteSearchInputView?.setOnItemClickListener { adapterView, view, i, l ->
             Timber.e("$adapterView is $view $i $l ayoba$$$$$$$$$$$$$$$$$$$")
         }
+
+        // setup the main action bar search button
+        main_btn_search.setOnClickListener({
+            onSearchButtonClick()
+        })
+
+        // initially the fragment that is there is the main fragment with the details about the app
+        addFragment(savedInstanceState, 1)
+
 
         nav_view.setNavigationItemSelectedListener { menuItem ->
             // set item as selected to persist highlight

@@ -16,6 +16,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlin.system.exitProcess
 
 /**
  * Created by divine on 3/11/18.
@@ -36,7 +37,7 @@ class SignIn : BaseActivity() {
                 .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         val account = GoogleSignIn.getLastSignedInAccount(this)
-        updateUI(account)
+       // updateUI(account)
 
         sign_in_button.setSize(SignInButton.SIZE_WIDE)
         sign_in_button.setOnClickListener({
@@ -99,13 +100,21 @@ class SignIn : BaseActivity() {
     }
 
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
 
     companion object {
         const val RC_SIGN_IN = 100
         const val TAG = "__SIGN_IN__"
 
         fun getStartIntent(context: Context): Intent {
-            return Intent(context, SignIn::class.java)
+
+            val intent = Intent(context, SignIn::class.java)
+//            activitySta
+
+            // delete all the items on the activity stack
+            return intent
         }
 
     }

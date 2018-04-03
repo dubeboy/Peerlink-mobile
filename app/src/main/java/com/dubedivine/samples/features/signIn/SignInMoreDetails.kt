@@ -33,8 +33,6 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
         mSignInPresenter.attachView(this)
         mPreferencesHelper = PreferencesHelper(this)
         progressDialog = getProgressBarInstance("Loading", "Signing in")
-
-
         // we pass the email only because that is what is needed to check if the user existss
         mSignInPresenter.startMainIfUserIsRegistered(
                 User("",

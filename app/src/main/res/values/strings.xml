@@ -26,6 +26,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="comments">Comments</string>
-    <string name="about_app">App that connects student that need answers to those that have them.</string>
+    <string name="about_app"><b>Peerlink</b> in App that connects student that need answers to those that have them.</string>
     <string name="title_activity_hellee">Hellee</string>
+    <string name="feature_set_desc">On Peerlink you can get the ability to ask questions to anyone on your campus questions and I there is someone who know the answer they will answer you</string>
+    <string name="feature_set_list">You can upload a 1 minute video of you question, recorded video of your question, pictures and documents supporting your question </string>
 </resources>
