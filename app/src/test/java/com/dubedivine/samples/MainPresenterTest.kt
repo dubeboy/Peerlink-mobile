@@ -2,6 +2,7 @@ package com.dubedivine.samples
 
 import com.dubedivine.samples.common.TestDataFactory
 import com.dubedivine.samples.data.DataManager
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.features.main.MainMvpView
 import com.dubedivine.samples.features.main.MainPresenter
 import com.dubedivine.samples.util.RxSchedulersOverrideRule
@@ -16,6 +17,7 @@ import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
+import javax.inject.Inject
 
 /**
  * Created by ravindra on 24/12/16.
@@ -25,6 +27,8 @@ class MainPresenterTest {
 
     @Mock lateinit var mMockMainMvpView: MainMvpView
     @Mock lateinit var mMockDataManager: DataManager
+    @Inject lateinit var mPreferencesHelper: PreferencesHelper
+
     private var mMainPresenter: MainPresenter? = null
 
     @JvmField
@@ -33,7 +37,7 @@ class MainPresenterTest {
 
     @Before
     fun setUp() {
-        mMainPresenter = MainPresenter(mMockDataManager)
+        mMainPresenter = MainPresenter(mMockDataManager, mPreferencesHelper)
         mMainPresenter?.attachView(mMockMainMvpView)
     }
 

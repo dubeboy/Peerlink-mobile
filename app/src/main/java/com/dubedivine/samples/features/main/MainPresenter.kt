@@ -26,7 +26,7 @@ constructor(private val mDataManager: DataManager,
     fun getPokemon(limit: Int) {
         checkViewAttached()
         mvpView?.showProgress(true)
-        mDataManager.getPokemonList(limit)
+       /* mDataManager.getPokemonList(limit)
                 .compose(SchedulerUtils.ioToMain<List<String>>())
                 .subscribe({ pokemons ->
                     mvpView?.showProgress(false)
@@ -34,7 +34,7 @@ constructor(private val mDataManager: DataManager,
                 }) { throwable ->
                     mvpView?.showProgress(false)
                     mvpView?.showError(throwable)
-                }
+                }*/
     }
 
     fun getSuggestions(chars: CharSequence?) {
