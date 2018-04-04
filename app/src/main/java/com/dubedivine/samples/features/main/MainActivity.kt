@@ -3,30 +3,22 @@ package com.dubedivine.samples.features.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.ConditionVariable
-import android.support.design.widget.NavigationView
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.util.Range
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import butterknife.BindView
-import butterknife.OnClick
 import com.bumptech.glide.Glide
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.SearchArrayAdapter
-import com.dubedivine.samples.features.main.fragment.TagsSubscribedFragment
+import com.dubedivine.samples.features.main.fragment.subscribe.TagsSubscribedFragment
 import com.dubedivine.samples.features.main.fragment.WelcomeFragment
 import com.dubedivine.samples.features.searchResults.SearchActivity
 import com.dubedivine.samples.features.signIn.SignIn
@@ -35,9 +27,7 @@ import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.nav_header.*
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 

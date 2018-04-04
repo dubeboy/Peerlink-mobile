@@ -3,6 +3,7 @@ package com.dubedivine.samples.injection.module
 import android.app.Activity
 import android.content.Context
 import android.support.v4.app.Fragment
+import com.dubedivine.samples.features.main.fragment.subscribe.TagsSubscribedAdapter
 import com.dubedivine.samples.injection.ActivityContext
 import dagger.Module
 import dagger.Provides
@@ -26,4 +27,9 @@ class FragmentModule(private val mFragment: Fragment) {
         return mFragment.activity
     }
 
+    // todo: this should be gone
+    @Provides
+    internal fun providesFragmentAdapter(): TagsSubscribedAdapter {
+        return TagsSubscribedAdapter()
+    }
 }

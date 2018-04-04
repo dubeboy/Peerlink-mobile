@@ -3,18 +3,21 @@ package com.dubedivine.samples.features.main
 import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import io.reactivex.Flowable
 import timber.log.Timber
+import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @ConfigPersistent
 class MainPresenter @Inject
-constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>() {
+constructor(private val mDataManager: DataManager,
+            private val preferencesHelper: PreferencesHelper) : BasePresenter<MainMvpView>() {
 
     override fun attachView(mvpView: MainMvpView) {
         super.attachView(mvpView)
@@ -64,9 +67,26 @@ constructor(private val mDataManager: DataManager) : BasePresenter<MainMvpView>(
 
     /**
      * @param question this is the one that will be passed to the search to be put on top
-    * */
+     * */
     fun getQuestions(question: Question?) {
         Timber.d("getQuestions: calling the api to get the questions with name ")
+    }
+
+    //todo : should inline function please
+    fun fragmentGetTagsSubscribed(success: (status: Boolean, message: String, tags: List<Tag>?) -> Unit) {
+        mDataManager.getTagsSubscribed(preferencesHelper.getUserId())
+                .compose(SchedulerUtils.ioToMain())
+                .subscribe({
+                    if (it.status!!) {
+                        success(true, "got subscribed tags", it.entity!!)
+                    } else {
+                        success(false, "could not get the tags somehow sorry please try again", null)
+                    }
+                }, {
+                    it.printStackTrace()
+                    success(false, "an error happened, please make sure you connected to the internet", null)
+                })
+
     }
 
 

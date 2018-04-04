@@ -7,6 +7,9 @@ import com.dubedivine.samples.injection.ActivityContext
 import dagger.Module
 import dagger.Provides
 
+
+// this is where I list how it instantiate a class
+
 @Module
 class ActivityModule(private val mActivity: Activity) {
 
@@ -25,4 +28,6 @@ class ActivityModule(private val mActivity: Activity) {
     internal fun providesSearchArrayAdapter(): SearchArrayAdapter {
         return SearchArrayAdapter(mActivity, arrayListOf())
     }
+
+
 }

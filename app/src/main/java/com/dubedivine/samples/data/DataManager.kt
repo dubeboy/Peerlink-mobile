@@ -117,4 +117,8 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     fun getVideo(videoLocation: String): Single<ResponseBody> {
         return mMvpStarterService.getVideo(videoLocation)
     }
+
+    fun getTagsSubscribed(userId: String): Single<StatusResponse<List<Tag>>> {
+        return mMvpStarterService.getTagsSubscribed(userId)
+    }
 }

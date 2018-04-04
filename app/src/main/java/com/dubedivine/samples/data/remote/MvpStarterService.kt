@@ -71,4 +71,7 @@ interface MvpStarterService {
     @Streaming
     @GET("{video_id}")
     fun getVideo(@Path("video_id") videoLocation: String): Single<ResponseBody>
+
+    @GET("users/tags_subscribed/{user_id}")
+    fun getTagsSubscribed(@Path("user_id")  userId: String): Single<StatusResponse<List<Tag>>>
 }

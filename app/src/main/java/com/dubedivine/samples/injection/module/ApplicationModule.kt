@@ -2,6 +2,7 @@ package com.dubedivine.samples.injection.module
 
 import android.app.Application
 import android.content.Context
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.remote.MvpStarterService
 import com.dubedivine.samples.data.remote.MvpStarterServiceFactory
 import com.dubedivine.samples.injection.ApplicationContext
@@ -27,5 +28,11 @@ class ApplicationModule(private val mApplication: Application) {
     @Singleton
     internal fun provideMvpStarterService(): MvpStarterService {
         return MvpStarterServiceFactory.makeStarterService()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideMvpPreferences(): PreferencesHelper {
+        return PreferencesHelper(mApplication)
     }
 }

@@ -43,8 +43,14 @@ fun Chip.setDefaultDrawableIcon() {
 }
 
 
+// below 4 show just be 2 from the context class
+
 fun Activity.toast(msg: String, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, msg, duration).show()
+}
+
+fun Fragment.toast(msg: String, duration: Int = Toast.LENGTH_LONG) {
+    Toast.makeText(this.context, msg, duration).show()
 }
 
 fun Activity.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {

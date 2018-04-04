@@ -43,7 +43,6 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
                         "",
                         null))
 
-
         btn_next.setOnClickListener({
             //upload all the data to the server
             val degree = et_degree.text.toString()
@@ -83,9 +82,11 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
     }
 
     override fun showError(error: Throwable) {
-        toast("Oops something went wrong, please try again")
-        //todo: print error to firebase
         error.printStackTrace()
+        if (error.message == "connect timed out") {
+            finish()  // go back to the previous activity if it was a connection error
+        }
+        toast("Oops something went wrong, please try again")
     }
 
     override fun showProgressWithMessage(show: Boolean, title: String, msg: String) {
