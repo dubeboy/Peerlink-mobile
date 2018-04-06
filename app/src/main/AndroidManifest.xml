@@ -37,7 +37,7 @@
         </activity>
         <activity
             android:name=".features.detail.DetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -54,7 +54,7 @@
         <activity
             android:name=".features.detail.MapsSampleActivity"
             android:label="@string/title_activity_maps_sample" />
-        <activity android:name=".features.searchResults.SearchActivity"  />
+        <activity android:name=".features.searchResults.SearchActivity" />
         <activity android:name=".features.addQuestion.AddQuestionActivity" />
         <activity
             android:name=".features.signIn.SignIn"
@@ -63,11 +63,16 @@
         <activity
             android:name=".features.signIn.SignInMoreDetails"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".features.profile.Hellee"
             android:label="@string/title_activity_hellee"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".service.NotificationsService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>
