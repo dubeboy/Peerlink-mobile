@@ -1,8 +1,10 @@
 package com.dubedivine.samples.features.main.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.dubedivine.samples.R
+import com.dubedivine.samples.R.id.btn_test_ws
 import com.dubedivine.samples.features.base.BaseFragment
 import com.dubedivine.samples.service.WebSocketListener
 import kotlinx.android.synthetic.main.fragment_welcome.*
@@ -30,11 +32,15 @@ class WelcomeFragment : BaseFragment() {
     }
 
     private fun start() {
-        Thread({
-            val req = Request.Builder().url("ws://localhost:8080/send/message").build()
-            webSocketListener = WebSocketListener()
-            val  ws = client.newWebSocket(req, webSocketListener)
-            client.dispatcher().executorService().shutdown()
+        // did it so that I can debug it
+        Thread(object : Runnable {
+            override fun run() {
+                Log.d("WELCOM_FRAG", "doing ws bro")
+                val req = Request.Builder().url("ws://echo.websocket.org").build()
+                webSocketListener = WebSocketListener()
+                client.newWebSocket(req, webSocketListener)
+            }
+            //     client.dispatcher().executorService().shutdown()
         }).start()
     }
 }

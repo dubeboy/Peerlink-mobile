@@ -11,7 +11,7 @@ class WebSocketListener : okhttp3.WebSocketListener() {
     }
 
     override fun onMessage(webSocket: WebSocket?, text: String?) {
-        Log.d("WEBLIST","recieved message $text" )
+        Log.d("WEBLIST","received message $text" )
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String?) {
