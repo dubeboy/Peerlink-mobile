@@ -25,6 +25,7 @@ import com.dubedivine.samples.features.signIn.SignIn
 import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import timber.log.Timber
@@ -37,8 +38,7 @@ class MainActivity :
         BaseActivity(),
         MainMvpView,
         PokemonAdapter.ClickListener,
-       SearchArrayAdapter.OnItemClickListener {
-
+        SearchArrayAdapter.OnItemClickListener {
 
     @Inject
     lateinit var mSearchArrayAdapter: SearchArrayAdapter
@@ -79,10 +79,11 @@ class MainActivity :
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         //instantiate our prefs helper class
         mPreferencesHelper = PreferencesHelper(this)
+        FirebaseMessaging.getInstance().subscribeToTopic("Peerlink")
+
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()
         setupSideNavigation()
-
 
 
         //mAutoCompleteSearchInputView ----------------------------------------------------
@@ -125,7 +126,7 @@ class MainActivity :
 
             when (menuItem.itemId) {
                 R.id.nav_home -> {
-                   addFragment(savedInstanceState, 1)
+                    addFragment(savedInstanceState, 1)
                 }
                 R.id.nav_interests -> {
                     addFragment(savedInstanceState, 2)
@@ -167,20 +168,19 @@ class MainActivity :
     }
 
 
-
     private fun isUserLoggedIn(): Boolean {
         return mPreferencesHelper.getString(SignInMoreDetails.P_EMAIL).isBlank()
     }
 
     private fun checkIfUserSignedUp() {
         if (isUserLoggedIn()) {
-          startActivity(SignIn.getStartIntent(this))
+            startActivity(SignIn.getStartIntent(this))
         }
     }
 
-    private fun addFragment(savedInstanceState: Bundle?, num: Int)  {
+    private fun addFragment(savedInstanceState: Bundle?, num: Int) {
         //this is when we are rotating the screen bruv so that we dont overlapt the fragments
-        if(savedInstanceState != null) return
+        if (savedInstanceState != null) return
         val transaction = supportFragmentManager.beginTransaction()
         when (num) {
             1 -> {
@@ -213,7 +213,6 @@ class MainActivity :
         super.onDestroy()
         mMainPresenter.detachView()
     }
-
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -261,8 +260,8 @@ class MainActivity :
 //            }
 //
 //        } else {
-            mSwipeRefreshLayout?.isRefreshing = false
-            mProgress?.visibility = View.GONE
+        mSwipeRefreshLayout?.isRefreshing = false
+        mProgress?.visibility = View.GONE
 //        }
     }
 
@@ -313,6 +312,7 @@ class MainActivity :
         Timber.i("showSuggestions: is called with suggestions: $question")
         mSearchArrayAdapter.addAll(question)
     }
+
     companion object {
         fun getStartIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)

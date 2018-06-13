@@ -25,7 +25,7 @@ constructor(context: Context,
             private val questions: List<Question>) : ArrayAdapter<Question>(context, 0, questions), Filterable {
 
     private var _onItemClick: OnItemClickListener? = null
-    public var onItemClick: OnItemClickListener?  //backing field vs setters??
+    var onItemClick: OnItemClickListener?  //backing field vs setters??
          get() = _onItemClick
          set(listener) {
             _onItemClick = listener

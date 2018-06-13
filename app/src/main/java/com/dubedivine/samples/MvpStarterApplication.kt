@@ -6,6 +6,7 @@ import com.dubedivine.samples.injection.component.ApplicationComponent
 import com.dubedivine.samples.injection.component.DaggerApplicationComponent
 import com.dubedivine.samples.injection.module.ApplicationModule
 import com.facebook.stetho.Stetho
+import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
 
@@ -15,6 +16,9 @@ class MvpStarterApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+
+
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

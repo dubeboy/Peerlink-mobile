@@ -74,4 +74,7 @@ interface MvpStarterService {
 
     @GET("users/tags_subscribed/{user_id}")
     fun getTagsSubscribed(@Path("user_id")  userId: String): Single<StatusResponse<List<Tag>>>
+
+    @POST("users/fcm_token/{token}")
+    fun sendFCMTokenToUser(@Path("token")  token: String , @Body user: User): Single<StatusResponse<Boolean>>
 }
