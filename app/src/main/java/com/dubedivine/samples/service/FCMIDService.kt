@@ -43,7 +43,7 @@ class FCMIDService : FirebaseInstanceIdService() {
         if (pref.getString(SignInMoreDetails.P_ID).isNotBlank()) {
             dataManager.sendFCMTokenToUser(refreshedToken, User(pref.getUserId()))
             Log.d("FCMIDService", "saved user fcm token")
-            pref.save { putBoolean(FCM_TOKEN_PUSHED,true) }
+            pref.save { putBoolean(FCM_TOKEN_PUSHED, true) }
         }
         Log.d("FCMIDService", "Cannot push the phone fcm token")
     }

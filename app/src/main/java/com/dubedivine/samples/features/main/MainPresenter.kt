@@ -4,9 +4,11 @@ import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
 import com.dubedivine.samples.data.model.Tag
+import com.dubedivine.samples.data.model.User
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.ConfigPersistent
+import com.dubedivine.samples.service.FCMIDService
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import io.reactivex.Flowable
 import timber.log.Timber
@@ -23,18 +25,35 @@ constructor(private val mDataManager: DataManager,
         super.attachView(mvpView)
     }
 
+
+    fun pushFCMToken(): Boolean {
+
+        if (!preferencesHelper.getBoolean(FCMIDService.FCM_TOKEN_PUSHED)) {
+            if (preferencesHelper.getUserId().isNotBlank() &&
+                    preferencesHelper.getString(FCMIDService.FCM_TOKEN).isNotBlank()) {
+
+                mDataManager.sendFCMTokenToUser(preferencesHelper.getString(FCMIDService.FCM_TOKEN),
+                        User(preferencesHelper.getUserId()))
+
+                preferencesHelper.save { putBoolean(FCMIDService.FCM_TOKEN_PUSHED, true) }
+                return true
+            }
+        }
+        return false
+    }
+
     fun getPokemon(limit: Int) {
         checkViewAttached()
         mvpView?.showProgress(true)
-       /* mDataManager.getPokemonList(limit)
-                .compose(SchedulerUtils.ioToMain<List<String>>())
-                .subscribe({ pokemons ->
-                    mvpView?.showProgress(false)
-                    mvpView?.showPokemon(pokemons)
-                }) { throwable ->
-                    mvpView?.showProgress(false)
-                    mvpView?.showError(throwable)
-                }*/
+        /* mDataManager.getPokemonList(limit)
+                 .compose(SchedulerUtils.ioToMain<List<String>>())
+                 .subscribe({ pokemons ->
+                     mvpView?.showProgress(false)
+                     mvpView?.showPokemon(pokemons)
+                 }) { throwable ->
+                     mvpView?.showProgress(false)
+                     mvpView?.showError(throwable)
+                 }*/
     }
 
     fun getSuggestions(chars: CharSequence?) {

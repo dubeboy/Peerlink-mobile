@@ -83,6 +83,7 @@ class MainActivity :
 
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()
+        mMainPresenter.pushFCMToken()
         setupSideNavigation()
 
 

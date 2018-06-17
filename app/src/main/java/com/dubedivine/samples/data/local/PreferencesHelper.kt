@@ -38,6 +38,10 @@ constructor(@ApplicationContext private val context: Context) {
        return mPref.getString(key, defaultString)
     }
 
+    fun getBoolean(key: String): Boolean {
+        return mPref.getBoolean(key, false)
+    }
+
     fun getUserId(): String {
         val userId = getString(SignInMoreDetails.P_ID)
         checkIfUserIsSignedIn(userId)
