@@ -12,9 +12,8 @@ import com.dubedivine.samples.util.log
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class PreferencesHelper @Inject
-constructor(@ApplicationContext private val context: Context) {
+class PreferencesHelper
+constructor( private val context: Context) {
 
     private val mPref: SharedPreferences
 

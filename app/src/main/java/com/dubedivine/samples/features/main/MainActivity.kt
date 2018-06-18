@@ -79,7 +79,7 @@ class MainActivity :
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         //instantiate our prefs helper class
         mPreferencesHelper = PreferencesHelper(this)
-        FirebaseMessaging.getInstance().subscribeToTopic("Peerlink")
+       // FirebaseMessaging.getInstance().subscribeToTopic("Peerlink")
 
         // start the sign in activity if the user is not signed in
         checkIfUserSignedUp()

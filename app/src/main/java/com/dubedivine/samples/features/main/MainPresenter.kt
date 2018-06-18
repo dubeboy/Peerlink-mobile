@@ -1,8 +1,10 @@
 package com.dubedivine.samples.features.main
 
+import android.util.Log
 import com.dubedivine.samples.data.DataManager
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
+import com.dubedivine.samples.data.model.StatusResponse
 import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.data.model.User
 import com.dubedivine.samples.features.base.BasePresenter
@@ -27,15 +29,22 @@ constructor(private val mDataManager: DataManager,
 
 
     fun pushFCMToken(): Boolean {
-
         if (!preferencesHelper.getBoolean(FCMIDService.FCM_TOKEN_PUSHED)) {
             if (preferencesHelper.getUserId().isNotBlank() &&
                     preferencesHelper.getString(FCMIDService.FCM_TOKEN).isNotBlank()) {
 
-                mDataManager.sendFCMTokenToUser(preferencesHelper.getString(FCMIDService.FCM_TOKEN),
+                Timber.i("pushing the fcm")
+                val x = mDataManager.sendFCMTokenToUser(preferencesHelper.getString(FCMIDService.FCM_TOKEN),
                         User(preferencesHelper.getUserId()))
+                x.compose(SchedulerUtils.ioToMain<StatusResponse<Boolean>>())
+                        .subscribe({
+                            Timber.i("FCM pushed and updated")
+                            preferencesHelper.save { putBoolean(FCMIDService.FCM_TOKEN_PUSHED, true) }
+                        }, {
+                            Timber.i("Server had an error updating the fcm")
+                            it.printStackTrace()
+                        })
 
-                preferencesHelper.save { putBoolean(FCMIDService.FCM_TOKEN_PUSHED, true) }
                 return true
             }
         }

@@ -15,11 +15,12 @@ import com.dubedivine.samples.features.signIn.SignInMoreDetails
 
 class FCMIDService : FirebaseInstanceIdService() {
 
-    val pref: PreferencesHelper = PreferencesHelper(this)
-    @Inject
-    lateinit var dataManager: DataManager
+     public lateinit var dataManager: DataManager
 
     override fun onTokenRefresh() {
+
+        val pref = PreferencesHelper(this)
+
         val refreshedToken = FirebaseInstanceId.getInstance().token
         Log.d("FCMIDService", "Refreshed token: $refreshedToken")
 
@@ -31,7 +32,7 @@ class FCMIDService : FirebaseInstanceIdService() {
                 putBoolean(FCM_TOKEN_PUSHED, false)
             }
 
-            sendRegistrationToServer(refreshedToken)
+            sendRegistrationToServer(pref, refreshedToken)
         }
 
         // If you want to send messages to this application instance or
@@ -39,18 +40,21 @@ class FCMIDService : FirebaseInstanceIdService() {
         // Instance ID token to your app server.
     }
 
-    private fun sendRegistrationToServer(refreshedToken: String) {
+    private fun sendRegistrationToServer(pref: PreferencesHelper, refreshedToken: String) {
         if (pref.getString(SignInMoreDetails.P_ID).isNotBlank()) {
-            dataManager.sendFCMTokenToUser(refreshedToken, User(pref.getUserId()))
+            dataManager?.sendFCMTokenToUser(refreshedToken, User(pref.getUserId())) ?:
+                  throw IllegalStateException("data manager is null and cannot be null, please check your injection")
             Log.d("FCMIDService", "saved user fcm token")
             pref.save { putBoolean(FCM_TOKEN_PUSHED, true) }
         }
+
+
         Log.d("FCMIDService", "Cannot push the phone fcm token")
     }
 
     companion object {
         const val FCM_TOKEN = "fcm_token"
         //used to check weather the firebase token was pushed bro
-        const val FCM_TOKEN_PUSHED = "fcm_token"
+        const val FCM_TOKEN_PUSHED = "fcm_token_pushed"
     }
 }
