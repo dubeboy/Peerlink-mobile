@@ -15,6 +15,7 @@ import com.dubedivine.samples.features.signIn.SignInMoreDetails
 
 class FCMIDService : FirebaseInstanceIdService() {
 
+    @Inject
      public lateinit var dataManager: DataManager
 
     override fun onTokenRefresh() {
@@ -32,7 +33,7 @@ class FCMIDService : FirebaseInstanceIdService() {
                 putBoolean(FCM_TOKEN_PUSHED, false)
             }
 
-            sendRegistrationToServer(pref, refreshedToken)
+         //   sendRegistrationToServer(pref, refreshedToken)
         }
 
         // If you want to send messages to this application instance or
@@ -42,8 +43,7 @@ class FCMIDService : FirebaseInstanceIdService() {
 
     private fun sendRegistrationToServer(pref: PreferencesHelper, refreshedToken: String) {
         if (pref.getString(SignInMoreDetails.P_ID).isNotBlank()) {
-            dataManager?.sendFCMTokenToUser(refreshedToken, User(pref.getUserId())) ?:
-                  throw IllegalStateException("data manager is null and cannot be null, please check your injection")
+            dataManager.sendFCMTokenToUser(refreshedToken, User(pref.getUserId()))
             Log.d("FCMIDService", "saved user fcm token")
             pref.save { putBoolean(FCM_TOKEN_PUSHED, true) }
         }

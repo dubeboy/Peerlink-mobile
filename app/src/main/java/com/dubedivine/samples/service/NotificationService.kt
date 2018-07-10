@@ -40,8 +40,6 @@ class NotificationService : FirebaseMessagingService() {
                 FirebaseCrash.log("The notification arrived with out data fields")
             }
         }
-
-
     }
 
 
