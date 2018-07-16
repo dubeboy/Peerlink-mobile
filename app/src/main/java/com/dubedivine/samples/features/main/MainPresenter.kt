@@ -35,7 +35,7 @@ constructor(private val mDataManager: DataManager,
 
                 Timber.i("pushing the fcm")
                 val x = mDataManager.sendFCMTokenToUser(preferencesHelper.getString(FCMIDService.FCM_TOKEN),
-                        User(preferencesHelper.getUserId()))
+                        User(preferencesHelper.getUserId(),preferencesHelper.getString(SignInMoreDetails.P_NICKNAME)))
                 x.compose(SchedulerUtils.ioToMain<StatusResponse<Boolean>>())
                         .subscribe({
                             Timber.i("FCM pushed and updated")

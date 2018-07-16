@@ -143,10 +143,11 @@
                 </HorizontalScrollView>
 
                 <com.robertlevonyan.views.chip.Chip
+                    android:id="@+id/chip_user_name"
                     android:layout_width="wrap_content"
                     android:layout_margin="8dp"
                     android:layout_gravity="end|bottom"
-                    app:chipText="asked by SpotNik"
+                    tools:chipText="asked by SpotNik"
 
                     android:layout_height="wrap_content">
 

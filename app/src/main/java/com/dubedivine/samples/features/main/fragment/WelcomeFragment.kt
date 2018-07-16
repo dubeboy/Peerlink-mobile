@@ -9,5 +9,5 @@ import com.dubedivine.samples.features.base.BaseFragment
  */
 class WelcomeFragment : BaseFragment() {
     override val layout: Int
-        get() = R.layout.fragment_welcome
+        get() = R.layout.fragment_welcome2
 }

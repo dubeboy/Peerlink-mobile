@@ -11,7 +11,7 @@ data class User(val nickname: String,
                 val id: String? = null,
                 var tags: List<Tag>? = null) : Serializable {
 
-    constructor(id: String) : this("", "", null, "", emptySet(), id, null)
+    constructor(id: String, nickname: String) : this(nickname, "", null, "", emptySet(), id, null)
 
 }
 

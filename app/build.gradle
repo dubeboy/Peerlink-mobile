@@ -10,11 +10,6 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
 
-    //todo: future cool stuff
-//    dataBinding {
-//        enabled = true
-//    }
-
     dexOptions {
         maxProcessCount 4
         preDexLibraries false

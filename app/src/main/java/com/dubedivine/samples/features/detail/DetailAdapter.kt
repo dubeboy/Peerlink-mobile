@@ -19,6 +19,7 @@ import com.dubedivine.samples.features.detail.comments.CommentsAdapter
 import com.dubedivine.samples.features.detail.comments.FullCommentsListFragment
 import com.dubedivine.samples.features.detail.dialog.ShowVideoFragment
 import com.dubedivine.samples.util.BasicUtils
+import com.robertlevonyan.views.chip.Chip
 import javax.inject.Inject
 
 /**
@@ -75,13 +76,16 @@ class DetailAdapter
     }
 
     //this inner is not so efficient causes leaks.. i think
-    inner class DetailView(private val view: View, private val context: AppCompatActivity, private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
+    inner class DetailView(private val view: View,
+                           private val context: AppCompatActivity,
+                           private val mDetailPresenter: DetailPresenter) : RecyclerView.ViewHolder(view) {
+
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
         private val btnCorrectAnswer: Button = view.findViewById(R.id.btn_correct_answer)
         private val tvQuestionTitle: TextView = view.findViewById(R.id.q_title)
         private val tvQuestionBody: TextView = view.findViewById(R.id.q_body)
-        @Deprecated("useless", ReplaceWith("delete"))
+        @Deprecated("useless", ReplaceWith("delete")) //todo delete
         private val questionVidView: VideoView = view.findViewById(R.id.q_vid)
         @Deprecated("useless", ReplaceWith("delete"))
         private val questionImageView: ImageView = view.findViewById(R.id.q_image)
@@ -92,6 +96,7 @@ class DetailAdapter
         private val btnSubmitComment: ImageButton = view.findViewById(R.id.btn_comment_question)
         private val btnMoreComments: ImageButton = view.findViewById(R.id.btn_more_comments)
         private val etCommentBody: EditText = view.findViewById(R.id.et_comment_input)
+        private val chipUserName: Chip = view.findViewById(R.id.chip_user_name)
         private var q: Question? = null
 
         //it should have helped if both of our answers and question where of the same type hierarchy i think....
@@ -164,6 +169,7 @@ class DetailAdapter
         // the main binder
         fun bindQuestion(q: Question) {
             bindCommonQuestion(q)
+            chipUserName.chipText = q.user?.nickname
             this.q = q
             q.tags.forEach({
                 val chip = BasicUtils.createTagsChip(itemView.context, it.name)
@@ -177,20 +183,20 @@ class DetailAdapter
             }
 
             //todo: once we have the user object then we can allow the changing of state of the answered object
-            btnVoteUp.setOnClickListener({
+            btnVoteUp.setOnClickListener {
                 mDetailPresenter.addVote(q.id!!, true, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() + 1)}"
                 //should set the button to be disabled here
-            })
+            }
             btnVoteDown.setOnClickListener({
                 mDetailPresenter.addVote(q.id!!, false, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() - 1)}"
             })
 
-            btnSubmitComment.setOnClickListener({
-                handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this)
+            btnSubmitComment.setOnClickListener {
+                handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this) // todo leaking
                 etCommentBody.setText("") //todo : bad should be in the callback when this is success
-            })
+            }
 
             if (q.comments != null && q.comments!!.isNotEmpty())
                 attachCommentsAdapter(q.comments!!)
@@ -200,21 +206,23 @@ class DetailAdapter
         fun bindAnswer(qId: String, ans: Answer) {
 
             bindCommonAnswer(ans)
+            chipUserName.chipText = ans.user?.nickname
 
-            btnVoteUp.setOnClickListener({
+
+            btnVoteUp.setOnClickListener {
                 //should be done via the presenter
                 mDetailPresenter.addVoteToAnswer(qId, ans.id, true, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() + 1)}"
                 //should set the button to be disabled here
                 btnVoteUp.isEnabled = false
-            })
+            }
 
-            btnVoteDown.setOnClickListener({
+            btnVoteDown.setOnClickListener {
                 //should be done via the presenter
                 mDetailPresenter.addVoteToAnswer(qId, ans.id, false, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() - 1)}"
                 btnVoteDown.isEnabled = false
-            })
+            }
 
             btnSubmitComment.setOnClickListener {
                 handleCommentSubmissionForAnswer(qId,

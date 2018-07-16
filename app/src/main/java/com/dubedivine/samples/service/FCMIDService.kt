@@ -43,7 +43,7 @@ class FCMIDService : FirebaseInstanceIdService() {
 
     private fun sendRegistrationToServer(pref: PreferencesHelper, refreshedToken: String) {
         if (pref.getString(SignInMoreDetails.P_ID).isNotBlank()) {
-            dataManager.sendFCMTokenToUser(refreshedToken, User(pref.getUserId()))
+            dataManager.sendFCMTokenToUser(refreshedToken, User(pref.getUserId(), pref.getString(SignInMoreDetails.P_NICKNAME)))
             Log.d("FCMIDService", "saved user fcm token")
             pref.save { putBoolean(FCM_TOKEN_PUSHED, true) }
         }

@@ -7,6 +7,7 @@ import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.BasePresenter
 import com.dubedivine.samples.features.detail.DetailActivity.Companion.TAG
+import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.injection.ConfigPersistent
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
@@ -90,7 +91,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
 
     fun addAnswer(questionId: String, answer: String, fileSet: HashSet<String>) {
         doLongTaskOnView {
-            mDataManager.postAnswer(questionId, Answer(answer, 0, false, User(mPref.getUserId())))
+            mDataManager.postAnswer(questionId, Answer(answer, 0, false, User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))))
                     .compose(SchedulerUtils.ioToMain())
                     .subscribe({
                         if (it.status!!) {
@@ -185,12 +186,12 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
     fun postCommentQuestion(questionId: String, body: String, detailView: DetailAdapter.DetailView) {
         if (body.isNotBlank()) {
             doLongTaskOnView {
-                mDataManager.postCommentQuestion(questionId, Comment(body, 0, User(mPref.getUserId())))
+                mDataManager.postCommentQuestion(questionId, Comment(body, 0, User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))))
                         .compose(SchedulerUtils.ioToMain())
                         .subscribe({
                             mvpView!!.showProgress(false)
                             if (it.status!!) {
-                                mvpView!!.showCommentForQuestion(questionId, Comment(body, 0, User(mPref.getUserId())), detailView)
+                                mvpView!!.showCommentForQuestion(questionId, Comment(body, 0, User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))), detailView)
                             } else {
                                 mvpView!!.showUserMessage("Failed to share comment, please try again")
                             }
@@ -207,13 +208,13 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
     fun postCommentForAnswer(questionId: String, answerId: String, body: String, detailView: DetailAdapter.DetailView) {
         if (body.isNotBlank()) {
             doLongTaskOnView {
-                mDataManager.postCommentForAnswer(questionId, answerId, Comment(body, 0, User(mPref.getUserId())))
+                mDataManager.postCommentForAnswer(questionId, answerId, Comment(body, 0, User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))))
                         .compose(SchedulerUtils.ioToMain())
                         .subscribe({
                             mvpView!!.showProgress(false)
                             if (it.status!!) {
                                 //todo creating a new comment object really?
-                                mvpView!!.showCommentForAnswer(answerId, Comment(body, 0, User(mPref.getUserId())), detailView)
+                                mvpView!!.showCommentForAnswer(answerId, Comment(body, 0, User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))), detailView)
                             } else {
                                 mvpView!!.showUserMessage("Failed to share comment, please try again")
                             }

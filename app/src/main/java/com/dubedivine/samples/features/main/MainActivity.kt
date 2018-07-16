@@ -25,7 +25,6 @@ import com.dubedivine.samples.features.signIn.SignIn
 import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import timber.log.Timber
@@ -40,10 +39,8 @@ class MainActivity :
         PokemonAdapter.ClickListener,
         SearchArrayAdapter.OnItemClickListener {
 
-    @Inject
-    lateinit var mSearchArrayAdapter: SearchArrayAdapter
-    @Inject
-    lateinit var mMainPresenter: MainPresenter
+    @Inject lateinit var mSearchArrayAdapter: SearchArrayAdapter
+    @Inject lateinit var mMainPresenter: MainPresenter
 
     @BindView(R.id.progress)
     @JvmField
@@ -186,10 +183,9 @@ class MainActivity :
         when (num) {
             1 -> {
                 transaction.replace(R.id.fragment_framelayout, WelcomeFragment())
-                transaction.addToBackStack(null)
                 transaction.commit()
             }
-            2 -> {
+            2 -> {  // these adds to back stack because we need the back button to take me back
                 transaction.replace(R.id.fragment_framelayout, TagsSubscribedFragment())
                 transaction.addToBackStack(null)
                 transaction.commit()

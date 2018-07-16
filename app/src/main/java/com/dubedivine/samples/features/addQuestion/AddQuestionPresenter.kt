@@ -9,6 +9,7 @@ import com.dubedivine.samples.data.model.StatusResponse
 import com.dubedivine.samples.data.model.Tag
 import com.dubedivine.samples.data.model.User
 import com.dubedivine.samples.features.base.BasePresenter
+import com.dubedivine.samples.features.signIn.SignInMoreDetails
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.rx.scheduler.SchedulerUtils
 import okhttp3.MultipartBody
@@ -45,7 +46,7 @@ constructor(private val mDataManager: DataManager, activity: Activity) : BasePre
     fun publishNewQuestion(question: Question, files: List<String>? = null) {
         doLongTaskOnView {
             // set the user of this question
-            question.user = User(mPref.getUserId())
+            question.user = User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))
             mDataManager.postQuestion(question)
                     .compose(SchedulerUtils.ioToMain<StatusResponse<Question>>())
                     .subscribe({
