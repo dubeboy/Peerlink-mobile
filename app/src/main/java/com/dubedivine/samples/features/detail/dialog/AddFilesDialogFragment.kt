@@ -49,24 +49,23 @@ class AddFilesDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "On create is called")
-        val permissionCheckWrite = ContextCompat.checkSelfPermission(context,
+        val permissionCheckWrite = ContextCompat.checkSelfPermission(context!!,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        val permissionCheckRead = ContextCompat.checkSelfPermission(context,
+        val permissionCheckRead = ContextCompat.checkSelfPermission(context!!,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE)
 
         if (permissionCheckRead != PackageManager.PERMISSION_GRANTED ||
                 permissionCheckWrite != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                activity.toast("Accept the permissions so that the app can complete its functionality")
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                activity!!.toast("Accept the permissions so that the app can complete its functionality")
             } else {
-                ActivityCompat.requestPermissions(activity,
+                ActivityCompat.requestPermissions(activity!!,
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE,
                                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         MY_PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
             }
         }
         //  setStyle(DialogFragment.STYLE_NO_TITLE,  R.style.MyDialog)
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -74,7 +73,8 @@ class AddFilesDialogFragment : DialogFragment() {
         when (requestCode) {
             MY_PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    activity.snack("Permission granted.")
+                    activity?.snack("Permission granted.")
+                    Log.d(TAG, "Permission granted.")
                 } else {
                     permissionGranted = false
                 }
@@ -105,7 +105,7 @@ class AddFilesDialogFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.alert_dialog_select_files, container, false)
-        pref = PreferencesHelper(context)
+        pref = PreferencesHelper(context!!)
 //            type = savedInstanceState.getChar(CURRENT_MEDIA_TYPE)
         Log.d(TAG, "onCreateView called and medafile looks like $mediaFiles and type $type")
         if (mediaFiles.isEmpty()) {
@@ -123,27 +123,27 @@ class AddFilesDialogFragment : DialogFragment() {
         // remove background dim
         dialog.window.setDimAmount(0.3F)
 
-        btnAttachPhotos.setOnClickListener({
+        btnAttachPhotos.setOnClickListener {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
                     .setActivityTheme(R.style.AppTheme)
                     .pickPhoto(this)
-        })
+        }
 
-        btnAttachVideos.setOnClickListener({
+        btnAttachVideos.setOnClickListener {
             val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-            if (takeVideoIntent.resolveActivity(activity.packageManager) != null) {
+            if (takeVideoIntent.resolveActivity(activity?.packageManager) != null) {
                 Log.d(TAG, " the data is ${takeVideoIntent.data}")
                 startActivityForResult(takeVideoIntent, AddQuestionActivity.REQUEST_VIDEO_CAPTURE)
             }
-        })
+        }
 
-        btnAttachFiles.setOnClickListener({
+        btnAttachFiles.setOnClickListener {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
                     .setActivityTheme(R.style.AppTheme)
                     .pickFile(this)
-        })
+        }
         return view
     }
 
@@ -180,7 +180,7 @@ class AddFilesDialogFragment : DialogFragment() {
             AddQuestionActivity.REQUEST_VIDEO_CAPTURE -> {
                 if (intent?.data != null) {
                     val vidUri = intent.data!!
-                    val vidUrl = getRealPathFromURI(vidUri, activity)
+                    val vidUrl = getRealPathFromURI(vidUri, activity!!)
                     Log.d(TAG, "the path is $vidUrl")
                     mediaFiles = hashMapOf(Media.VIDEO_TYPE to listOf(vidUrl))
                 }

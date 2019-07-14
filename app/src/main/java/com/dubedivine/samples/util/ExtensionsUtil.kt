@@ -59,7 +59,7 @@ fun Activity.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {
 }
 
 fun Fragment.snack(msg: String,  duration: Int = Snackbar.LENGTH_LONG ) {
-    ViewUtil.hideKeyboard(this.activity)  // hide the keyboard first
+    ViewUtil.hideKeyboard(this.activity!!)  // hide the keyboard first
     Snackbar.make(view!!, "", duration).show()
 }
 

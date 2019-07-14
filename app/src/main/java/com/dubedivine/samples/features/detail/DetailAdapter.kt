@@ -49,9 +49,9 @@ class DetailAdapter
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DetailView {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailView {
         val view = LayoutInflater
-                .from(parent!!.context)
+                .from(parent.context)
                 .inflate(R.layout.item_question_detail_thread, parent, false)
         return DetailView(view, activity as AppCompatActivity, mDetailPresenter)
     }

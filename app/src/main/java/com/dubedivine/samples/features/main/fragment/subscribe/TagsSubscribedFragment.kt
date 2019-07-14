@@ -28,7 +28,7 @@ class TagsSubscribedFragment : BaseFragment() {
         fragmentComponent().inject(this)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         swipe_to_refresh.isRefreshing = true
 

@@ -9,14 +9,7 @@ import com.dubedivine.samples.R
 import com.dubedivine.samples.features.base.BaseBottomSheetFragment
 import com.dubedivine.samples.util.snack
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [VideoViewFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [VideoViewFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class VideoViewFragment : BaseBottomSheetFragment() {
 
     override val layout: Int
@@ -25,10 +18,10 @@ class VideoViewFragment : BaseBottomSheetFragment() {
     // TODO: Rename and change types of parameters
     private var videoURI: String? = null
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val videoView = view!!.findViewById<VideoView>(R.id.fragment_vid)
-        videoURI = arguments.getString(VIDEO_URI, "")
+        val videoView = view.findViewById<VideoView>(R.id.fragment_vid)
+        videoURI = arguments!!.getString(VIDEO_URI, "")
         if (videoURI != "") {
             videoView.setVideoPath(videoURI)
             videoView.start()

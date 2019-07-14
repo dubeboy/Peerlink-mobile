@@ -47,6 +47,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
         mDataManager.getQuestion(questionId)
                 .compose(SchedulerUtils.ioToMain<StatusResponse<Question>>())
                 .subscribe({
+                    // todo check status and show error page
                     mvpView?.showQuestion(it.entity!!)
                     mvpView?.showProgress(false)
                 }) { throwable ->

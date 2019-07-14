@@ -18,13 +18,13 @@ class FragmentModule(private val mFragment: Fragment) {
 
     @Provides
     internal fun provideActivity(): Activity {
-        return mFragment.activity
+        return mFragment.activity!!
     }
 
     @Provides
     @ActivityContext
     internal fun providesContext(): Context {
-        return mFragment.activity
+        return mFragment.activity!!
     }
 
     // todo: this should be gone

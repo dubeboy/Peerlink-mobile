@@ -25,7 +25,7 @@ class ShowVideoFragment : BottomSheetDialogFragment() {
         arguments?.let {
             videoLocation = it.getString(VIDEO_LOCATION)
         }
-        BasicUtils.checkExternalReadWritePermissions(activity, 100)
+        BasicUtils.checkExternalReadWritePermissions(activity!!, 100)
     }
 
     // totally overring the super method
@@ -41,12 +41,12 @@ class ShowVideoFragment : BottomSheetDialogFragment() {
         videoView.setMediaController(mediaController)
 
         val metrics = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(metrics)
+        activity!!.windowManager.defaultDisplay.getMetrics(metrics)
         dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (metrics.heightPixels * 0.10).roundToInt())
 
 
         //get the root external DIR
-        val externalFilesDir = activity.getExternalFilesDir(null)
+        val externalFilesDir = activity!!.getExternalFilesDir(null)
         val peerlinkDirectory = externalFilesDir.absolutePath
 
         videoView.setOnPreparedListener({

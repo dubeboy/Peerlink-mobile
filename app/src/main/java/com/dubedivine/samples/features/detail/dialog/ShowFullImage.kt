@@ -61,7 +61,7 @@ class ShowFullImage : BottomSheetDialogFragment() {
     override fun onResume() {
         super.onResume()
         val metrics = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(metrics)
+        activity!!.windowManager.defaultDisplay.getMetrics(metrics)
         val height = metrics.heightPixels
         log("the height of the ShowFullImageFragMent is $height")
         dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, height )

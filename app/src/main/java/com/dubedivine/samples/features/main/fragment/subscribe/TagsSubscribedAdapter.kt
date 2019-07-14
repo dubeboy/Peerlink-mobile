@@ -28,17 +28,17 @@ constructor() : RecyclerView.Adapter<TagsSubscribedAdapter.TagsSubscribedAdapter
         }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TagsSubscribedAdapterViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagsSubscribedAdapterViewHolder {
         val view = LayoutInflater
-                .from(parent?.context)
+                .from(parent.context)
                 .inflate(R.layout.item_tag, parent, false)
         return TagsSubscribedAdapterViewHolder(view)
     }
 
     override fun getItemCount(): Int = tags.size
 
-    override fun onBindViewHolder(holder: TagsSubscribedAdapterViewHolder?, position: Int) {
-        holder?.bind(mTags[position])
+    override fun onBindViewHolder(holder: TagsSubscribedAdapterViewHolder, position: Int) {
+        holder.bind(mTags[position])
     }
 
     class TagsSubscribedAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -50,7 +50,6 @@ constructor() : RecyclerView.Adapter<TagsSubscribedAdapter.TagsSubscribedAdapter
                 Log.d(TAG, "you clicked me ${tag.name}")
             })
         }
-
     }
 
 

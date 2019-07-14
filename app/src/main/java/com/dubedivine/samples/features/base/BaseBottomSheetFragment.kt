@@ -46,7 +46,7 @@ abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
         if (sComponentsArray.get(mFragmentId) == null) {
             Timber.i("Creating new ConfigPersistentComponent id=%d", mFragmentId)
             configPersistentComponent = DaggerConfigPersistentComponent.builder()
-                    .applicationComponent(MvpStarterApplication[activity].component)
+                    .applicationComponent(MvpStarterApplication[activity!!].component)
                     .build()
             sComponentsArray.put(mFragmentId, configPersistentComponent)
         } else {
@@ -56,22 +56,21 @@ abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
         mFragmentComponent = configPersistentComponent.fragmentComponent(FragmentModule(this))
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view: View? = inflater?.inflate(layout, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view: View? = inflater.inflate(layout, container, false)
         ButterKnife.bind(this, view as View)
         return view
     }
 
     abstract val layout: Int
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putLong(KEY_FRAGMENT_ID, mFragmentId)
+        outState.putLong(KEY_FRAGMENT_ID, mFragmentId)
     }
 
     override fun onDestroy() {
-        if (!activity.isChangingConfigurations) {
+        if (!activity!!.isChangingConfigurations) {
             Timber.i("Clearing ConfigPersistentComponent id=%d", mFragmentId)
             sComponentsArray.remove(mFragmentId)
         }

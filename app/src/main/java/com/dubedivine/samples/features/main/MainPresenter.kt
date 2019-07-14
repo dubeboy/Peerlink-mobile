@@ -74,7 +74,7 @@ constructor(private val mDataManager: DataManager,
                 Flowable
                         .just(chars) //todo NB: does not work
                         .debounce(2, TimeUnit.SECONDS) // debouncing when the user is inputting the text
-                        .subscribe({
+                        .subscribe {
                             Timber.i("getSuggestions: calling the api for some data with this title $it")
                             mDataManager.getSuggestions(it)
                                     .compose(SchedulerUtils.ioToMain<List<Question>>())
@@ -88,7 +88,7 @@ constructor(private val mDataManager: DataManager,
                                         mvpView?.showError(it)
                                         Timber.e(it)
                                     })
-                        })
+                        }
             }
         }
     }
