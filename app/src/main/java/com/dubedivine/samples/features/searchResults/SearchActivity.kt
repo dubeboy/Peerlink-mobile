@@ -65,9 +65,9 @@ class SearchActivity : BaseActivity(), SearchMvpView, SearchAdapter.ClickListene
         }
         mSearchResultsRecycler?.adapter = searchAdapter
 
-        fab_add.setOnClickListener({
+        fab_add.setOnClickListener {
             startActivity(AddQuestionActivity.getStartIntent(this))
-        })
+        }
     }
 
     override fun showProgress(show: Boolean) {

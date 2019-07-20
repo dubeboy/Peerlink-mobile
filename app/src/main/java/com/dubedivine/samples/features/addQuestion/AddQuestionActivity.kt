@@ -46,6 +46,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
     private lateinit var prog: ProgressDialog
     private lateinit var mPref: PreferencesHelper
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
@@ -214,7 +215,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
         when (requestCode) {
             REQUEST_VIDEO_CAPTURE -> {
                 if (intent?.data != null) {
-                    q_add.hint = "add a tag to the attached video so that people can find it\n#math1b #drawingGraphs"
+                    q_add.hint = "describe your question and add a tag to the attached video so that people can find it\n#math1b #drawingGraphs"
                     enableAddButtons(isVid = true)
                     if (add_q_linearlayout.childCount > 0) {
                         snack("You can only add one video. press X to remove the previously add video to add another one")
@@ -260,7 +261,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             }
             FilePickerConst.REQUEST_CODE_PHOTO -> {
                 if (intent != null) {
-                    q_add.hint = "add a tag to the attached photo so that people can find it\n#math1b #drawingGraphs"
+                    q_add.hint = "describe your question and add a tag to the attached photo so that people can find it\n#math1b #drawingGraphs"
                     enableAddButtons(isPic = true)
                     val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)
                     Log.d(TAG, "the data that we got: Photos $photosPaths")
@@ -283,7 +284,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             }
             FilePickerConst.REQUEST_CODE_DOC -> {
                 if (intent != null) {
-                    q_add.hint = "add a tag to the attached document so that people can find it\n#math1b #drawingGraphs"
+                    q_add.hint = "describe your question and add a tag to the attached document so that people can find it\n#math1b #drawingGraphs"
                     enableAddButtons(isFiles = true)
                     val photosPaths = intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS)
                     Log.d(TAG, "the data that we got ${intent.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)}")
@@ -327,7 +328,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
                 snack("You did not type the actual question")
             }
             BasicUtils.textHasNoTags(questionBody) -> {  // the last && is not required just for clearity
-                snack("please add at least one tag to this question so that people can find it")
+                snack("describe your question and please add at least one tag to this question so that people can find it")
             }
             else -> {
                 val (_, tags) = BasicUtils.getCleanTextAndTags(questionBody)

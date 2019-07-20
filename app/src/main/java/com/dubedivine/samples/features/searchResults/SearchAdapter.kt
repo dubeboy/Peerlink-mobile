@@ -89,17 +89,15 @@ constructor(private val context: Activity) : RecyclerView.Adapter<SearchViewHold
                 // todo: clean the layout first
                 questionTagsLayout.visibility = View.VISIBLE
                 if (questionTagsLayout.childCount == 0) {
-                    question.tags.forEach(
-                            {
-                                questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
-                            }
-                    )
+                    question.tags.forEach {
+                        questionTagsLayout.addView(BasicUtils.createTagsChip(itemView.context, it.name))
+                    }
                 }
             }
-            itemView.setOnClickListener({
+            itemView.setOnClickListener {
                 log("on QuestionClick has been clicked for $question")
                 clickListener?.onQuestionClick(question)
-            })
+            }
         }
 
         private fun String.pluralise(x: Int): String {

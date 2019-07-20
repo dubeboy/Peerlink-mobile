@@ -7,11 +7,13 @@ import java.util.*
 /**
  * Created by divine on 2017/08/13.
  */
-class Media(val name: String, val size: Long, val type: Char  // P-> picture, V-> video, f -> docs
-            , val location: String) : Serializable {
+// P-> picture, V-> video, f -> docs
+class Media(val name: String,
+            val size: Long,
+            val type: Char,
+            var location: String) : Serializable {
 
     val limit: Int
-
         get() = 5120
 
     companion object {

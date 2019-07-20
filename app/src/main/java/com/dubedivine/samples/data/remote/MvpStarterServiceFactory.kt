@@ -11,6 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 /**
  * Provide "make" methods to create instances of [MvpStarterService]
@@ -40,6 +41,9 @@ object MvpStarterServiceFactory {
         if (BuildConfig.DEBUG) {
             val loggingInterceptor = HttpLoggingInterceptor { message -> Timber.d(message) }
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            httpClientBuilder.retryOnConnectionFailure(true)
+            httpClientBuilder.connectTimeout(10, TimeUnit.SECONDS)
+            httpClientBuilder.readTimeout(10, TimeUnit.SECONDS)
             httpClientBuilder.addInterceptor(loggingInterceptor)
             httpClientBuilder.addNetworkInterceptor(StethoInterceptor())
         }

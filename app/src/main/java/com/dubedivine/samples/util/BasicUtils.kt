@@ -217,43 +217,41 @@ object BasicUtils {
         if (pictures != null) {
             horizontalScrollView.visibility = View.VISIBLE
             if (horizontalScrollView.childCount > 0) horizontalScrollView.removeAllViewsInLayout()
-            pictures.forEachIndexed(
-                    { i: Int, location: String ->
-                        // since its an Item we inflate it many times
-                        val constraintLayout = BasicUtils.inflateFor<ConstraintLayout>(context, R.layout.item_fragment_full_image_view)
-                        val imageView = constraintLayout.findViewById<ImageView>(R.id.img_full_image_view)
-                        val progressBar = constraintLayout.findViewById<ProgressBar>(R.id.progress_image_loading)
-                        //change the params so that they give other items space
-                        if (enableImageViewClick)
-                            imageView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ViewUtil.dpToPx(300))
-                        else
-                            imageView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ViewUtil.dpToPx(450))
+            pictures.forEachIndexed { i: Int, location: String ->
+                // since its an Item we inflate it many times
+                val constraintLayout = BasicUtils.inflateFor<ConstraintLayout>(context, R.layout.item_fragment_full_image_view)
+                val imageView = constraintLayout.findViewById<ImageView>(R.id.img_full_image_view)
+                val progressBar = constraintLayout.findViewById<ProgressBar>(R.id.progress_image_loading)
+                //change the params so that they give other items space
+                if (enableImageViewClick)
+                    imageView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ViewUtil.dpToPx(300))
+                else
+                    imageView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ViewUtil.dpToPx(450))
 
-                        imageView.setPadding(0, 0, ViewUtil.dpToPx(2), 0)
+                imageView.setPadding(0, 0, ViewUtil.dpToPx(2), 0)
 
-                        Glide.with(context)
-                                .load(BasicUtils.genMediaFullUrl(location))
-                                .listener(object : RequestListener<Drawable?> {
-                                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
-                                        progressBar.visibility = View.GONE
-                                        return false
-                                    }
+                Glide.with(context)
+                        .load(genMediaFullUrl(location))
+                        .listener(object : RequestListener<Drawable?> {
+                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+                                progressBar.visibility = View.GONE
+                                return false
+                            }
 
-                                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                                        progressBar.visibility = View.GONE
-                                        return false
-                                    }
-                                })
-                                .into(imageView)
-                        if (enableImageViewClick) {
-                            imageView.setOnClickListener({
-                                ShowFullImage.newInstance(mDetailPresenter, i, pictures)
-                                        .show(context.supportFragmentManager, "showFullImagesFragments")
-                            })
-                        }
-                        horizontalScrollView.addView(constraintLayout)
-                    }
-            )
+                            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                                progressBar.visibility = View.GONE
+                                return false
+                            }
+                        })
+                        .into(imageView)
+                if (enableImageViewClick) {
+                    imageView.setOnClickListener({
+                        ShowFullImage.newInstance(mDetailPresenter, i, pictures)
+                                .show(context.supportFragmentManager, "showFullImagesFragments")
+                    })
+                }
+                horizontalScrollView.addView(constraintLayout)
+            }
         }
     }
 

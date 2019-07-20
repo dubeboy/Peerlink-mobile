@@ -126,17 +126,18 @@ class DetailAdapter
             if (files != null) {
                 filesLinearHorizontalView.visibility = View.VISIBLE
                 if (filesLinearHorizontalView.childCount > 0) filesLinearHorizontalView.removeAllViewsInLayout()
-                files.forEach({
+                files.forEach {
                     val fileView = BasicUtils.getFileViewInstance(context, it, {}, {}, false)
                     filesLinearHorizontalView.addView(fileView)
-                })
+                }
             }
         }
 
         private fun bindPictureView(picture: List<Media>?) {
-            Log.d(TAG, "binding picture view")
+            Log.d(TAG, "binding picture  view")
             if (picture != null) {
-                BasicUtils.addPicturesListToHorizontalListView(filesLinearHorizontalView, ArrayList(picture.map { it.location }), context, mDetailPresenter)
+                val locations = ArrayList(picture.map { it.location })
+                BasicUtils.addPicturesListToHorizontalListView(filesLinearHorizontalView, locations, context, mDetailPresenter)
             }
         }
 
@@ -171,12 +172,12 @@ class DetailAdapter
             bindCommonQuestion(q)
             chipUserName.chipText = q.user?.nickname
             this.q = q
-            q.tags.forEach({
+            q.tags.forEach {
                 val chip = BasicUtils.createTagsChip(itemView.context, it.name)
                 if (tagsLinearHorizontalView.childCount == 0)
                     tagsLinearHorizontalView.addView(chip)
 
-            })
+            }
 
             if (q.answered == true) {
                 btnCorrectAnswer.visibility = View.VISIBLE
@@ -188,10 +189,10 @@ class DetailAdapter
                 tvVotes.text = "${(tvVotes.text.toString().toInt() + 1)}"
                 //should set the button to be disabled here
             }
-            btnVoteDown.setOnClickListener({
+            btnVoteDown.setOnClickListener {
                 mDetailPresenter.addVote(q.id!!, false, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() - 1)}"
-            })
+            }
 
             btnSubmitComment.setOnClickListener {
                 handleCommentSubmissionForQuestion(q.id!!, etCommentBody.text.toString(), this) // todo leaking

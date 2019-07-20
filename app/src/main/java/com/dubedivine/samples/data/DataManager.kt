@@ -44,7 +44,7 @@ constructor(private val mMvpStarterService: MvpStarterService) {
         val returnQuestions = mMvpStarterService.getSearchSuggestions(questionName)
                 .toObservable()
                 .flatMapIterable { it }
-                .map({ title -> title })
+                .map { title -> title }
                 .toList()
 
         returnQuestions.subscribeOn(Schedulers.computation()).subscribe(
