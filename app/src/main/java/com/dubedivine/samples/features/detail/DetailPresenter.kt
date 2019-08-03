@@ -92,15 +92,18 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
 
     fun addAnswer(questionId: String, answer: String, fileSet: HashSet<String>) {
         doLongTaskOnView {
-            mDataManager.postAnswer(questionId, Answer(answer, 0, false, User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))))
+            mDataManager.postAnswer(questionId,
+                    Answer(answer, 0, false,
+                            User(mPref.getUserId(), mPref.getString(SignInMoreDetails.P_NICKNAME))))
+
                     .compose(SchedulerUtils.ioToMain())
-                    .subscribe({
-                        if (it.status!!) {
+                    .subscribe({ statusResponse ->
+                        if (statusResponse.status!!) {
 
                             if (fileSet.isNotEmpty()) {
                                 val distinctFiles: List<String> = fileSet.distinct()
                                 val retrofitFileParts: MutableList<MultipartBody.Part> = BasicUtils.createMultiPartFromFile(distinctFiles)
-                                mDataManager.postAnswerFiles(questionId, it.entity!!.id!!, retrofitFileParts)
+                                mDataManager.postAnswerFiles(questionId, statusResponse.entity!!.id!!, retrofitFileParts)
                                         .compose(SchedulerUtils.ioToMain())
                                         .subscribe({
                                             mvpView!!.showProgress(false)
@@ -109,7 +112,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                                             mvpView!!.showUserMessage("Failed to upload the file please try again")
                                         })
                             } else {
-                                mvpView!!.showAnswer(it.entity!!)
+                                mvpView!!.showAnswer(statusResponse.entity!!)
 
                             }
                         } else {

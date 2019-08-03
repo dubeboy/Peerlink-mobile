@@ -25,4 +25,5 @@
     <string name="feature_set_desc">On <b>Peerlink</b> <b>You</b> can ask questions or <b>You</b> can answer other UJ students` questions.<br/><b>You</b> can answer and up vote or down vote other students`s answers. Answers are ranked by votes and answers with the highest votes get shown first.</string>
     <string name="feature_set_list"><b>Peerlink</b> enables <b>You</b> to upload a 1 minute video or pictures or documents to better explain your question.</string>
     <string name="default_notification_channel_id">PeerlinkChannel</string>
+    <string name="attached_files">Attach Files</string>
 </resources>

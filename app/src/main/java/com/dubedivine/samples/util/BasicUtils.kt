@@ -116,11 +116,9 @@ object BasicUtils {
         val imageView = relativeLayout.findViewById<ImageView>(R.id.view_image_preview)
         val btnCloseImage = relativeLayout.findViewById<ImageView>(R.id.btn_image_close)
 
-        btnCloseImage.setOnClickListener(
-                {
-                    onCloseImageView(relativeLayout)
-                }
-        )
+        btnCloseImage.setOnClickListener {
+            onCloseImageView(relativeLayout)
+        }
         Glide.with(imageView.context)
                 .load(path)
                 .into(imageView)
@@ -245,10 +243,10 @@ object BasicUtils {
                         })
                         .into(imageView)
                 if (enableImageViewClick) {
-                    imageView.setOnClickListener({
+                    imageView.setOnClickListener {
                         ShowFullImage.newInstance(mDetailPresenter, i, pictures)
                                 .show(context.supportFragmentManager, "showFullImagesFragments")
-                    })
+                    }
                 }
                 horizontalScrollView.addView(constraintLayout)
             }

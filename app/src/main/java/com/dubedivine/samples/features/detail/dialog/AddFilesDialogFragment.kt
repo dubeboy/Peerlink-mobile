@@ -6,7 +6,9 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
+import android.support.annotation.MainThread
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.DialogFragment
@@ -15,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Media
@@ -29,20 +32,17 @@ import droidninja.filepicker.FilePickerConst
  * Created by divine on 2017/10/06.
  */
 
-/*
- *
-  * the type: Char is a problem its functionality should be removed its redundant
-  * it uses prefs which is no need we should fix this
-* */
 class AddFilesDialogFragment : DialogFragment() {
     private var mediaFiles: HashMap<Char, List<String>> = HashMap() //Maps media type to Files
     private lateinit var onItemClick: OnItemClick
     private lateinit var btnAttachPhotos: FloatingActionButton
     private lateinit var btnAttachVideos: FloatingActionButton
     private lateinit var btnAttachFiles: FloatingActionButton
+    private lateinit var tvAlertDialogTitle: TextView
     //overkill variable should maintain state within the fragment itself , google Fragment Manager maintain state
     private var type: Char = NO_MEDIA //default type is NO_MEDIA
     private var permissionGranted = true
+    private var numberOfDocsSelected = 0
 
     private lateinit var pref: PreferencesHelper
 
@@ -65,7 +65,6 @@ class AddFilesDialogFragment : DialogFragment() {
                         MY_PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
             }
         }
-        //  setStyle(DialogFragment.STYLE_NO_TITLE,  R.style.MyDialog)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -115,6 +114,7 @@ class AddFilesDialogFragment : DialogFragment() {
         btnAttachPhotos = view.findViewById(R.id.btn_attach_photos)
         btnAttachVideos = view.findViewById(R.id.btn_attach_video)
         btnAttachFiles = view.findViewById(R.id.btn_attach_filez)
+        tvAlertDialogTitle = view.findViewById(R.id.tv_alert_dialog_title)
 
         //  enableButtonsForType(btnAttachPhotos, btnAttachVideos, btnAttachFiles)
         // make dialog itself transparent
@@ -125,7 +125,7 @@ class AddFilesDialogFragment : DialogFragment() {
 
         btnAttachPhotos.setOnClickListener {
             FilePickerBuilder.getInstance()
-                    .setMaxCount(10)
+                    .setMaxCount(10 - numberOfDocsSelected)
                     .setActivityTheme(R.style.AppTheme)
                     .pickPhoto(this)
         }
@@ -140,7 +140,7 @@ class AddFilesDialogFragment : DialogFragment() {
 
         btnAttachFiles.setOnClickListener {
             FilePickerBuilder.getInstance()
-                    .setMaxCount(10)
+                    .setMaxCount(10 - numberOfDocsSelected)
                     .setActivityTheme(R.style.AppTheme)
                     .pickFile(this)
         }
@@ -164,10 +164,15 @@ class AddFilesDialogFragment : DialogFragment() {
         this.onItemClick = onItemClick
     }
 
+    fun setNumberOfDocsSelected(count: Int) {
+        numberOfDocsSelected = if (count <= 9) (count) else 10
+    }
+
     // to be called by the main activity to enable all the buttons ie when there are no selected elements
     fun enableAllButtons() {
         type = NO_MEDIA
         saveTypeToPreferences(type)
+        enableButtonForType(type)
     }
 
     //todo: should factorise
@@ -212,12 +217,14 @@ class AddFilesDialogFragment : DialogFragment() {
             docsListPaths != null && docsListPaths.isNotEmpty() -> {
                 onItemClick.onItemClick(docsListPaths, Media.DOCS_TYPE)
                 type = Media.DOCS_TYPE
+                tvAlertDialogTitle.text = "Attached ${(10 - numberOfDocsSelected)} of 10 Documents"
                 saveTypeToPreferences(type)
                 return
             }
             videoListPaths != null && videoListPaths.isNotEmpty() -> {
                 onItemClick.onItemClick(videoListPaths, Media.VIDEO_TYPE)
                 type = Media.VIDEO_TYPE
+                tvAlertDialogTitle.text = "Attached 1 of 1 Videos"
                 saveTypeToPreferences(type)
                 return
             }
@@ -225,6 +232,7 @@ class AddFilesDialogFragment : DialogFragment() {
                 Log.d(TAG, "In here bro looking at pictures")
                 onItemClick.onItemClick(picturesListPaths, Media.PICTURE_TYPE)
                 type = Media.PICTURE_TYPE
+                tvAlertDialogTitle.text = "Attached ${(10 - numberOfDocsSelected)} of 10 Pictures"
                 saveTypeToPreferences(type)
                 return
             }
@@ -266,6 +274,7 @@ class AddFilesDialogFragment : DialogFragment() {
             }
         }
     }
+
 
     private fun saveTypeToPreferences(type: Char) {
         if (permissionGranted)

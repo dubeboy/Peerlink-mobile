@@ -46,7 +46,7 @@ class DetailAdapter
 
     fun addAnswer(answer: Answer) {
         mQuestion.answers!!.add(answer)
-        notifyDataSetChanged()
+        notifyItemChanged(0)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailView {
@@ -125,7 +125,8 @@ class DetailAdapter
         private fun bindFileView(files: List<Media>?) {
             if (files != null) {
                 filesLinearHorizontalView.visibility = View.VISIBLE
-                if (filesLinearHorizontalView.childCount > 0) filesLinearHorizontalView.removeAllViewsInLayout()
+
+              //  if (filesLinearHorizontalView.childCount > 0) filesLinearHorizontalView.removeAllViewsInLayout()
                 files.forEach {
                     val fileView = BasicUtils.getFileViewInstance(context, it, {}, {}, false)
                     filesLinearHorizontalView.addView(fileView)
@@ -134,10 +135,13 @@ class DetailAdapter
         }
 
         private fun bindPictureView(picture: List<Media>?) {
-            Log.d(TAG, "binding picture  view")
+            Log.d(TAG, "binding picture view")
             if (picture != null) {
+                filesLinearHorizontalView.visibility = View.VISIBLE
                 val locations = ArrayList(picture.map { it.location })
                 BasicUtils.addPicturesListToHorizontalListView(filesLinearHorizontalView, locations, context, mDetailPresenter)
+            } else {
+
             }
         }
 
@@ -148,15 +152,16 @@ class DetailAdapter
             if (video?.location != null) {
                 // in the future we should be able to use glide and show a thumbnail of the video
                 if (video.type == Media.VIDEO_TYPE) {
+                    filesLinearHorizontalView.visibility = View.VISIBLE
                     val fileView = BasicUtils.getFileViewInstance(context, video, {
                         Log.d(TAG, "the clicked file is $it")
                         ShowVideoFragment.newInstance(mDetailPresenter, it.location)
                                 .show(context.supportFragmentManager, "ShowVideoFrag")
 
                     }, {}, false)
-                    if (filesLinearHorizontalView.childCount > 0) {
-                        filesLinearHorizontalView.removeAllViewsInLayout()
-                    }
+//                    if (filesLinearHorizontalView.childCount > 0) {
+//                        filesLinearHorizontalView.removeAllViewsInLayout()
+//                    }
                     filesLinearHorizontalView.addView(fileView)
                 }
             }
@@ -205,7 +210,7 @@ class DetailAdapter
         }
 
         fun bindAnswer(qId: String, ans: Answer) {
-
+            clearItemView()
             bindCommonAnswer(ans)
             chipUserName.chipText = ans.user?.nickname
 
@@ -233,7 +238,7 @@ class DetailAdapter
                 etCommentBody.setText("")
             }
 
-            if (ans.comments != null && ans.comments.isNotEmpty())
+            if (ans.comments.isNotEmpty())
                 attachCommentsAdapter(ans.comments)
             else
                 Log.i(TAG, "Could not attach comments recycler A: ${ans.comments}")
@@ -293,7 +298,15 @@ class DetailAdapter
 
         //lets see how much memory this leaks
 
+        private fun clearItemView() {
+            tagsLinearHorizontalView.removeAllViews()
+            recyclerComments.removeAllViews()
+            tagsLinearHorizontalView.visibility = View.GONE
+            recyclerComments.visibility = View.GONE
+        }
     }
+
+
 
     fun addCommentForQuestion(comment: Comment) {
         mQuestion.comments!!.add(comment)

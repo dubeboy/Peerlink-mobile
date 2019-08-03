@@ -30,7 +30,7 @@ constructor(private val mDataManager: DataManager, activity: Activity) : BasePre
 
     fun getTagSuggestion(tag: CharSequence, tagStartIndex: Int, tagStopIndex: Int) {
         checkViewAttached()
-        mvpView!!.showProgress(false)  // diable the default behaviour
+        mvpView!!.showProgress(false)  // disable the default behaviour
         mvpView!!.showTagSuggestionProgress(true)
         mDataManager.getTagSuggestion(tag)
                 .compose(SchedulerUtils.ioToMain<List<Tag>>())

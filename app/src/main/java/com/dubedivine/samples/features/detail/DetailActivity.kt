@@ -38,7 +38,6 @@ import kotlin.collections.HashSet
 //todo look into the boom menu: https://github.com/Nightonke/BoomMenu
 //todo: should only search when the text is not a empty(space) key
 class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnItemClick {
-
     @Inject
     lateinit var mDetailPresenter: DetailPresenter
     @Inject
@@ -54,7 +53,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
     var mRecyclerData: RecyclerView? = null
 
     private var mQuestion: Question? = null
-    private val docsList: HashSet<String> = HashSet(0)//not sure weather there should be 0 , 1 or default init capacity, 0 for now
+    private val docsList: HashSet<String> = HashSet(10)//not sure weather there should be 0 , 1 or default init capacity, 0 for now
     private lateinit var newFragment: AddFilesDialogFragment
 
     override val layout: Int
@@ -100,7 +99,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         mRecyclerData!!.addOnScrollListener(scrollListener)
 
         //create a dialog that shows the files to attach
-        btn_attach_files.setOnClickListener({
+        btn_attach_files.setOnClickListener {
             val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag("dialog")
             if (prev != null) {
@@ -110,20 +109,20 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             // Create and show the dialog.
             newFragment.show(ft, "dialog")
 
-        })
+        }
 
-        btn_answer_question.setOnClickListener({
+        btn_answer_question.setOnClickListener {
             val answer = et_answer_input.text
 
             if (answer.isBlank()) {
-                snack("incorrect answer!")
+                snack("Incorrect answer!")
             } else {
-                toast("posting answer")
+                toast("Posting answer")
                 Log.d(TAG, "posting answer and the posted files are $docsList")
 
                 mDetailPresenter.addAnswer(mQuestion!!.id!!, answer.toString(), docsList)
             }
-        })
+        }
     }
 
     override fun showUserMessage(msg: String) {
@@ -131,8 +130,8 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
     }
 
     override fun showAnswer(entity: Answer) {
-        mDetailAdapter.addAnswer(entity)
         snack("shared answer")
+        mDetailAdapter.addAnswer(entity)
         et_answer_input.setText("")
         // this check is for when the user has posted one with files
         if (docsList.size > 0) {
@@ -143,7 +142,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
 
         mRecyclerData!!.scrollToPosition(mRecyclerData!!.adapter.itemCount - 1)
     }
-
 
     override fun showQuestionsAndAnswers(pokemon: Pokemon) {
 
@@ -188,15 +186,15 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
     //onclick event from the add files dialog fragment which gives this parent the required parameters to complete the task
     override fun onItemClick(fileList: List<String>, type: Char) {
         docsList.addAll(fileList)
+        newFragment.setNumberOfDocsSelected(docsList.size)
         newFragment.dismiss()
         Log.d(TAG, "__onItemClick this has also been called $type and the fileList: $fileList")
         when (type) {
             Media.PICTURE_TYPE -> {
                 fileList.forEach { item ->
-                    val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this, item,
-                            {
-                                removeItem(item, it)
-                            })
+                    val imagePreviewInstance = BasicUtils.getImagePreviewInstance(this, item) {
+                        removeItem(item, it)
+                    }
                     add_q_linearlayout.addView(imagePreviewInstance)
                 }
             }
@@ -269,16 +267,16 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             (it.parent as ViewGroup).removeView(it)
         }
         docsList.remove(item)
+        newFragment.setNumberOfDocsSelected(docsList.size)
         checkHoriElementsAndFragmentButtons()
     }
 
     private fun checkHoriElementsAndFragmentButtons() {
-        if (add_q_linearlayout.childCount > 0) {
+        if (docsList.size > 0) {
             hori_scroll_view.visibility = View.VISIBLE
         } else {
             hori_scroll_view.visibility = View.GONE
-            if (docsList.size > 0)
-                newFragment.enableAllButtons()
+            newFragment.enableAllButtons()
         }
     }
 
@@ -291,6 +289,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             mDetailPresenter.getFullQuestion(questionId)
         }
     }
+
 
     companion object {
 
