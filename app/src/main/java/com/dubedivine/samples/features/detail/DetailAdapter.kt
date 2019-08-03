@@ -221,6 +221,7 @@ class DetailAdapter
                 tvVotes.text = "${(tvVotes.text.toString().toInt() + 1)}"
                 //should set the button to be disabled here
                 btnVoteUp.isEnabled = false
+                btnVoteDown.isEnabled = true
             }
 
             btnVoteDown.setOnClickListener {
@@ -228,6 +229,7 @@ class DetailAdapter
                 mDetailPresenter.addVoteToAnswer(qId, ans.id, false, this)
                 tvVotes.text = "${(tvVotes.text.toString().toInt() - 1)}"
                 btnVoteDown.isEnabled = false
+                btnVoteUp.isEnabled = true
             }
 
             btnSubmitComment.setOnClickListener {

@@ -94,7 +94,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             }
         }
 
-
         mRecyclerData!!.adapter = mDetailAdapter
         mRecyclerData!!.addOnScrollListener(scrollListener)
 
@@ -241,17 +240,14 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
 
     override fun upVoteAnswerAndDisableButton(answerId: String, detailView: DetailAdapter.DetailView) {
         detailView.upVoteAnswerAndDisableButton(answerId)
-
     }
 
     override fun downVoteAndDisableButton(detailView: DetailAdapter.DetailView) {
         detailView.downVoteQuestionAndDisableButton()
-
     }
 
     override fun upVoteAndDisableButton(detailView: DetailAdapter.DetailView) {
         detailView.upVoteQuestionAndDisableButton()
-
     }
 
     override fun showCommentForQuestion(questionId: String, comment: Comment, detailView: DetailAdapter.DetailView) {
