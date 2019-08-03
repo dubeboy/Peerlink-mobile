@@ -22,7 +22,7 @@ interface MvpStarterService {
                           @Query("user_id") userId: String,
                           @Query("vote") vote: Boolean): Single<StatusResponse<Boolean>>  // should return a single Boolean
 
-    @POST("questions/{q_id}/vote/{a_id}/vote")
+    @POST("questions/{q_id}/answer/{a_id}/vote")
     fun addVoteToAnswer(@Path("q_id") questionId: String,
                         @Path("a_id") id: String,
                         @Query("user_id") userId: String,
