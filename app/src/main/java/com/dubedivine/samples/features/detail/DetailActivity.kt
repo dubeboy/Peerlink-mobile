@@ -19,6 +19,7 @@ import com.dubedivine.samples.data.model.*
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.features.common.EndlessRecyclerViewScrollListener
 import com.dubedivine.samples.features.detail.dialog.AddFilesDialogFragment
+import com.dubedivine.samples.service.ITEM_ID
 import com.dubedivine.samples.util.BasicUtils
 import com.dubedivine.samples.util.snack
 import com.dubedivine.samples.util.toast
@@ -29,14 +30,12 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.collections.HashSet
 
-
-
-
 // in the future we should also get the question answers increnmentally so the
 // serialized Question should contain a max of 5 children each comments and answers and then
 // we lazily load the the other children
 //todo look into the boom menu: https://github.com/Nightonke/BoomMenu
 //todo: should only search when the text is not a empty(space) key
+
 class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnItemClick {
     @Inject
     lateinit var mDetailPresenter: DetailPresenter
@@ -67,9 +66,15 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         // todo: should look into delegate and lazy loading so that this is only create if the user wants to send file and its created once
         newFragment = AddFilesDialogFragment.newInstance(this)
 
-        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as Question
+        mQuestion = intent.getSerializableExtra(EXTRA_QUESTION) as? Question
+        title = mQuestion?.title ?: "Question Detail"
+
         if (mQuestion == null) {
-            throw IllegalArgumentException("Detail Activity requires a Question Instance")
+            // throw IllegalArgumentException("Detail Activity requires a Question Instance")
+            val questionID = intent.getStringExtra(ITEM_ID)
+            val subItem = intent
+
+            mQuestion = Question(questionID, "", "", 0, emptyList(), "")
         }
 
         setUpSwipeRecyclerView(mQuestion!!.id!!)
@@ -81,7 +86,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        title = mQuestion!!.title
+
 
         mDetailAdapter.mQuestion = mQuestion!!
         val layoutManager = LinearLayoutManager(this)
@@ -138,7 +143,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             add_q_linearlayout.removeAllViews()
             checkHoriElementsAndFragmentButtons()
         }
-
         mRecyclerData!!.scrollToPosition(mRecyclerData!!.adapter.itemCount - 1)
     }
 
@@ -177,6 +181,7 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
 
     override fun showQuestion(question: Question) {
         mDetailAdapter.clear()
+        title = question.title
         mDetailAdapter.mQuestion = question
         mDetailAdapter.notifyDataSetChanged()
         swipe_to_refresh.isRefreshing = false

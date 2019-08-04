@@ -24,6 +24,13 @@ class Question(val title: String, val body: String, var votes: Long, val tags: L
     var answered: Boolean? = null
 
 
+    constructor(id: String,
+                title: String,
+                body: String,
+                votes: Long,
+                tags: List<Tag>,
+                type: String) : this(title, body, votes, tags, type) { this.id = id }
+
     override fun toString(): String {
         return "Question{" +
                 "id='" + id + '\'' +
