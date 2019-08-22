@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.*
 import butterknife.BindView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.dubedivine.samples.R
 import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Question
@@ -162,6 +163,7 @@ class MainActivity :
         Timber.d("the pic url is $photoUrl")
         Glide.with(this)
                 .load(photoUrl)
+                .apply(RequestOptions.circleCropTransform())
                 .into(tvUserUserProfilePhoto)
     }
 
