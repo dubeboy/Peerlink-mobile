@@ -78,4 +78,7 @@ interface MvpStarterService {
     @POST("users/update_fcm_token/{token}")
     fun sendFCMTokenToUser(@Path("token")  token: String ,
                            @Body user: User): Single<StatusResponse<Boolean>>
+
+    @GET("questions/tag_search")
+    fun getQuestionsByTag(@Query("tag_name") tagName: String): Single<StatusResponse<Question>>
 }

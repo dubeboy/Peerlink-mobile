@@ -125,4 +125,8 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     fun sendFCMTokenToUser(token: String, user: User): Single<StatusResponse<Boolean>>{
         return mMvpStarterService.sendFCMTokenToUser(token, user)
     }
+
+    fun getQuestionsByTag(tagName: String): Single<StatusResponse<Question>> {
+        return mMvpStarterService.getQuestionsByTag(tagName)
+    }
 }

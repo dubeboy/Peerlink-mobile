@@ -64,12 +64,16 @@
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_vote_down" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btn_correct_answer"
-                    android:layout_width="wrap_content"
-                    android:visibility="gone"
-                    android:background="@drawable/ic_select"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_check" />
             </LinearLayout>
 
             <LinearLayout
