@@ -43,7 +43,7 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
                         "",
                         null))
 
-        btn_next.setOnClickListener({
+        btn_next.setOnClickListener {
             //upload all the data to the server
             val degree = et_degree.text.toString()
             val nickname = et_nickname.text.toString()
@@ -70,7 +70,7 @@ class SignInMoreDetails : BaseActivity(), SignInMvpView {
                 }
                 snack("Please make sure that all the fields are filled in.")
             }
-        })
+        }
     }
 
     override fun showProgress(show: Boolean) {

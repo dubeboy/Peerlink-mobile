@@ -3,16 +3,11 @@ package com.dubedivine.samples.data.local
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import com.dubedivine.samples.data.model.User
-import com.dubedivine.samples.features.addQuestion.AddQuestionActivity
 import com.dubedivine.samples.features.signIn.SignIn
 import com.dubedivine.samples.features.signIn.SignInMoreDetails
-import com.dubedivine.samples.injection.ApplicationContext
 import com.dubedivine.samples.util.log
-import javax.inject.Inject
-import javax.inject.Singleton
 
-class PreferencesHelper constructor( private val context: Context) {
+class PreferencesHelper constructor(private val context: Context) {
 
     private val mPref: SharedPreferences
 

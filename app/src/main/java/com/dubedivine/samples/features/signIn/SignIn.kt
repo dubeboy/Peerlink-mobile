@@ -40,10 +40,10 @@ class SignIn : BaseActivity() {
        // updateUI(account)
 
         sign_in_button.setSize(SignInButton.SIZE_WIDE)
-        sign_in_button.setOnClickListener({
+        sign_in_button.setOnClickListener {
             toast("Starting google sign in")
             signIn()
-        })
+        }
     }
 
     private fun signIn() {

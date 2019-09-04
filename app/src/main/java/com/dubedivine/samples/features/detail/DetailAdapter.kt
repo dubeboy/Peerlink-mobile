@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.dubedivine.samples.R
+import com.dubedivine.samples.data.local.PreferencesHelper
 import com.dubedivine.samples.data.model.Answer
 import com.dubedivine.samples.data.model.Comment
 import com.dubedivine.samples.data.model.Media
@@ -46,7 +47,7 @@ class DetailAdapter
 
     fun addAnswer(answer: Answer) {
         mQuestion.answers!!.add(answer)
-        notifyItemChanged(0)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailView {
@@ -62,7 +63,9 @@ class DetailAdapter
         if (position == 0) {
             holder.bindQuestion(mQuestion) // look at this this is how you can index an Item
         } else { //position > 0
-            holder.bindAnswer(mQuestion.id!!, mQuestion.answers!![position - 1])  // so that I don`t miss the 0th element in the answers arrayList
+            holder.bindAnswer(mQuestion.id!!,
+                    mQuestion.user!!.id!! ,
+                    mQuestion.answers!![position - 1])  // so that I don`t miss the 0th element in the answers arrayList
         }
     }
 
@@ -82,7 +85,7 @@ class DetailAdapter
 
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
-        private val btnCorrectAnswer: Button = view.findViewById(R.id.btn_correct_answer)
+        private val btnCorrectAnswer: ImageButton = view.findViewById(R.id.btn_correct_answer)
         private val tvQuestionTitle: TextView = view.findViewById(R.id.q_title)
         private val tvQuestionBody: TextView = view.findViewById(R.id.q_body)
         @Deprecated("useless", ReplaceWith("delete")) //todo delete
@@ -116,7 +119,6 @@ class DetailAdapter
             tvQuestionTitle.visibility = View.GONE
             tvQuestionBody.text = a.body
             bindVotes(a.votes)
-
             bindFileView(a.files)
             bindVideoView(a.video)
             bindPictureView(a.files)
@@ -181,7 +183,6 @@ class DetailAdapter
                 val chip = BasicUtils.createTagsChip(itemView.context, it.name)
                 if (tagsLinearHorizontalView.childCount == 0)
                     tagsLinearHorizontalView.addView(chip)
-
             }
 
             if (q.answered == true) {
@@ -213,11 +214,12 @@ class DetailAdapter
             else Log.d(TAG, "Could not attach comments recycler Q: ${q.comments}")
         }
 
-        fun bindAnswer(qId: String, ans: Answer) {
+        fun bindAnswer(qId: String, questionUserId: String, ans: Answer) {
             clearItemView()
             bindCommonAnswer(ans)
             chipUserName.chipText = ans.user?.nickname
 
+            acceptAnswer(questionUserId, ans)
 
             btnVoteUp.setOnClickListener {
                 //should be done via the presenter
@@ -262,17 +264,34 @@ class DetailAdapter
                 commentsListFragment.show()
             }
 
-            recyclerComments.setOnClickListener({
+            recyclerComments.setOnClickListener {
                 showCommentsDetails()
-            })
+            }
 
             if (comments.size > 4) {
                 btnMoreComments.visibility = View.VISIBLE
-                btnMoreComments.setOnClickListener({
+                btnMoreComments.setOnClickListener {
                     showCommentsDetails()
-                })
+                }
             }
         }
+
+        private fun acceptAnswer(questionUserId: String, answer: Answer) {
+            val pref = PreferencesHelper(itemView.context)
+            val userId = pref.getUserId()
+            if (answer.isChosen) {
+                btnCorrectAnswer.isEnabled = false
+                btnCorrectAnswer.visibility = View.VISIBLE
+//                btnCorrectAnswer.backgroundTintList =
+            } else if (questionUserId == userId) {
+                btnCorrectAnswer.isEnabled = true
+                btnCorrectAnswer.visibility = View.VISIBLE
+                btnCorrectAnswer.setOnClickListener {
+                    Log.d(TAG, "btn mark answer as correct ")
+                }
+            }
+        }
+
 
         private fun handleCommentSubmissionForQuestion(questionId: String, body: String, detailView: DetailView) {
             mDetailPresenter.postCommentQuestion(questionId, body, detailView)
