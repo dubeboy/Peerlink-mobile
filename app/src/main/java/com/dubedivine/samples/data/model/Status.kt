@@ -1,5 +1,6 @@
 package com.dubedivine.samples.data.model
 
+
 /**
  * Created by divine on 2017/09/23.
  */

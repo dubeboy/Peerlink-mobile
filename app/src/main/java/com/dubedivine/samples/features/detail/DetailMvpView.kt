@@ -29,4 +29,5 @@ interface DetailMvpView : MvpView {
     fun showCommentForAnswer(answerId: String, comment1: Comment, detailView: DetailAdapter.DetailView)
 
     fun showQuestion(question: Question)
+    fun acceptAnswer(answerAccepted: Boolean)
 }

@@ -17,7 +17,7 @@ class Question(val title: String, val body: String, var votes: Long, val tags: L
     var comments: ArrayList<Comment>? = null
     @SerializedName("answers")
     var answers: ArrayList<Answer>? = null
-    var user: User? = null // the user the
+    var user: User? = null
     var video: Media? = null
     var files: ArrayList<Media>? = null //this can be combined with video dwag
     var createdAt = Date()

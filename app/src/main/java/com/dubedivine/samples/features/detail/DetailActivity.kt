@@ -263,6 +263,10 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         mDetailAdapter.addCommentForAnswer(answerId, comment1)
     }
 
+    override fun acceptAnswer(answerAccepted: Boolean) {
+        mDetailAdapter.acceptAnswer(answerAccepted)
+    }
+
     private fun removeItem(item: String, it: View) {
         if (it.parent != null) {
             (it.parent as ViewGroup).removeView(it)

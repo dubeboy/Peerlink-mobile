@@ -47,20 +47,25 @@ interface MvpStarterService {
     @PUT("questions/{q_id}/answer")
     fun postAnswer(@Path("q_id") questionId: String, @Body answer: Answer): Single<StatusResponse<Answer>>
 
+    @POST("questions/{q_id}/comment")
+    fun postCommentQuestion(@Path("q_id") questionId: String,
+                            @Body body: Comment): Single<StatusResponse<Comment>>
+
     @Multipart
     @POST("questions/{q_id}/answer/{a_id}/files")
     fun postAnswerFiles(@Path("q_id") questionId: String,
                         @Path("a_id") answerId: String,
                         @Part retrofitFileParts: List<MultipartBody.Part>): Single<StatusResponse<Answer>>
 
-    @POST("questions/{q_id}/comment")
-    fun postCommentQuestion(@Path("q_id") questionId: String,
-                            @Body body: Comment): Single<StatusResponse<Comment>>
-
     @POST("questions/{q_id}/answer/{a_id}/comment")
     fun postCommentForAnswer(@Path("q_id") questionId: String,
                              @Path("a_id") answerId: String,
                              @Body body: Comment): Single<StatusResponse<Comment>>
+
+    @POST("questions/{q_id}/answer/{a_id}/accept")
+    fun postAcceptAnswer(@Path("q_id") questionId: String,
+                         @Path("a_id") answerId: String,
+                         @Body userId: String): Single<StatusResponse<Boolean>>
 
     @POST("users")
     fun postSignInUserWithServer(@Body user: User): Single<StatusResponse<User>>
@@ -81,4 +86,6 @@ interface MvpStarterService {
 
     @GET("questions/tag_search")
     fun getQuestionsByTag(@Query("tag_name") tagName: String): Single<StatusResponse<Question>>
+
+
 }

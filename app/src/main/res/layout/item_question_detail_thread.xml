@@ -64,7 +64,7 @@
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_vote_down" />
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/btn_correct_answer"
                     android:layout_width="match_parent"
                     android:paddingTop="15dp"

@@ -73,7 +73,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                 }) { throwable ->
                     mvpView?.showProgress(false)
                     mvpView?.showError(throwable)
-                }
+                }.dispose()
     }
 
     fun getMoreAnswers(questionId: String, page: Int) {
@@ -240,7 +240,7 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                            Unit, progress: (prog: Long, fileSize: Long) -> Unit) {
         // sane check to see where there the string had just empty characters
         if (videoLocation.isNotBlank()) {
-            mDataManager.getVideo(videoLocation)
+           mDataManager.getVideo(videoLocation)
                     .compose(SchedulerUtils.ioToMain())
                     .subscribe({
                         val fileReader = ByteArray(4096)
@@ -259,7 +259,6 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                             outputStream.write(fileReader, 0, read)
                             fileSizeDownloaded += read
                             progress(fileSizeDownloaded, fileSize)
-//                            Log.d(TAG, "file size downloaded$fileSizeDownloaded of $fileSize")
                         }
                         outputStream.flush()
                         inputStream.close()
@@ -268,6 +267,28 @@ constructor(private val mDataManager: DataManager) : BasePresenter<DetailMvpView
                     }, {
                         it.printStackTrace()
                         success(false, "failed to download the video", null)
+                    })
+        }
+    }
+
+    fun postAcceptAnswer(questionId: String, answerId: String, userId: String) {
+        doLongTaskOnView {
+            mDataManager.postAcceptAnswer(questionId, answerId, userId)
+                    .compose(SchedulerUtils.ioToMain())
+                    .subscribe({
+                        mvpView!!.showProgress(false)
+                        if (it.status!!) {
+                            mvpView!!.showUserMessage(it.message!!)
+                            mvpView!!.acceptAnswer(it.entity!!)
+                        } else {
+                            mvpView!!.acceptAnswer(false)
+                            mvpView!!.showUserMessage("You cannot comment on this answer because this question has been deleted")
+                        }
+                    }, {
+                        mvpView!!.showProgress(false)
+                        mvpView!!.acceptAnswer(false)
+                        Log.e(TAG, "Something went wrong really bad")
+                        mvpView!!.showError(it)
                     })
         }
     }

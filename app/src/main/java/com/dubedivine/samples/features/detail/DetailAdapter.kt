@@ -21,6 +21,7 @@ import com.dubedivine.samples.features.detail.comments.FullCommentsListFragment
 import com.dubedivine.samples.features.detail.dialog.ShowVideoFragment
 import com.dubedivine.samples.util.BasicUtils
 import com.robertlevonyan.views.chip.Chip
+import java.security.AccessController.getContext
 import javax.inject.Inject
 
 /**
@@ -85,7 +86,7 @@ class DetailAdapter
 
         private val btnVoteUp: ImageButton = view.findViewById(R.id.btn_vote_up)
         private val btnVoteDown: ImageButton = view.findViewById(R.id.btn_vote_down)
-        private val btnCorrectAnswer: ImageButton = view.findViewById(R.id.btn_correct_answer)
+        private val btnCorrectAnswer: ImageView = view.findViewById(R.id.btn_correct_answer)
         private val tvQuestionTitle: TextView = view.findViewById(R.id.q_title)
         private val tvQuestionBody: TextView = view.findViewById(R.id.q_body)
         @Deprecated("useless", ReplaceWith("delete")) //todo delete
@@ -101,6 +102,9 @@ class DetailAdapter
         private val etCommentBody: EditText = view.findViewById(R.id.et_comment_input)
         private val chipUserName: Chip = view.findViewById(R.id.chip_user_name)
         private var q: Question? = null
+
+        private var chosenAnswer: Answer? = null
+        private val pref = PreferencesHelper(itemView.context)
 
         //it should have helped if both of our answers and question where of the same type hierarchy i think....
         // but that for some other day bro for now the painful method will work
@@ -147,8 +151,6 @@ class DetailAdapter
             }
         }
 
-
-
         private fun bindVideoView(video: Media?) {
             Log.d(TAG, "binding video view")
             if (video?.location != null) {
@@ -185,10 +187,6 @@ class DetailAdapter
                     tagsLinearHorizontalView.addView(chip)
             }
 
-            if (q.answered == true) {
-                btnCorrectAnswer.visibility = View.VISIBLE
-            }
-
             //todo: once we have the user object then we can allow the changing of state of the answered object
             btnVoteUp.setOnClickListener {
                 mDetailPresenter.addVote(q.id!!, true, this)
@@ -219,7 +217,18 @@ class DetailAdapter
             bindCommonAnswer(ans)
             chipUserName.chipText = ans.user?.nickname
 
-            acceptAnswer(questionUserId, ans)
+            if (ans.isChosen) {
+                btnCorrectAnswer.setColorFilter(itemView.context.resources.getColor(R.color.primary))
+                btnCorrectAnswer.visibility = View.VISIBLE
+                chosenAnswer = ans
+            } else {
+                btnCorrectAnswer.setColorFilter(itemView.context.resources.getColor(R.color.dark_gray))
+                if (questionUserId == pref.getUserId()) {
+                    btnCorrectAnswer.visibility = View.VISIBLE
+                } else {
+                    btnCorrectAnswer.visibility = View.GONE
+                }
+            }
 
             btnVoteUp.setOnClickListener {
                 //should be done via the presenter
@@ -244,6 +253,10 @@ class DetailAdapter
                         etCommentBody.text.toString(),
                         this) //todo: leaks
                 etCommentBody.setText("")
+            }
+
+            btnCorrectAnswer.setOnClickListener {
+                acceptAnswer(qId, ans)
             }
 
             if (ans.comments.isNotEmpty())
@@ -276,22 +289,12 @@ class DetailAdapter
             }
         }
 
-        private fun acceptAnswer(questionUserId: String, answer: Answer) {
-            val pref = PreferencesHelper(itemView.context)
-            val userId = pref.getUserId()
-            if (answer.isChosen) {
-                btnCorrectAnswer.isEnabled = false
-                btnCorrectAnswer.visibility = View.VISIBLE
-//                btnCorrectAnswer.backgroundTintList =
-            } else if (questionUserId == userId) {
-                btnCorrectAnswer.isEnabled = true
-                btnCorrectAnswer.visibility = View.VISIBLE
-                btnCorrectAnswer.setOnClickListener {
-                    Log.d(TAG, "btn mark answer as correct ")
-                }
-            }
+        // TODO add like a whats app blue tick to show that the author accepted this but others add one tick
+        private fun acceptAnswer(questionId: String, answer: Answer) {
+            btnCorrectAnswer.setColorFilter(itemView.context.resources.getColor(R.color.green_go))
+            answer.isChosen = true
+            mDetailPresenter.postAcceptAnswer(questionId, answer.id!!,  pref.getUserId())
         }
-
 
         private fun handleCommentSubmissionForQuestion(questionId: String, body: String, detailView: DetailView) {
             mDetailPresenter.postCommentQuestion(questionId, body, detailView)
@@ -312,13 +315,13 @@ class DetailAdapter
         fun downVoteQuestionAndDisableButton() {
             q!!.votes = q!!.votes - 1
             btnVoteUp.isEnabled = true
-            notifyDataSetChanged()
+            notifyDataSetChanged() // noooo!
         }
 
         fun upVoteQuestionAndDisableButton() {
             q!!.votes = q!!.votes + 1
             btnVoteDown.isEnabled = true
-            notifyDataSetChanged()
+            notifyDataSetChanged()  // todo these should not be here
         }
 
         //lets see how much memory this leaks
@@ -344,7 +347,15 @@ class DetailAdapter
             if (ans.id == answerId) {
                 ans.comments.add(comment1)
                 notifyDataSetChanged()
+                break
             }
         }
+    }
+
+    fun acceptAnswer(answerAccepted: Boolean) {
+        if (!answerAccepted) {
+            mQuestion.answers?.find { it.isChosen }?.isChosen = false
+        }
+        notifyDataSetChanged()
     }
 }

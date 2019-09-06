@@ -1,6 +1,7 @@
 package com.dubedivine.samples.data.model
 
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
@@ -13,8 +14,8 @@ class Answer : Serializable {
         private set  // todo: this is ugly y not make it a val
     var votes: Long = 0
         private set
+    @SerializedName("choosen")
     var isChosen: Boolean = false
-        private set
     val createAt = Date()
     var comments: ArrayList<Comment> = ArrayList()
     var video: Media? = null

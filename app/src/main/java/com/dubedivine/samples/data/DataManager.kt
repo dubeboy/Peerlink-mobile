@@ -129,4 +129,8 @@ constructor(private val mMvpStarterService: MvpStarterService) {
     fun getQuestionsByTag(tagName: String): Single<StatusResponse<Question>> {
         return mMvpStarterService.getQuestionsByTag(tagName)
     }
+
+    fun postAcceptAnswer(questionId: String, answerId: String, userId: String): Single<StatusResponse<Boolean>> {
+        return mMvpStarterService.postAcceptAnswer(questionId, answerId, userId)
+    }
 }
