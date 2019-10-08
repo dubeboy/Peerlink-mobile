@@ -103,7 +103,7 @@ class DetailAdapter
         private val chipUserName: Chip = view.findViewById(R.id.chip_user_name)
         private var q: Question? = null
 
-        private var chosenAnswer: Answer? = null
+
         private val pref = PreferencesHelper(itemView.context)
 
         //it should have helped if both of our answers and question where of the same type hierarchy i think....
@@ -220,7 +220,6 @@ class DetailAdapter
             if (ans.isChosen) {
                 btnCorrectAnswer.setColorFilter(itemView.context.resources.getColor(R.color.primary))
                 btnCorrectAnswer.visibility = View.VISIBLE
-                chosenAnswer = ans
             } else {
                 btnCorrectAnswer.setColorFilter(itemView.context.resources.getColor(R.color.dark_gray))
                 if (questionUserId == pref.getUserId()) {
@@ -293,6 +292,7 @@ class DetailAdapter
         private fun acceptAnswer(questionId: String, answer: Answer) {
             btnCorrectAnswer.setColorFilter(itemView.context.resources.getColor(R.color.green_go))
             answer.isChosen = true
+//            chosenAnswer = answer
             mDetailPresenter.postAcceptAnswer(questionId, answer.id!!,  pref.getUserId())
         }
 
