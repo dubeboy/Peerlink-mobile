@@ -37,10 +37,10 @@ import kotlin.collections.HashSet
 //todo: should only search when the text is not a empty(space) key
 
 class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnItemClick {
-    @Inject
-    lateinit var mDetailPresenter: DetailPresenter
-    @Inject
-    lateinit var mDetailAdapter: DetailAdapter
+
+    @Inject lateinit var mDetailPresenter: DetailPresenter
+    @Inject lateinit var mDetailAdapter: DetailAdapter
+
     @BindView(R.id.progress)
     @JvmField
     var mProgress: ProgressBar? = null
@@ -86,9 +86,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-
-
-        mDetailAdapter.mQuestion = mQuestion!!
         val layoutManager = LinearLayoutManager(this)
         mRecyclerData!!.layoutManager = layoutManager
         val scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
@@ -99,7 +96,6 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
             }
         }
 
-        mRecyclerData!!.adapter = mDetailAdapter
         mRecyclerData!!.addOnScrollListener(scrollListener)
 
         //create a dialog that shows the files to attach
@@ -180,9 +176,9 @@ class DetailActivity : BaseActivity(), DetailMvpView, AddFilesDialogFragment.OnI
     }
 
     override fun showQuestion(question: Question) {
-        mDetailAdapter.clear()
         title = question.title
         mDetailAdapter.mQuestion = question
+        mRecyclerData!!.adapter = mDetailAdapter
         mDetailAdapter.notifyDataSetChanged()
         swipe_to_refresh.isRefreshing = false
     }
