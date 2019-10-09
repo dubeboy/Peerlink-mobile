@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.dubedivine.samples.R
 import com.dubedivine.samples.features.base.BaseActivity
 import com.dubedivine.samples.util.toast
@@ -101,7 +102,8 @@ class SignIn : BaseActivity() {
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
+     //   super.onBackPressed()
+        Toast.makeText(this, "Please sign in to continue", Toast.LENGTH_SHORT).show();
     }
 
     companion object {
