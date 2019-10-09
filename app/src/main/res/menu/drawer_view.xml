@@ -8,9 +8,11 @@
         <item
             android:id="@+id/nav_trending"
             android:icon="@drawable/ic_whatshot"
+            android:enabled="false"
             android:title="Trending" />
         <item
             android:id="@+id/nav_interests"
+            android:enabled="false"
             android:icon="@drawable/ic_subscribed"
             android:title="Tags Of Interest">
         </item>
