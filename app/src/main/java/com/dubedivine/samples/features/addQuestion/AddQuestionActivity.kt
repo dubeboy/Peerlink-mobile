@@ -111,7 +111,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
 
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
-                    .setActivityTheme(R.style.AppTheme)
+                    .setActivityTheme(R.style.AppTheme_NoActionBar)
                     .pickFile(this)
 
         }
@@ -129,7 +129,7 @@ class AddQuestionActivity : BaseActivity(), AddQuestionMvpView {
             FilePickerBuilder.getInstance()
                     .setMaxCount(10)
                     .showGifs(true)
-                    .setActivityTheme(R.style.AppTheme)
+                    .setActivityTheme(R.style.AppTheme_NoActionBar)
                     .pickPhoto(this)
         }
         fab_add.setOnClickListener {

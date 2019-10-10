@@ -72,7 +72,7 @@ ext {
     // my miscellaneous dependencies ;)
     divineDeps = [
             chipsLib : "com.robertlevonyan.view:MaterialChipView:1.0.1", // todo: replace this please
-            filePicker : "com.droidninja:filepicker:2.0.8",
+//            filePicker : "com.droidninja:filepicker:2.1.5",
             chipsInput: "com.github.tylersuehr7:chips-input-layout:2.2"
     ]
 
